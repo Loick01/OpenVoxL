@@ -64,8 +64,3 @@ bool Window::EndFrame()
     glfwSwapBuffers(m_glfwWindow);
     return !glfwWindowShouldClose(m_glfwWindow);
 }
-
-void Window::PollEvents()
-{
-    glfwPollEvents();
-}

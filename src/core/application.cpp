@@ -14,16 +14,11 @@ Application::Application():
     glDepthFunc(GL_LESS);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
-    
-    // glfwSetKeyCallback(window, key_callback);
-    // glfwSetCursorPosCallback(window, mouse_cursor_callback);
-    // glfwSetMouseButtonCallback(window, mouse_button_callback);
-    // glfwSetScrollCallback(window, scroll_callback);
 }
 
 bool Application::Run()
 {
-    m_window.PollEvents();
+    m_eventController.PollEvents();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     m_eventController.HandleWindowEvent();

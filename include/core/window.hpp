@@ -25,5 +25,4 @@ class Window
         unsigned int GetHeight() const;
 
         bool EndFrame();
-        void PollEvents();
 };
