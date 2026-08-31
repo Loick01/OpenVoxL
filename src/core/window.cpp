@@ -4,6 +4,10 @@ Window::Window(const std::string& title):
     m_title(title)
 {
     InitGlfw();
+
+    // Should not be here (glad must be initialized after glfw) ? 
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+        throw std::runtime_error("Failed to initialize GLAD");
 }
 
 Window::~Window()
