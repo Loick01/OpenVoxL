@@ -1,16 +1,28 @@
+#include <exception>
 #include <iostream>
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+// #include <glm/glm.hpp>
+// #include <glm/vec3.hpp>
 
-#include <glm/glm.hpp>
-#include <glm/vec3.hpp>
+// #include <imgui.h>
+// #include <imgui_impl_glfw.h>
+// #include <imgui_impl_opengl3.h>
 
-#include <imgui.h>
-#include <imgui_impl_glfw.h>
-#include <imgui_impl_opengl3.h>
+#include "core/application.hpp"
 
 int main()
 {
-    std::cout << "Hello OpenVoxL\n";
+    Application app;
+    bool isRunning = true;
+    
+    try {
+        while(isRunning){
+            isRunning = app.Run();
+        }
+    } catch (const std::exception e) {
+        std::cerr << e.what() << "\n";
+        return EXIT_FAILURE;
+    }
+
+    return 0;
 }

@@ -41,6 +41,7 @@ file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
 add_executable(openvoxl ${SOURCES})
 
 target_include_directories(openvoxl PRIVATE
+    include
     ${CMAKE_CURRENT_SOURCE_DIR}/external/glm
 )
 
