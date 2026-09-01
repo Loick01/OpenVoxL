@@ -29,5 +29,5 @@ class Skybox {
         void LoadCubemap();
         void BindCubemap(int unit);
         void CreateBuffers();
-        void Draw(const glm::mat4& model, const glm::mat4& projection, const glm::mat4& view);
+        void Draw(const glm::mat4& projection, const glm::mat4& view);
 };

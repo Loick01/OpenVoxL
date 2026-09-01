@@ -25,51 +25,29 @@ Skybox::~Skybox(){
 
 void Skybox::CreateBuffers() {  
     m_vertices = {
-        // Back face
         -1.f, -1.f, -1.f,
         1.f, -1.f, -1.f,
         1.f, 1.f, -1.f,
         -1.f, 1.f, -1.f,
-        // Front face
         -1.f, -1.f, 1.f,
         1.f, -1.f, 1.f,
         1.f, 1.f, 1.f,
         -1.f, 1.f, 1.f,
-        // Bottom face
-        -1.f, -1.f, -1.f,
-        1.f, -1.f, -1.f,
-        1.f, -1.f, 1.f,
-        -1.f, -1.f, 1.f,
-        // Top face
-        -1.f, 1.f, -1.f,
-        1.f, 1.f, -1.f,
-        1.f, 1.f, 1.f,
-        -1.f, 1.f, 1.f,
-        // Left face
-        -1.f, -1.f, -1.f,
-        -1.f, -1.f, 1.f,
-        -1.f, 1.f, 1.f,
-        -1.f, 1.f, -1.f,
-        // Right face
-        1.f, -1.f, 1.f,
-        1.f, -1.f, -1.f,
-        1.f, 1.f, -1.f,
-        1.f, 1.f, 1.f
     };
 
     m_indices = {
-        1, 0, 2,
-        0, 3, 2,
-        4, 5, 6,
-        4, 6, 7,
-        8, 9, 10,
-        8, 10, 11,
-        12, 14, 13,
-        12, 15, 14,
-        16, 17, 18,
-        16, 18, 19,
-        20, 21, 22,
-        20, 22, 23
+        0, 1, 2,
+        0, 2, 3,
+        4, 6, 5,
+        4, 7, 6,
+        0, 5, 1,
+        0, 4, 5,
+        7, 2, 6,
+        7, 3, 2,
+        0, 7, 4,
+        0, 3, 7,
+        5, 2, 1,
+        5, 6, 2
     };
 
     glGenVertexArrays(1, &m_VAO);
@@ -88,10 +66,11 @@ void Skybox::CreateBuffers() {
 }
 
 
-void Skybox::Draw(const glm::mat4& model, const glm::mat4& projection, const glm::mat4& view) {
+void Skybox::Draw(const glm::mat4& projection, const glm::mat4& view) {
     m_shader.Use();
-    m_shader.SetMat4("model", model);
     m_shader.SetMat4("projection", projection);
+    // glm::mat4 skyboxView = glm::mat4(glm::mat3(view)); // Remove the translation of the camera
+    // m_shader.SetMat4("view", skyboxView);
     m_shader.SetMat4("view", view);
     glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, (void*)0);

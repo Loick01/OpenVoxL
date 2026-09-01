@@ -1,8 +1,12 @@
 #include "event/event.hpp"
 
-EventController::EventController(GLFWwindow* glfwWindow):
-    m_glfwWindow(glfwWindow)
+#include "core/camera.hpp"
+
+EventController::EventController(GLFWwindow* glfwWindow, Camera& camera):
+    m_glfwWindow(glfwWindow), m_camera(camera)
 {
+    glfwSetInputMode(m_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // Hide the mouse cursor. Will not be here
+
     glfwSetWindowUserPointer(m_glfwWindow, this);
 
     glfwSetKeyCallback(m_glfwWindow, [](GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -45,7 +49,9 @@ void EventController::EventKeyCallback(int key, int scancode, int action, int mo
 {}
 
 void EventController::EventCursorPosCallback(double xpos, double ypos)
-{}
+{
+    m_camera.CursorPosCallback(xpos, ypos);
+}
 
 void EventController::EventMouseButtonCallback(int button, int action, int mods)
 {}
