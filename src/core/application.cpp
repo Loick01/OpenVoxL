@@ -14,6 +14,7 @@ Application::Application():
     glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
 
     m_skybox.BindCubemap(0);
+    m_soundController.PlayRandonMusic();
 }
 
 bool Application::Run()

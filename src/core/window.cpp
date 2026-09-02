@@ -61,6 +61,7 @@ void Window::InitGlfw()
         throw std::runtime_error("Failed to create GLFW window");
 
     glfwMakeContextCurrent(m_glfwWindow);
+    // glfwSwapInterval(1); // ?
 }
 
 bool Window::EndFrame()

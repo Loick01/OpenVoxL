@@ -1,7 +1,5 @@
 #include "event/event.hpp"
 
-#include <iostream>
-
 EventController::EventController(GLFWwindow* glfwWindow, Camera& camera):
     m_glfwWindow(glfwWindow), m_camera(camera), m_keys{}
 {
