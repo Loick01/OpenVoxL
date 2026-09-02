@@ -15,8 +15,6 @@ Application::Application():
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
 
-    m_skybox.BindCubemapTexture(0);
-    m_hud.BindTexture2D(0);
     m_soundController.PlayRandonMusic();
 }
 

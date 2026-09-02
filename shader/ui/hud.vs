@@ -4,6 +4,10 @@ layout(location = 0) in vec2 aPos;
 
 out vec2 TexCoords;
 
+uniform int windowWidth;
+uniform int windowHeight;
+uniform int handBlockIndex;
+
 vec2 hudTexCoords[20] = vec2[20](
     // Hotbar
     vec2(0.001953,0.467391),
@@ -33,7 +37,9 @@ vec2 hudTexCoords[20] = vec2[20](
 );
 
 void main() {
-    vec2 normalizedPosition = vec2(aPos[0]/1920, aPos[1]/1080);
+    vec2 screenCoordinates = aPos;
+    // screenCoordinates[0] += handBlockIndex * 80.0;
+    vec2 normalizedPosition = vec2(screenCoordinates[0]/windowWidth, screenCoordinates[1]/windowHeight);
     gl_Position = vec4(normalizedPosition*2.0-1.0, 0.0, 1.0);
     TexCoords = hudTexCoords[gl_VertexID];
 }

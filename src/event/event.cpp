@@ -1,7 +1,9 @@
 #include "event/event.hpp"
 
+#include "core/camera.hpp"
+
 EventController::EventController(GLFWwindow* glfwWindow, Camera& camera):
-    m_glfwWindow(glfwWindow), m_camera(camera), m_keys{}
+    m_glfwWindow(glfwWindow), m_camera(camera), m_keys{}, m_handBlockIndex(0), m_hotbarSize(9)
 {
     glfwSetInputMode(m_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // Hide the mouse cursor. Will not be here
 
@@ -69,4 +71,7 @@ void EventController::EventMouseButtonCallback(int button, int action, int mods)
 {}
 
 void EventController::EventScrollCallback(double xoffset, double yoffset)
-{}
+{
+    m_handBlockIndex = (m_handBlockIndex + (yoffset > 0 ? -1 : 1) + m_hotbarSize) % m_hotbarSize;
+    // m_hudShader.SetInt("selectorLocation", m_handBlockIndex);
+}

@@ -74,6 +74,11 @@ class Shader
             glDeleteShader(fragment);
         }
 
+        GLint GetLocation(const std::string& name) const
+        {
+            return glGetUniformLocation(m_programId, name.c_str());
+        }
+
         void Use()
         {
             glUseProgram(m_programId);

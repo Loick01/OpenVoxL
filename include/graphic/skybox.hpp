@@ -26,6 +26,4 @@ class Skybox {
 
         void Load();
         void Draw(const glm::mat4& projection, const glm::mat4& view);
-
-        void BindCubemapTexture(int unit); // Will be in texture.hpp
 };

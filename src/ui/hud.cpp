@@ -26,6 +26,11 @@ Hud::Hud(const std::string& vertexPath, const std::string& fragmentPath, const u
 
     Load();
     m_textureId = LoadTexture2D("../asset/texture/ui/hud.png");
+    
+    m_shader.Use();
+    m_shader.SetInt("windowWidth", m_windowWidth);
+    m_shader.SetInt("windowHeight", m_windowHeight);
+    BindTexture2D(m_shader.GetLocation("hudTexture"), m_textureId, 0);
 }
 
 Hud::~Hud()
@@ -104,10 +109,3 @@ void Hud::UpdateHealth(const float health)
 
 void Hud::UpdateStamina(const float stamina)
 {}
-
-void Hud::BindTexture2D(int unit)
-{
-    glActiveTexture(GL_TEXTURE0 + unit);
-    glBindTexture(GL_TEXTURE_2D, m_textureId);
-    m_shader.SetInt("hudTexture", unit);
-}

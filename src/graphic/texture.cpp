@@ -53,3 +53,17 @@ GLuint LoadCubemapTexture(const std::array<std::string,6>& pathTextures)
 
     return cubemapTextureId;
 }
+
+void BindTexture2D(GLint textureLocation, const GLuint textureId, const int unit)
+{
+    glActiveTexture(GL_TEXTURE0 + unit);
+    glBindTexture(GL_TEXTURE_2D, textureId);
+    glUniform1i(textureLocation, unit);
+}
+
+void BindCubemapTexture(GLint textureLocation, const GLuint textureId, int unit)
+{
+    glActiveTexture(GL_TEXTURE0 + unit);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, textureId);
+    glUniform1i(textureLocation, unit);
+}

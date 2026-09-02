@@ -16,6 +16,7 @@ Skybox::Skybox(const std::string& vertexPath, const std::string& fragmentPath):
         "../asset/texture/skybox/nz.png"
         }
     );
+    BindTexture2D(m_shader.GetLocation("skyboxTexture"), m_cubemapTextureId, 0);
 }
 
 Skybox::~Skybox()
@@ -81,11 +82,4 @@ void Skybox::Draw(const glm::mat4& projection, const glm::mat4& view)
     glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, (void*)0);
     glDepthFunc(GL_LESS);
-}
-
-void Skybox::BindCubemapTexture(int unit)
-{
-    glActiveTexture(GL_TEXTURE0 + unit);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubemapTextureId);
-    m_shader.SetInt("skyboxTexture", unit);
 }

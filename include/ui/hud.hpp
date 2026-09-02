@@ -47,8 +47,6 @@ class Hud{
 
         void Load();
         void Draw();
-        
-        void BindTexture2D(int unit); // Will be in texture.hpp
 
         void UpdateHealth(const float health);
         void UpdateStamina(const float stamina);
