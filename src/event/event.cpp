@@ -1,9 +1,9 @@
 #include "event/event.hpp"
 
-#include "core/camera.hpp"
+#include <iostream>
 
 EventController::EventController(GLFWwindow* glfwWindow, Camera& camera):
-    m_glfwWindow(glfwWindow), m_camera(camera)
+    m_glfwWindow(glfwWindow), m_camera(camera), m_keys{}
 {
     glfwSetInputMode(m_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // Hide the mouse cursor. Will not be here
 
@@ -34,6 +34,11 @@ EventController::EventController(GLFWwindow* glfwWindow, Camera& camera):
     });
 }
 
+const std::array<bool,GLFW_KEY_LAST+1>& EventController::GetKeys() const
+{
+    return m_keys;
+}
+
 void EventController::PollEvents()
 {
     glfwPollEvents();
@@ -46,7 +51,16 @@ void EventController::HandleWindowEvent()
 }
 
 void EventController::EventKeyCallback(int key, int scancode, int action, int mods)
-{}
+{
+    if (key < 0 || key > GLFW_KEY_LAST) 
+        return;
+
+    if (action == GLFW_PRESS) {
+        m_keys[key] = true;
+    } else if (action == GLFW_RELEASE) {
+        m_keys[key] = false;
+    }
+}
 
 void EventController::EventCursorPosCallback(double xpos, double ypos)
 {

@@ -3,6 +3,7 @@
 #include <glad/glad.h>
 
 #include "core/camera.hpp"
+#include "core/time.hpp"
 #include "core/window.hpp"
 #include "event/event.hpp"
 #include "graphic/skybox.hpp"
@@ -15,6 +16,7 @@ class Application
         
         Camera m_camera;
         Skybox m_skybox;
+        Time m_time;
         
     public:
         Application();

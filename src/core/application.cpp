@@ -18,6 +18,9 @@ Application::Application():
 
 bool Application::Run()
 {
+    m_time.Update();
+    const double deltaTime = m_time.GetDeltaTime();
+    
     m_eventController.PollEvents();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
@@ -26,6 +29,7 @@ bool Application::Run()
     const glm::mat4 cameraViewMatrix = m_camera.GetViewMatrix();
     const glm::mat4 cameraProjectionMatrix = m_camera.GetProjectionMatrix();
     
+    m_camera.ProcessKeyEvent(m_eventController.GetKeys(), deltaTime);
     glDepthFunc(GL_LEQUAL);
     m_skybox.Draw(cameraProjectionMatrix, cameraViewMatrix);
     glDepthFunc(GL_LESS);
