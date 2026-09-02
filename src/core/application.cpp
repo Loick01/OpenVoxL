@@ -3,17 +3,20 @@
 Application::Application():
     m_window("OpenVoxL"), m_camera((float)m_window.GetWidth()/(float)m_window.GetHeight()),
     m_eventController(m_window.GetGlfwWindow(), m_camera),
-    m_skybox("../shader/skybox.vs", "../shader/skybox.fs")
+    m_skybox("../shader/skybox/skybox.vs", "../shader/skybox/skybox.fs"),
+    m_hud("../shader/ui/hud.vs", "../shader/ui/hud.fs", m_window.GetWidth(), m_window.GetHeight())
 {
     glViewport(0, 0, m_window.GetWidth(), m_window.GetHeight());
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
+    glFrontFace(GL_CCW);
     glEnable(GL_BLEND);    
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
 
-    m_skybox.BindCubemap(0);
+    m_skybox.BindCubemapTexture(0);
+    m_hud.BindTexture2D(0);
     m_soundController.PlayRandonMusic();
 }
 
@@ -31,9 +34,9 @@ bool Application::Run()
     const glm::mat4 cameraProjectionMatrix = m_camera.GetProjectionMatrix();
     
     m_camera.ProcessKeyEvent(m_eventController.GetKeys(), deltaTime);
-    glDepthFunc(GL_LEQUAL);
+    
     m_skybox.Draw(cameraProjectionMatrix, cameraViewMatrix);
-    glDepthFunc(GL_LESS);
+    m_hud.Draw();
     
     return m_window.EndFrame();
 }

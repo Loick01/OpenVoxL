@@ -8,6 +8,7 @@
 #include "event/event.hpp"
 #include "graphic/skybox.hpp"
 #include "sound/sound.hpp"
+#include "ui/hud.hpp"
 
 class Application
 {
@@ -17,6 +18,7 @@ class Application
         SoundController m_soundController;
         
         Camera m_camera;
+        Hud m_hud;
         Skybox m_skybox;
         Time m_time;
         

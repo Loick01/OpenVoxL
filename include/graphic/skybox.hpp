@@ -1,6 +1,5 @@
 #pragma once
 
-#include <array>
 #include <string>
 #include <vector>
 
@@ -11,23 +10,22 @@
 
 class Skybox {
     private:
-        Shader m_shader;
-        
         std::vector<float> m_vertices;
         std::vector<unsigned int> m_indices;
-        std::array<std::string,6> m_pathTextures;
+        
+        Shader m_shader;
+        GLuint m_cubemapTextureId;
         
         GLuint m_VBO;
         GLuint m_EBO;
         GLuint m_VAO;
-        GLuint m_cubemapTextureId;
 
     public:
         Skybox(const std::string& vertexPath, const std::string& fragmentPath);
         ~Skybox();
 
-        void LoadCubemap();
-        void BindCubemap(int unit);
-        void CreateBuffers();
+        void Load();
         void Draw(const glm::mat4& projection, const glm::mat4& view);
+
+        void BindCubemapTexture(int unit); // Will be in texture.hpp
 };
