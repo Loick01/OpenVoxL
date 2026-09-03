@@ -4,6 +4,7 @@ Application::Application():
     m_window("OpenVoxL"), m_camera((float)m_window.GetWidth()/(float)m_window.GetHeight()),
     m_eventController(m_window.GetGlfwWindow(), m_camera),
     m_skybox("../shader/skybox/skybox.vs", "../shader/skybox/skybox.fs"),
+    m_chunk("../shader/chunk/chunk.vs", "../shader/chunk/chunk.fs", glm::ivec3(0, 0, 0), glm::vec3(0.f)),
     m_hud("../shader/ui/hud.vs", "../shader/ui/hud.fs", m_window.GetWidth(), m_window.GetHeight())
 {
     glViewport(0, 0, m_window.GetWidth(), m_window.GetHeight());
@@ -16,6 +17,7 @@ Application::Application():
     glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
 
     m_soundController.PlayRandonMusic();
+    m_chunk.Load();
 }
 
 bool Application::Run()
@@ -34,6 +36,7 @@ bool Application::Run()
     m_camera.ProcessKeyEvent(m_eventController.GetKeys(), deltaTime);
     
     m_skybox.Draw(cameraProjectionMatrix, cameraViewMatrix);
+    m_chunk.Draw(cameraProjectionMatrix, cameraViewMatrix, glm::mat4(1.f));
     m_hud.Draw();
     
     return m_window.EndFrame();

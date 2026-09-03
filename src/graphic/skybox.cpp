@@ -75,10 +75,8 @@ void Skybox::Draw(const glm::mat4& projection, const glm::mat4& view)
     glDepthFunc(GL_LEQUAL);
     m_shader.Use();
     m_shader.SetMat4("projection", projection);
-    // TODO
-    // glm::mat4 skyboxView = glm::mat4(glm::mat3(view)); // Remove the translation of the camera
-    // m_shader.SetMat4("view", skyboxView);
-    m_shader.SetMat4("view", view);
+    glm::mat4 skyboxView = glm::mat4(glm::mat3(view)); // Remove the translation of the camera
+    m_shader.SetMat4("view", skyboxView);
     glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, (void*)0);
     glDepthFunc(GL_LESS);

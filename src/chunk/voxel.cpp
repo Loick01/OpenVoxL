@@ -58,7 +58,8 @@ void Voxel::SetIdInChunk(const unsigned int idInChunk)
     m_idInChunk = idInChunk;
 }
 
-void Voxel::BuildVoxel(){
+void Voxel::BuildVoxel()
+{
     const std::string rootId = GetRootFaceId();
 
     Face currentFace;

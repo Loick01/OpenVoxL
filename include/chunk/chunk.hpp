@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include <vector>
 
 #include <glad/glad.h>
@@ -19,8 +20,8 @@ class Chunk // 32x32x32
 
         std::vector<glm::vec3> m_vertices;
         std::vector<unsigned int> m_indices;
-        
-        // std::map<std::string, std::vector<glm::vec3>> map_vertices;
+        std::map<std::string, std::vector<glm::vec3>> m_mapVertices; // TODO Rename
+
         GLuint m_VAO;
         GLuint m_VBO;
         GLuint m_EBO;
@@ -29,6 +30,9 @@ class Chunk // 32x32x32
 
         void AddFaceIndices(const unsigned int offset);
 
+        void BuildFace(const std::string& faceId, const std::vector<glm::vec3>& faceVertices);
+        void BuildFaces();
+    
     public:
         Chunk(const std::string& vertexPath, const std::string& fragmentPath, const glm::ivec3 terrainPosition, const glm::vec3 originPosition);
         // Chunk(glm::vec3 position, bool referenceChunk); // Used in editor mode only
@@ -36,7 +40,10 @@ class Chunk // 32x32x32
         
         void BuildFullChunk();
     
+        void VoxelComputeData();
+        void VoxelBufferData();
         void Load();
+        
         void Draw(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& model);
         
         // void addFace(Voxel* v_bottom,int orientation);

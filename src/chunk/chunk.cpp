@@ -24,6 +24,25 @@ void Chunk::AddFaceIndices(const unsigned int offset)
     m_indices.push_back(offset + 1);
 }
 
+void Chunk::BuildFace(const std::string& faceId, const std::vector<glm::vec3>& faceVertices)
+{
+    m_mapVertices[faceId] = faceVertices;
+}
+
+void Chunk::BuildFaces()
+{
+    m_mapVertices.clear();
+
+    for (Voxel& v : m_voxels) {
+        BuildFace(v.GetFaceId(0), v.GetFaceVertices(0));
+        BuildFace(v.GetFaceId(1), v.GetFaceVertices(1));
+        BuildFace(v.GetFaceId(2), v.GetFaceVertices(2));
+        BuildFace(v.GetFaceId(3), v.GetFaceVertices(3));
+        BuildFace(v.GetFaceId(4), v.GetFaceVertices(4));
+        BuildFace(v.GetFaceId(5), v.GetFaceVertices(5));
+    }
+}
+
 void Chunk::BuildFullChunk()
 {
     m_voxels.clear();
@@ -38,14 +57,30 @@ void Chunk::BuildFullChunk()
     }
 }
 
-void Chunk::Load() 
-{  
+void Chunk::VoxelComputeData()
+{
+    m_vertices.clear();
+    m_indices.clear();
+
+    unsigned int offset = 0;
+    for(std::map<std::string, std::vector<glm::vec3>>::iterator it = m_mapVertices.begin(); it != m_mapVertices.end(); ++it) {
+        std::vector<glm::vec3> faceVertices = it->second;
+        for (int i = 0 ; i < faceVertices.size() ; i++)
+            m_vertices.push_back(faceVertices[i]);
+
+        AddFaceIndices(offset);
+        offset += 4;
+    }
+}
+
+void Chunk::VoxelBufferData()
+{
     glGenVertexArrays(1, &m_VAO);
     glGenBuffers(1, &m_VBO);
     glGenBuffers(1, &m_EBO);
 
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-    glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(float), m_vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(glm::vec3), m_vertices.data(), GL_STATIC_DRAW);
 
     glBindVertexArray(m_VAO);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
@@ -55,6 +90,12 @@ void Chunk::Load()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size()* sizeof(unsigned int), m_indices.data(), GL_STATIC_DRAW);
 }
 
+void Chunk::Load() 
+{  
+    BuildFaces();
+    VoxelComputeData();
+    VoxelBufferData();
+}
 
 void Chunk::Draw(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& model) 
 {
