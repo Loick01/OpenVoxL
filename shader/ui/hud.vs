@@ -39,7 +39,7 @@ vec2 hudTexCoords[20] = vec2[20](
 void main() {
     vec2 screenCoordinates = aPos;
     // screenCoordinates[0] += handBlockIndex * 80.0;
-    vec2 normalizedPosition = vec2(screenCoordinates[0]/windowWidth, screenCoordinates[1]/windowHeight);
+    vec2 normalizedPosition = vec2(screenCoordinates[0]/1920, screenCoordinates[1]/1080); // windowWidth and windowHeight are not working here
     gl_Position = vec4(normalizedPosition*2.0-1.0, 0.0, 1.0);
     TexCoords = hudTexCoords[gl_VertexID];
 }
