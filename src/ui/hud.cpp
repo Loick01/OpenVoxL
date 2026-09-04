@@ -24,13 +24,14 @@ Hud::Hud(const std::string& vertexPath, const std::string& fragmentPath, const u
     //     m_uiQuads.push_back(q);
     // }
 
+    glGenVertexArrays(1, &m_VAO);
+    glGenBuffers(1, &m_VBO);
+    glGenBuffers(1, &m_EBO);
+    
     Load();
     m_textureId = LoadTexture2D("../asset/texture/ui/hud.png");
-    
-    m_shader.Use();
     m_shader.SetInt("windowWidth", m_windowWidth);
     m_shader.SetInt("windowHeight", m_windowHeight);
-    BindTexture2D(m_shader.GetLocation("hudTexture"), m_textureId, 0);
 }
 
 Hud::~Hud()
@@ -79,10 +80,6 @@ void Hud::Load()
         }
         indexOffset += 4;
     }
-    
-    glGenVertexArrays(1, &m_VAO);
-    glGenBuffers(1, &m_VBO);
-    glGenBuffers(1, &m_EBO);
 
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(glm::vec2), vertices.data(), GL_STATIC_DRAW);
@@ -99,6 +96,7 @@ void Hud::Draw()
 {
     glDisable(GL_DEPTH_TEST);
     m_shader.Use();
+    BindTexture2D(m_shader.GetLocation("hudTexture"), m_textureId, 0);
     glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLES, m_countIndex, GL_UNSIGNED_INT, (void*)0);
     glEnable(GL_DEPTH_TEST);

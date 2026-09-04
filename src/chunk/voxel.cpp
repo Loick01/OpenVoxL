@@ -13,7 +13,6 @@ std::string Voxel::GetFaceId(const unsigned int faceIndex) const
 
 std::string Voxel::GetRootFaceId() const 
 {
-    // TODO : cast int is useless ? (.0 is already removed from id ?)
     return std::to_string((int)m_origin.x) + " " + std::to_string((int)m_origin.y) + " " + std::to_string((int)m_origin.z) + " ";
 }
 

@@ -8,7 +8,7 @@
 struct Face 
 {
     std::vector<glm::vec3> vertices;
-    std::string id; // TODO uint ?
+    std::string id; // TODO uint ? And I'm not really sure face id are necessary
 };
 
 class Voxel 

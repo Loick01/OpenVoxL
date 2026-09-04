@@ -5,6 +5,10 @@
 Skybox::Skybox(const std::string& vertexPath, const std::string& fragmentPath):
     m_shader(vertexPath, fragmentPath)
 {
+    glGenVertexArrays(1, &m_VAO);
+    glGenBuffers(1, &m_VBO);
+    glGenBuffers(1, &m_EBO);
+    
     Load();
     m_cubemapTextureId = LoadCubemapTexture(
         {
@@ -16,7 +20,6 @@ Skybox::Skybox(const std::string& vertexPath, const std::string& fragmentPath):
         "../asset/texture/skybox/nz.png"
         }
     );
-    BindTexture2D(m_shader.GetLocation("skyboxTexture"), m_cubemapTextureId, 0);
 }
 
 Skybox::~Skybox()
@@ -54,10 +57,6 @@ void Skybox::Load()
         5, 6, 2
     };
 
-    glGenVertexArrays(1, &m_VAO);
-    glGenBuffers(1, &m_VBO);
-    glGenBuffers(1, &m_EBO);
-
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
     glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(float), m_vertices.data(), GL_STATIC_DRAW);
 
@@ -77,6 +76,7 @@ void Skybox::Draw(const glm::mat4& projection, const glm::mat4& view)
     m_shader.SetMat4("projection", projection);
     glm::mat4 skyboxView = glm::mat4(glm::mat3(view)); // Remove the translation of the camera
     m_shader.SetMat4("view", skyboxView);
+    BindTexture2D(m_shader.GetLocation("skyboxTexture"), m_cubemapTextureId, 0);
     glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, (void*)0);
     glDepthFunc(GL_LESS);

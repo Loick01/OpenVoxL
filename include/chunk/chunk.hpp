@@ -20,13 +20,16 @@ class Chunk // 32x32x32
 
         std::vector<glm::vec3> m_vertices;
         std::vector<unsigned int> m_indices;
+        std::vector<unsigned int> m_blockIds;
         std::map<std::string, std::vector<glm::vec3>> m_mapVertices; // TODO Rename
 
         GLuint m_VAO;
         GLuint m_VBO;
         GLuint m_EBO;
+        GLuint m_textureId_SBBO;
 
         Shader m_shader;
+        GLuint m_textureId; // TODO : Will be removed and be in TerrainController instead
 
         void AddFaceIndices(const unsigned int offset);
 
