@@ -9,6 +9,7 @@
 #include "event/event.hpp"
 #include "graphic/skybox.hpp"
 #include "sound/sound.hpp"
+#include "ui/debug_window.hpp"
 #include "ui/hud.hpp"
 
 class Application
@@ -20,6 +21,7 @@ class Application
         
         Camera m_camera;
         Chunk m_chunk; // TODO : Remove and use instead TerrainController
+        DebugWindow m_debug;
         Hud m_hud;
         Skybox m_skybox;
         Time m_time;
