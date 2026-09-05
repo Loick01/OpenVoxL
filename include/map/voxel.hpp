@@ -21,7 +21,7 @@ class Voxel
     private:
         std::vector<Face> m_faces;
         glm::vec3 m_origin; // Back-bottom-left vertex
-        unsigned int m_blockId; // TODO Rename
+        unsigned int m_blockId;
         unsigned int m_idInChunk; // TODO Rename
         
     public:

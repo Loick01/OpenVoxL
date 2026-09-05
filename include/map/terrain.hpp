@@ -3,10 +3,13 @@
 #include <vector>
 
 #include "map/chunk.hpp"
+#include "map/map_generator.hpp"
 
 class Terrain
 {
     private:
+        MapGenerator m_generator;
+        
         std::vector<Chunk> m_chunks;
         const unsigned int m_width;
         const unsigned int m_depth;

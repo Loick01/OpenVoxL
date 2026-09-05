@@ -11,7 +11,7 @@ const glm::ivec3 terrainPosition, const glm::vec3 originPosition, const unsigned
     glGenBuffers(1, &m_EBO);
     glGenBuffers(1, &m_textureId_SBBO);
     
-    BuildFullChunk();
+    BuildWaveChunk(4.5f);
     
     m_textureId = LoadTexture2D("../asset/texture/block/atlas.png");
 }
@@ -51,7 +51,7 @@ void Chunk::BuildFaces()
         BuildFace(v.GetFaceId(3), v.GetFacePtr(3));
         BuildFace(v.GetFaceId(4), v.GetFacePtr(4));
         BuildFace(v.GetFaceId(5), v.GetFacePtr(5));
-        m_blockIds.push_back(m_blockId);
+        m_blockIds.push_back(v.GetBlockId());
     }
 }
 
@@ -59,14 +59,48 @@ void Chunk::BuildFullChunk()
 {
     m_voxels.clear();
 
-    for (unsigned int k = 0 ; k < CHUNK_SIZE ; k++) {
-        for (unsigned int j = 0 ; j < CHUNK_SIZE ; j++) {
-            for (unsigned int i = 0 ; i < CHUNK_SIZE ; i++) {
-                Voxel v(m_originPosition + glm::vec3(i, k, j), 0);
-                m_voxels.push_back(v);
+    for (unsigned int k = 0 ; k < CHUNK_SIZE ; k++) { // Y
+        for (unsigned int j = 0 ; j < CHUNK_SIZE ; j++) { // Z
+            for (unsigned int i = 0 ; i < CHUNK_SIZE ; i++) { // X
+                m_voxels.emplace_back(m_originPosition + glm::vec3(i, k, j), m_blockId);
             }
         }
     }
+}
+
+void Chunk::BuildFlatChunk()
+{
+    m_voxels.clear();
+
+    for (unsigned int j = 0 ; j < CHUNK_SIZE ; j++) { // Z
+        for (unsigned int i = 0 ; i < CHUNK_SIZE ; i++) { // X
+            m_voxels.emplace_back(m_originPosition + glm::vec3(i, 0.f, j), m_blockId);
+        }
+    }
+}
+
+void Chunk::BuildWaveChunk(const float frequency)
+{
+    m_voxels.clear();
+
+    for (unsigned int k = 0 ; k < CHUNK_SIZE ; k++) { // Y
+        for (unsigned int j = 0 ; j < CHUNK_SIZE ; j++) { // Z
+            for (unsigned int i = 0 ; i < CHUNK_SIZE ; i++) { // X
+                const float s = (float)i/CHUNK_SIZE+m_terrainPosition.x-1; // (i+m_terrainPosition.x*CHUNK_SIZE)/CHUNK_SIZE = i/CHUNK_SIZE+m_terrainPosition.x
+                const float t = (float)j/CHUNK_SIZE+m_terrainPosition.z-1;
+                float value = (std::sin(frequency*(s+t))+1.0f)*0.5f; // [0, 1s]
+                const unsigned int maxHeight = value*(CHUNK_SIZE-1);
+                if (k <= maxHeight)
+                    m_voxels.emplace_back(m_originPosition + glm::vec3(i, k, j), m_blockId);
+            }
+        }
+    }
+}
+
+void Chunk::BuildEditorChunk()
+{
+    const glm::vec3 centerPosition = glm::vec3(CHUNK_SIZE/2);
+    m_voxels.emplace_back(m_originPosition + centerPosition, m_blockId);
 }
 
 void Chunk::VoxelComputeData()

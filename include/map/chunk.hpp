@@ -9,7 +9,7 @@
 #include "map/voxel.hpp"
 #include "graphic/shader.hpp"
 
-#define CHUNK_SIZE 4 // TODO : 32
+#define CHUNK_SIZE 32 // TODO : 32
 
 class Chunk // 32x32x32
 { 
@@ -43,6 +43,9 @@ class Chunk // 32x32x32
         ~Chunk();
         
         void BuildFullChunk();
+        void BuildFlatChunk();
+        void BuildWaveChunk(const float frequency);
+        void BuildEditorChunk();
     
         void VoxelComputeData();
         void VoxelBufferData();
