@@ -11,6 +11,8 @@
 
 #define CHUNK_SIZE 32 // TODO : 32
 
+class FastNoise;
+
 class Chunk // 32x32x32
 { 
     private:
@@ -42,10 +44,13 @@ class Chunk // 32x32x32
         // Chunk(glm::vec3 position, bool referenceChunk); // Used in editor mode only
         ~Chunk();
         
+        // For now, only one chunk in height
         void BuildFullChunk();
         void BuildFlatChunk();
         void BuildWaveChunk(const float frequency);
         void BuildEditorChunk();
+        void BuildHeightmapChunk(const unsigned char* heightmap, const unsigned int heightmapWidth, const unsigned int heightmapDepth);
+        void BuildCheeseChunk(const FastNoise& noise, const float frequency);
     
         void VoxelComputeData();
         void VoxelBufferData();

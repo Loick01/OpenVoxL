@@ -1,5 +1,6 @@
 #include "map/chunk.hpp"
 
+#include "core/FastNoise.h" // Used in BuildCheeseChunk. Remove ?
 #include "graphic/texture.hpp"
 
 Chunk::Chunk(const std::string& vertexPath, const std::string& fragmentPath, 
@@ -10,8 +11,6 @@ const glm::ivec3 terrainPosition, const glm::vec3 originPosition, const unsigned
     glGenBuffers(1, &m_VBO);
     glGenBuffers(1, &m_EBO);
     glGenBuffers(1, &m_textureId_SBBO);
-    
-    BuildWaveChunk(4.5f);
     
     m_textureId = LoadTexture2D("../asset/texture/block/atlas.png");
 }
@@ -95,6 +94,34 @@ void Chunk::BuildWaveChunk(const float frequency)
             }
         }
     }
+}
+
+void Chunk::BuildHeightmapChunk(const unsigned char* heightmap, const unsigned int heightmapWidth, const unsigned int heightmapDepth)
+{
+    m_voxels.clear();
+
+    for (unsigned int j = 0 ; j < CHUNK_SIZE ; j++) { // Z
+        for (unsigned int i = 0 ; i < CHUNK_SIZE ; i++) { // X
+            const unsigned int hmIndex = m_terrainPosition.z*CHUNK_SIZE*heightmapWidth  + m_terrainPosition.x*CHUNK_SIZE + j*heightmapWidth + i; 
+            m_voxels.emplace_back(m_originPosition + glm::vec3(i, heightmap[hmIndex], j), m_blockId); 
+        }
+    }
+}
+
+void Chunk::BuildCheeseChunk(const FastNoise& noise, const float frequency)
+{
+    m_voxels.clear();
+
+    for (unsigned int k = 0 ; k < CHUNK_SIZE ; k++) { // Y
+        for (unsigned int j = 0 ; j < CHUNK_SIZE ; j++) { // Z
+            for (unsigned int i = 0 ; i < CHUNK_SIZE ; i++) { // X
+                const float density = noise.GetNoise(frequency*(m_terrainPosition.x*CHUNK_SIZE + i), frequency*(m_terrainPosition.y*CHUNK_SIZE + k), frequency*(m_terrainPosition.z*CHUNK_SIZE + j));
+                if (density > 0.f)
+                    m_voxels.emplace_back(m_originPosition + glm::vec3(i, k, j), rand()%35); 
+            }
+        }
+    }
+
 }
 
 void Chunk::BuildEditorChunk()

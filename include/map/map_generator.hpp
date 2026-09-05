@@ -15,5 +15,6 @@ class MapGenerator
     public:
         MapGenerator(const unsigned int width, const unsigned int depth, const unsigned int heightBlock, const int octave, const int seed); // TODO : Rename heightBlock
 
+        const FastNoise& GetNoise() const;
         void GenerateHeightMap() const; // TODO : Rename ?
 };
