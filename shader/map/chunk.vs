@@ -11,7 +11,6 @@ out vec2 texCoords;
 
 uniform mat4 projection;
 uniform mat4 view;
-uniform mat4 model;
 
 vec2 atlasTexCoords[4] = vec2[4](
         vec2(0.0, 0.1),
@@ -22,8 +21,8 @@ vec2 atlasTexCoords[4] = vec2[4](
 
 void main()
 {
-    gl_Position = projection * view * model * vec4(aPos, 1.0);
-    uint blockId = textureIds[gl_VertexID/36];
+    gl_Position = projection * view * vec4(aPos, 1.0);
+    uint blockId = textureIds[gl_VertexID/24];
     texCoords = atlasTexCoords[gl_VertexID%4];
     texCoords[0] += blockId%5*0.2;
     texCoords[1] += blockId/5*0.1; 

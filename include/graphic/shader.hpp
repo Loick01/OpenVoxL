@@ -79,7 +79,7 @@ class Shader
             return glGetUniformLocation(m_programId, name.c_str());
         }
 
-        void Use()
+        void Use() const
         {
             glUseProgram(m_programId);
         }

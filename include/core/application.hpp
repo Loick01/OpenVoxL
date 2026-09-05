@@ -2,7 +2,7 @@
 
 #include <glad/glad.h>
 
-#include "chunk/chunk.hpp"
+#include "map/terrain.hpp"
 #include "core/camera.hpp"
 #include "core/time.hpp"
 #include "core/window.hpp"
@@ -20,10 +20,10 @@ class Application
         SoundController m_soundController;
         
         Camera m_camera;
-        Chunk m_chunk; // TODO : Remove and use instead TerrainController
         DebugWindow m_debug;
         Hud m_hud;
         Skybox m_skybox;
+        Terrain m_terrain;
         Time m_time;
         
     public:

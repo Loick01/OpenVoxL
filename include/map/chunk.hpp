@@ -6,10 +6,10 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
-#include "chunk/voxel.hpp"
+#include "map/voxel.hpp"
 #include "graphic/shader.hpp"
 
-#define CHUNK_SIZE 32
+#define CHUNK_SIZE 4 // TODO : 32
 
 class Chunk // 32x32x32
 { 
@@ -21,7 +21,8 @@ class Chunk // 32x32x32
         std::vector<glm::vec3> m_vertices;
         std::vector<unsigned int> m_indices;
         std::vector<unsigned int> m_blockIds;
-        std::map<std::string, std::vector<glm::vec3>> m_mapVertices; // TODO Rename
+        std::map<std::string, Face*> m_chunkFaces;
+        const unsigned int m_blockId; // TODO : Remove
 
         GLuint m_VAO;
         GLuint m_VBO;
@@ -33,11 +34,11 @@ class Chunk // 32x32x32
 
         void AddFaceIndices(const unsigned int offset);
 
-        void BuildFace(const std::string& faceId, const std::vector<glm::vec3>& faceVertices);
+        void BuildFace(const std::string& faceId, Face* face);
         void BuildFaces();
     
     public:
-        Chunk(const std::string& vertexPath, const std::string& fragmentPath, const glm::ivec3 terrainPosition, const glm::vec3 originPosition);
+        Chunk(const std::string& vertexPath, const std::string& fragmentPath, const glm::ivec3 terrainPosition, const glm::vec3 originPosition, const unsigned int blockId); // TODO : Remove blockId 
         // Chunk(glm::vec3 position, bool referenceChunk); // Used in editor mode only
         ~Chunk();
         
@@ -47,7 +48,7 @@ class Chunk // 32x32x32
         void VoxelBufferData();
         void Load();
         
-        void Draw(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& model);
+        void Draw(const glm::mat4& projection, const glm::mat4& view) const;
         
         // void addFace(Voxel* v_bottom,int orientation);
         // void removeFace(Voxel* v_bottom,int orientation);

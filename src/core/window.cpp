@@ -34,7 +34,7 @@ unsigned int Window::GetHeight() const
 void Window::InitGlfw()
 {
     if (!glfwInit())
-        std::runtime_error("Failed to initialize GLFW");
+        throw std::runtime_error("Failed to initialize GLFW");
 
     GLFWmonitor* monitor = glfwGetPrimaryMonitor();
     if (!monitor)

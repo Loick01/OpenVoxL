@@ -1,9 +1,14 @@
-#include "chunk/voxel.hpp"
+#include "map/voxel.hpp"
 
-Voxel::Voxel(const glm::vec3 origin, const unsigned int objectId):
-    m_origin(origin), m_objectId(objectId)
+Voxel::Voxel(const glm::vec3 origin, const unsigned int blockId):
+    m_origin(origin), m_blockId(blockId)
 {
     BuildVoxel();
+}
+
+Face* Voxel::GetFacePtr(const unsigned int faceIndex)
+{
+    return &m_faces[faceIndex];
 }
 
 std::string Voxel::GetFaceId(const unsigned int faceIndex) const
@@ -14,11 +19,6 @@ std::string Voxel::GetFaceId(const unsigned int faceIndex) const
 std::string Voxel::GetRootFaceId() const 
 {
     return std::to_string((int)m_origin.x) + " " + std::to_string((int)m_origin.y) + " " + std::to_string((int)m_origin.z) + " ";
-}
-
-std::vector<glm::vec3> Voxel::GetFaceVertices(const unsigned int faceIndex) const
-{
-    return m_faces[faceIndex].vertices;
 }
 
 glm::vec3 Voxel::GetOrigin() const
@@ -42,14 +42,14 @@ unsigned int Voxel::GetIdInChunk() const
     return m_idInChunk;
 }
 
-unsigned int Voxel::GetObjectId() const
+unsigned int Voxel::GetBlockId() const
 {
-    return m_objectId;
+    return m_blockId;
 }
 
-void Voxel::SetObjectId(const unsigned int objectId)
+void Voxel::SetBlockId(const unsigned int blockId)
 {
-    m_objectId = objectId;
+    m_blockId = blockId;
 }
 
 void Voxel::SetIdInChunk(const unsigned int idInChunk)
