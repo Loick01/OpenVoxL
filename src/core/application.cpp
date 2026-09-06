@@ -4,7 +4,7 @@ Application::Application():
     m_window("OpenVoxL"), m_camera((float)m_window.GetWidth()/(float)m_window.GetHeight()),
     m_eventController(m_window.GetGlfwWindow(), m_camera),
     m_skybox("../shader/skybox/skybox.vs", "../shader/skybox/skybox.fs"),
-    m_terrain(3, 3),
+    m_terrain(3, 3, 3),
     m_hud("../shader/ui/hud.vs", "../shader/ui/hud.fs", m_window.GetWidth(), m_window.GetHeight()),
     m_debug(m_window.GetGlfwWindow())
 {

@@ -4,8 +4,8 @@
 
 #include "graphic/stb_image_write.h"
 
-MapGenerator::MapGenerator(const unsigned int width, const unsigned int depth, const unsigned int heightBlock, const int octave, const int seed):
-    m_nrBlockWidth(width), m_nrBlockDepth(depth), m_heightBlockTerrainGeneration(heightBlock)
+MapGenerator::MapGenerator(const unsigned int width, const unsigned int depth, const unsigned int maxBlockHeight, const int octave, const int seed):
+    m_nrBlockWidth(width), m_nrBlockDepth(depth), m_maxBlockHeight(maxBlockHeight)
 {
     // enum NoiseType { Value, ValueFractal, Perlin, PerlinFractal, Simplex, SimplexFractal, Cellular, WhiteNoise, Cubic, CubicFractal };
     m_noise.SetNoiseType(FastNoise::SimplexFractal);
@@ -25,7 +25,7 @@ void MapGenerator::GenerateHeightMap() const
 
     for(unsigned int j = 0 ; j < m_nrBlockDepth ; j++) { // Z
         for(unsigned int i = 0 ; i < m_nrBlockWidth ; i++) { // X
-            const unsigned int height = ((m_noise.GetNoise(i,j)+1)/2)*(m_heightBlockTerrainGeneration-1);
+            const unsigned int height = ((m_noise.GetNoise(i,j)+1)/2)*(m_maxBlockHeight-1);
             data[j*m_nrBlockWidth+i] = height;
         }
     }

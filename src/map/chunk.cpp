@@ -71,25 +71,30 @@ void Chunk::BuildFlatChunk()
 {
     m_voxels.clear();
 
-    for (unsigned int j = 0 ; j < CHUNK_SIZE ; j++) { // Z
-        for (unsigned int i = 0 ; i < CHUNK_SIZE ; i++) { // X
-            m_voxels.emplace_back(m_originPosition + glm::vec3(i, 0.f, j), m_blockId);
+    if (m_terrainPosition.y == 0) {
+        for (unsigned int j = 0 ; j < CHUNK_SIZE ; j++) { // Z
+            for (unsigned int i = 0 ; i < CHUNK_SIZE ; i++) { // X
+                m_voxels.emplace_back(m_originPosition + glm::vec3(i, 0.f, j), m_blockId);
+            }
         }
     }
 }
 
-void Chunk::BuildWaveChunk(const float frequency)
+void Chunk::BuildWaveChunk(const float frequency, const unsigned int maxBlockHeight)
 {
     m_voxels.clear();
 
     for (unsigned int k = 0 ; k < CHUNK_SIZE ; k++) { // Y
         for (unsigned int j = 0 ; j < CHUNK_SIZE ; j++) { // Z
+            const float t = (float)j/CHUNK_SIZE+m_terrainPosition.z-1;
+
             for (unsigned int i = 0 ; i < CHUNK_SIZE ; i++) { // X
                 const float s = (float)i/CHUNK_SIZE+m_terrainPosition.x-1; // (i+m_terrainPosition.x*CHUNK_SIZE)/CHUNK_SIZE = i/CHUNK_SIZE+m_terrainPosition.x
-                const float t = (float)j/CHUNK_SIZE+m_terrainPosition.z-1;
-                float value = (std::sin(frequency*(s+t))+1.0f)*0.5f; // [0, 1s]
-                const unsigned int maxHeight = value*(CHUNK_SIZE-1);
-                if (k <= maxHeight)
+                float v = (std::sin(frequency*(s+t))+1.0f)*0.5f; // [0, 1s]
+                const unsigned int maxHeight = v*(maxBlockHeight-1);
+                const unsigned int blockHeightPosition = m_originPosition.y + k;
+
+                if (blockHeightPosition <= maxHeight)
                     m_voxels.emplace_back(m_originPosition + glm::vec3(i, k, j), m_blockId);
             }
         }
@@ -100,10 +105,14 @@ void Chunk::BuildHeightmapChunk(const unsigned char* heightmap, const unsigned i
 {
     m_voxels.clear();
 
-    for (unsigned int j = 0 ; j < CHUNK_SIZE ; j++) { // Z
-        for (unsigned int i = 0 ; i < CHUNK_SIZE ; i++) { // X
-            const unsigned int hmIndex = m_terrainPosition.z*CHUNK_SIZE*heightmapWidth  + m_terrainPosition.x*CHUNK_SIZE + j*heightmapWidth + i; 
-            m_voxels.emplace_back(m_originPosition + glm::vec3(i, heightmap[hmIndex], j), m_blockId); 
+    for (unsigned int k = 0 ; k < CHUNK_SIZE ; k++) { // Y
+        for (unsigned int j = 0 ; j < CHUNK_SIZE ; j++) { // Z
+            for (unsigned int i = 0 ; i < CHUNK_SIZE ; i++) { // X
+                const unsigned int hmIndex = m_originPosition.z*heightmapWidth  + m_originPosition.x + j*heightmapWidth + i; 
+                const unsigned int blockHeightPosition = m_originPosition.y + k;
+                if (blockHeightPosition <= heightmap[hmIndex])
+                    m_voxels.emplace_back(m_originPosition + glm::vec3(i, k, j), m_blockId); 
+            }
         }
     }
 }
@@ -115,9 +124,9 @@ void Chunk::BuildCheeseChunk(const FastNoise& noise, const float frequency)
     for (unsigned int k = 0 ; k < CHUNK_SIZE ; k++) { // Y
         for (unsigned int j = 0 ; j < CHUNK_SIZE ; j++) { // Z
             for (unsigned int i = 0 ; i < CHUNK_SIZE ; i++) { // X
-                const float density = noise.GetNoise(frequency*(m_terrainPosition.x*CHUNK_SIZE + i), frequency*(m_terrainPosition.y*CHUNK_SIZE + k), frequency*(m_terrainPosition.z*CHUNK_SIZE + j));
+                const float density = noise.GetNoise(frequency*(m_originPosition.x + i), frequency*(m_originPosition.y + k), frequency*(m_originPosition.z + j));
                 if (density > 0.f)
-                    m_voxels.emplace_back(m_originPosition + glm::vec3(i, k, j), rand()%35); 
+                    m_voxels.emplace_back(m_originPosition + glm::vec3(i, k, j), m_blockId); 
             }
         }
     }

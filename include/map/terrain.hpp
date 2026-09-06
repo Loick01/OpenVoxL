@@ -11,15 +11,15 @@
 class Terrain
 {
     private:
-        const unsigned int m_nrChunkWidth;
-        const unsigned int m_nrChunkDepth;
-        // const unsigned int m_nrChunkHeight;
+        const unsigned int m_nrChunkWidth; // X
+        const unsigned int m_nrChunkDepth; // Z
+        const unsigned int m_nrChunkHeight; // Y
         
         MapGenerator m_generator;    
         std::vector<Chunk> m_chunks; 
     
     public:
-        Terrain(const unsigned int width, const unsigned int depth);
+        Terrain(const unsigned int width, const unsigned int depth, const unsigned int height);
 
         void Load();
         void Draw(const glm::mat4& projection, const glm::mat4& view) const;

@@ -17,7 +17,7 @@ class Chunk // 32x32x32
 { 
     private:
         glm::ivec3 m_terrainPosition; // Position Column/Row/Depth 
-        glm::vec3 m_originPosition; // Back-bottom-left position
+        glm::vec3 m_originPosition; // Back-bottom-left position (m_originPosition = m_terrainPosition*CHUNKSIZE)
         std::vector<Voxel> m_voxels;
 
         std::vector<glm::vec3> m_vertices;
@@ -47,7 +47,7 @@ class Chunk // 32x32x32
         // For now, only one chunk in height
         void BuildFullChunk();
         void BuildFlatChunk();
-        void BuildWaveChunk(const float frequency);
+        void BuildWaveChunk(const float frequency, const unsigned int maxBlockHeight);
         void BuildEditorChunk();
         void BuildHeightmapChunk(const unsigned char* heightmap, const unsigned int heightmapWidth, const unsigned int heightmapDepth);
         void BuildCheeseChunk(const FastNoise& noise, const float frequency);
