@@ -32,9 +32,9 @@ float blockShadow[24] = float[24](
 void main()
 {
     gl_Position = projection * view * vec4(aPos, 1.0);
-    uint blockId = textureIds[gl_VertexID/24];
+    uint blockId = textureIds[gl_VertexID/4];
     texCoords = atlasTexCoords[gl_VertexID%4];
     texCoords[0] += blockId%5*0.2;
     texCoords[1] += blockId/5*0.1;
-    vertexShadow = blockShadow[gl_VertexID%24];
+    vertexShadow = blockShadow[gl_VertexID%24]; // TODO : I need faceId SSBO
 };

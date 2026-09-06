@@ -22,7 +22,7 @@ class Voxel
         std::vector<Face> m_faces;
         glm::vec3 m_origin; // Back-bottom-left vertex
         unsigned int m_blockId;
-        unsigned int m_idInChunk; // TODO Rename
+        // unsigned int m_idInChunk; // TODO Rename
         
     public:
         Voxel(const glm::vec3 origin, const unsigned int blockId);
@@ -33,10 +33,10 @@ class Voxel
 
         glm::vec3 GetOrigin() const;
         std::vector<glm::vec3> GetVertices() const;
-        unsigned int GetIdInChunk() const;
+        // unsigned int GetIdInChunk() const;
         unsigned int GetBlockId() const;
         void SetBlockId(const unsigned int blockId);
-        void SetIdInChunk(const unsigned int idInChunk);
+        // void SetIdInChunk(const unsigned int idInChunk);
 
         void BuildVoxel();
 };

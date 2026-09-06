@@ -19,6 +19,7 @@ class Chunk // 32x32x32
         glm::ivec3 m_terrainPosition; // Position Column/Row/Depth 
         glm::vec3 m_originPosition; // Back-bottom-left position (m_originPosition = m_terrainPosition*CHUNKSIZE)
         std::vector<Voxel> m_voxels;
+        std::vector<Voxel*> m_gridVoxel;
 
         std::vector<glm::vec3> m_vertices;
         std::vector<unsigned int> m_indices;
@@ -34,8 +35,9 @@ class Chunk // 32x32x32
         Shader m_shader;
         GLuint m_textureId; // TODO : Will be removed and be in TerrainController instead
 
+        unsigned int GetBlockIndexInGrid(const glm::ivec3& blockPosition) const;
+        void AddVoxel(const glm::vec3 blockPosition, const unsigned int blockId);
         void AddFaceIndices(const unsigned int offset);
-
         void BuildFace(const std::string& faceId, Face* face);
         void BuildFaces();
     

@@ -13,6 +13,7 @@ const glm::ivec3 terrainPosition, const glm::vec3 originPosition, const unsigned
     glGenBuffers(1, &m_textureId_SBBO);
     
     m_textureId = LoadTexture2D("../asset/texture/block/atlas.png");
+    m_gridVoxel.resize(CHUNK_SIZE*CHUNK_SIZE*CHUNK_SIZE);
 }
 
 Chunk::~Chunk()
@@ -21,6 +22,17 @@ Chunk::~Chunk()
     glDeleteBuffers(1, &m_VBO);
     glDeleteBuffers(1, &m_EBO);
     glDeleteBuffers(1, &m_textureId_SBBO); 
+}
+
+unsigned int Chunk::GetBlockIndexInGrid(const glm::ivec3& blockPosition) const
+{
+    return blockPosition.y*CHUNK_SIZE*CHUNK_SIZE + blockPosition.z*CHUNK_SIZE + blockPosition.x;
+}
+
+void Chunk::AddVoxel(const glm::vec3 blockPosition, const unsigned int blockId)
+{
+    m_voxels.emplace_back(m_originPosition + blockPosition, blockId);
+    m_gridVoxel[GetBlockIndexInGrid(blockPosition)] = &m_voxels.back();
 }
 
 void Chunk::AddFaceIndices(const unsigned int offset)
@@ -36,6 +48,8 @@ void Chunk::AddFaceIndices(const unsigned int offset)
 void Chunk::BuildFace(const std::string& faceId, Face* face)
 {
     m_chunkFaces[faceId] = face;
+    // TODO : Use texture from face instead from block (+ I can't even use Voxel::m_blockId)
+    m_blockIds.push_back(m_blockId); // One blockId for each face
 }
 
 void Chunk::BuildFaces()
@@ -44,13 +58,26 @@ void Chunk::BuildFaces()
     m_blockIds.clear(); // TODO : Will be removed when I use face textures instead of block textures
 
     for (Voxel& v : m_voxels) {
-        BuildFace(v.GetFaceId(0), v.GetFacePtr(0));
-        BuildFace(v.GetFaceId(1), v.GetFacePtr(1));
-        BuildFace(v.GetFaceId(2), v.GetFacePtr(2));
-        BuildFace(v.GetFaceId(3), v.GetFacePtr(3));
-        BuildFace(v.GetFaceId(4), v.GetFacePtr(4));
-        BuildFace(v.GetFaceId(5), v.GetFacePtr(5));
-        m_blockIds.push_back(v.GetBlockId());
+        const glm::ivec3 blockPosition = v.GetOrigin() - m_originPosition;
+        const int blockIndexInGrid = GetBlockIndexInGrid(blockPosition); // Do not use unsigned int
+
+        if (blockPosition.y == 0 || m_gridVoxel[blockIndexInGrid-CHUNK_SIZE*CHUNK_SIZE] == nullptr) // Bottom
+            BuildFace(v.GetFaceId(0), v.GetFacePtr(0));
+
+        if (blockPosition.y == CHUNK_SIZE-1 || m_gridVoxel[blockIndexInGrid+CHUNK_SIZE*CHUNK_SIZE] == nullptr) // Top
+            BuildFace(v.GetFaceId(1), v.GetFacePtr(1));
+
+        if (blockPosition.z == 0 || m_gridVoxel[blockIndexInGrid-CHUNK_SIZE] == nullptr) // Back
+            BuildFace(v.GetFaceId(2), v.GetFacePtr(2));
+
+        if (blockPosition.z == CHUNK_SIZE-1 || m_gridVoxel[blockIndexInGrid+CHUNK_SIZE] == nullptr) // Front
+            BuildFace(v.GetFaceId(3), v.GetFacePtr(3));
+
+        if (blockPosition.x == 0 || m_gridVoxel[blockIndexInGrid-1] == nullptr) // Left
+            BuildFace(v.GetFaceId(4), v.GetFacePtr(4));
+
+        if (blockPosition.x == CHUNK_SIZE-1 || m_gridVoxel[blockIndexInGrid+1] == nullptr) // Right
+            BuildFace(v.GetFaceId(5), v.GetFacePtr(5));
     }
 }
 
@@ -61,7 +88,7 @@ void Chunk::BuildFullChunk()
     for (unsigned int k = 0 ; k < CHUNK_SIZE ; k++) { // Y
         for (unsigned int j = 0 ; j < CHUNK_SIZE ; j++) { // Z
             for (unsigned int i = 0 ; i < CHUNK_SIZE ; i++) { // X
-                m_voxels.emplace_back(m_originPosition + glm::vec3(i, k, j), m_blockId);
+                AddVoxel(glm::vec3(i, k, j), m_blockId);
             }
         }
     }
@@ -74,7 +101,7 @@ void Chunk::BuildFlatChunk()
     if (m_terrainPosition.y == 0) {
         for (unsigned int j = 0 ; j < CHUNK_SIZE ; j++) { // Z
             for (unsigned int i = 0 ; i < CHUNK_SIZE ; i++) { // X
-                m_voxels.emplace_back(m_originPosition + glm::vec3(i, 0.f, j), m_blockId);
+                AddVoxel(glm::vec3(i, 0.f, j), m_blockId);
             }
         }
     }
@@ -95,7 +122,7 @@ void Chunk::BuildWaveChunk(const float frequency, const unsigned int maxBlockHei
                 const unsigned int blockHeightPosition = m_originPosition.y + k;
 
                 if (blockHeightPosition <= maxHeight)
-                    m_voxels.emplace_back(m_originPosition + glm::vec3(i, k, j), m_blockId);
+                    AddVoxel(glm::vec3(i, k, j), m_blockId);
             }
         }
     }
@@ -111,7 +138,7 @@ void Chunk::BuildHeightmapChunk(const unsigned char* heightmap, const unsigned i
                 const unsigned int hmIndex = m_originPosition.z*heightmapWidth  + m_originPosition.x + j*heightmapWidth + i; 
                 const unsigned int blockHeightPosition = m_originPosition.y + k;
                 if (blockHeightPosition <= heightmap[hmIndex])
-                    m_voxels.emplace_back(m_originPosition + glm::vec3(i, k, j), m_blockId); 
+                    AddVoxel(glm::vec3(i, k, j), m_blockId);
             }
         }
     }
@@ -126,7 +153,7 @@ void Chunk::BuildCheeseChunk(const FastNoise& noise, const float frequency)
             for (unsigned int i = 0 ; i < CHUNK_SIZE ; i++) { // X
                 const float density = noise.GetNoise(frequency*(m_originPosition.x + i), frequency*(m_originPosition.y + k), frequency*(m_originPosition.z + j));
                 if (density > 0.f)
-                    m_voxels.emplace_back(m_originPosition + glm::vec3(i, k, j), m_blockId); 
+                    AddVoxel(glm::vec3(i, k, j), m_blockId);
             }
         }
     }
@@ -136,7 +163,7 @@ void Chunk::BuildCheeseChunk(const FastNoise& noise, const float frequency)
 void Chunk::BuildEditorChunk()
 {
     const glm::vec3 centerPosition = glm::vec3(CHUNK_SIZE/2);
-    m_voxels.emplace_back(m_originPosition + centerPosition, m_blockId);
+    AddVoxel(centerPosition, m_blockId);
 }
 
 void Chunk::VoxelComputeData()

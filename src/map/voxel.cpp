@@ -37,10 +37,10 @@ std::vector<glm::vec3> Voxel::GetVertices() const
     return vertices;
 }
 
-unsigned int Voxel::GetIdInChunk() const
-{
-    return m_idInChunk;
-}
+// unsigned int Voxel::GetIdInChunk() const
+// {
+//     return m_idInChunk;
+// }
 
 unsigned int Voxel::GetBlockId() const
 {
@@ -52,10 +52,10 @@ void Voxel::SetBlockId(const unsigned int blockId)
     m_blockId = blockId;
 }
 
-void Voxel::SetIdInChunk(const unsigned int idInChunk)
-{
-    m_idInChunk = idInChunk;
-}
+// void Voxel::SetIdInChunk(const unsigned int idInChunk)
+// {
+//     m_idInChunk = idInChunk;
+// }
 
 void Voxel::BuildVoxel()
 {
