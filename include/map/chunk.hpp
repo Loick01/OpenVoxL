@@ -13,10 +13,16 @@
 
 class FastNoise;
 
+enum class ChunkNeighbor // Should not be inly used for Chunk ?
+{
+    Bottom, Top, Back, Front, Left, Right
+};
+
 class Chunk // 32x32x32
 { 
     private:
         glm::ivec3 m_terrainPosition; // Position Column/Row/Depth 
+        glm::ivec3 m_terrainSize;
         glm::vec3 m_originPosition; // Back-bottom-left position (m_originPosition = m_terrainPosition*CHUNKSIZE)
         std::vector<Voxel> m_voxels;
         std::vector<Voxel*> m_gridVoxel;
@@ -25,6 +31,7 @@ class Chunk // 32x32x32
         std::vector<unsigned int> m_indices;
         std::vector<unsigned int> m_blockIds;
         std::map<std::string, Face*> m_chunkFaces;
+        std::map<ChunkNeighbor, const Chunk*> m_chunkNeighbors;
         const unsigned int m_blockId; // TODO : Remove
 
         GLuint m_VAO;
@@ -42,10 +49,18 @@ class Chunk // 32x32x32
         void BuildFaces();
     
     public:
-        Chunk(const std::string& vertexPath, const std::string& fragmentPath, const glm::ivec3 terrainPosition, const glm::vec3 originPosition, const unsigned int blockId); // TODO : Remove blockId 
+        Chunk(const std::string& vertexPath, const std::string& fragmentPath, const glm::ivec3 terrainPosition, const glm::ivec3 terrainSize,
+            const glm::vec3 originPosition, const unsigned int blockId); // TODO : Remove blockId 
         // Chunk(glm::vec3 position, bool referenceChunk); // Used in editor mode only
         ~Chunk();
         
+        const Chunk* GetChunkNeighbor(const ChunkNeighbor which) const;
+        void SetChunkNeighbor(const ChunkNeighbor which, const Chunk* neighbor);
+        
+        glm::ivec3 GetTerrainPosition() const;
+
+        bool IsEmptyAt(const unsigned voxelIndex) const;
+
         // For now, only one chunk in height
         void BuildFullChunk();
         void BuildFlatChunk();
@@ -59,16 +74,4 @@ class Chunk // 32x32x32
         void Load();
         
         void Draw(const glm::mat4& projection, const glm::mat4& view) const;
-        
-        // void addFace(Voxel* v_bottom,int orientation);
-        // void removeFace(Voxel* v_bottom,int orientation);
-        // void removeFaces(std::string racine_face_id);
-        // void buildFace(std::string unique_id_face, bool cond1,int a1, int dec, int a2, int voxel_id, int8_t v1, int8_t v2, int8_t v3, std::vector<glm::vec3> voxel_vertices);
-        // void loadChunk(TerrainControler* tc = nullptr);
-        // void drawChunk();
-        // std::vector<Voxel*> getListeVoxels();
-        // void setListeVoxels(std::vector<Voxel*> newListeVoxels);
-        // glm::vec3 getPosition();
-
-        // void sendVoxelMapToShader();
 };

@@ -3,9 +3,9 @@
 #include "core/FastNoise.h" // Used in BuildCheeseChunk. Remove ?
 #include "graphic/texture.hpp"
 
-Chunk::Chunk(const std::string& vertexPath, const std::string& fragmentPath, 
-const glm::ivec3 terrainPosition, const glm::vec3 originPosition, const unsigned int blockId):
-    m_shader(vertexPath, fragmentPath), m_terrainPosition(terrainPosition), m_originPosition(originPosition), m_blockId(blockId)
+Chunk::Chunk(const std::string& vertexPath, const std::string& fragmentPath, const glm::ivec3 terrainPosition,
+const glm::ivec3 terrainSize, const glm::vec3 originPosition, const unsigned int blockId):
+    m_shader(vertexPath, fragmentPath), m_terrainPosition(terrainPosition), m_terrainSize(terrainSize), m_originPosition(originPosition), m_blockId(blockId)
 {
     glGenVertexArrays(1, &m_VAO);
     glGenBuffers(1, &m_VBO);
@@ -22,6 +22,29 @@ Chunk::~Chunk()
     glDeleteBuffers(1, &m_VBO);
     glDeleteBuffers(1, &m_EBO);
     glDeleteBuffers(1, &m_textureId_SBBO); 
+}
+
+const Chunk* Chunk::GetChunkNeighbor(const ChunkNeighbor which) const
+{
+    std::map<ChunkNeighbor, const Chunk*>::const_iterator it = m_chunkNeighbors.find(which);
+    if (it == m_chunkNeighbors.end())
+        return nullptr;
+    return it->second;
+}
+
+void Chunk::SetChunkNeighbor(const ChunkNeighbor which, const Chunk* neighbor)
+{
+    m_chunkNeighbors[which] = neighbor;
+}
+
+glm::ivec3 Chunk::GetTerrainPosition() const
+{
+    return m_terrainPosition;
+}
+
+bool Chunk::IsEmptyAt(const unsigned voxelIndex) const
+{
+    return m_gridVoxel[voxelIndex] == nullptr;
 }
 
 unsigned int Chunk::GetBlockIndexInGrid(const glm::ivec3& blockPosition) const
@@ -61,22 +84,52 @@ void Chunk::BuildFaces()
         const glm::ivec3 blockPosition = v.GetOrigin() - m_originPosition;
         const int blockIndexInGrid = GetBlockIndexInGrid(blockPosition); // Do not use unsigned int
 
-        if (blockPosition.y == 0 || m_gridVoxel[blockIndexInGrid-CHUNK_SIZE*CHUNK_SIZE] == nullptr) // Bottom
+        if (blockPosition.y == 0) {
+            if (m_terrainPosition.y == 0)
+                BuildFace(v.GetFaceId(0), v.GetFacePtr(0));
+            else if (GetChunkNeighbor(ChunkNeighbor::Bottom)->IsEmptyAt(blockIndexInGrid+CHUNK_SIZE*CHUNK_SIZE*(CHUNK_SIZE-1)))
+                BuildFace(v.GetFaceId(0), v.GetFacePtr(0));
+        } else if (m_gridVoxel[blockIndexInGrid-CHUNK_SIZE*CHUNK_SIZE] == nullptr)
             BuildFace(v.GetFaceId(0), v.GetFacePtr(0));
 
-        if (blockPosition.y == CHUNK_SIZE-1 || m_gridVoxel[blockIndexInGrid+CHUNK_SIZE*CHUNK_SIZE] == nullptr) // Top
+        if (blockPosition.y == CHUNK_SIZE-1) {
+            if (m_terrainPosition.y == m_terrainSize.y-1)
+                BuildFace(v.GetFaceId(1), v.GetFacePtr(1));
+            else if (GetChunkNeighbor(ChunkNeighbor::Top)->IsEmptyAt(blockIndexInGrid-CHUNK_SIZE*CHUNK_SIZE*(CHUNK_SIZE-1)))
+                BuildFace(v.GetFaceId(1), v.GetFacePtr(1));
+        } else if (m_gridVoxel[blockIndexInGrid+CHUNK_SIZE*CHUNK_SIZE] == nullptr)
             BuildFace(v.GetFaceId(1), v.GetFacePtr(1));
 
-        if (blockPosition.z == 0 || m_gridVoxel[blockIndexInGrid-CHUNK_SIZE] == nullptr) // Back
+        if (blockPosition.z == 0) {
+            if (m_terrainPosition.z == 0)
+                BuildFace(v.GetFaceId(2), v.GetFacePtr(2));
+            else if (GetChunkNeighbor(ChunkNeighbor::Back)->IsEmptyAt(blockIndexInGrid+CHUNK_SIZE*(CHUNK_SIZE-1)))
+                BuildFace(v.GetFaceId(2), v.GetFacePtr(2));
+        } else if (m_gridVoxel[blockIndexInGrid-CHUNK_SIZE] == nullptr)
             BuildFace(v.GetFaceId(2), v.GetFacePtr(2));
 
-        if (blockPosition.z == CHUNK_SIZE-1 || m_gridVoxel[blockIndexInGrid+CHUNK_SIZE] == nullptr) // Front
+        if (blockPosition.z == CHUNK_SIZE-1) {
+            if (m_terrainPosition.z == m_terrainSize.z-1)
+                BuildFace(v.GetFaceId(3), v.GetFacePtr(3));
+            else if (GetChunkNeighbor(ChunkNeighbor::Front)->IsEmptyAt(blockIndexInGrid-CHUNK_SIZE*(CHUNK_SIZE-1)))
+                BuildFace(v.GetFaceId(3), v.GetFacePtr(3));
+        } else if (m_gridVoxel[blockIndexInGrid+CHUNK_SIZE] == nullptr)
             BuildFace(v.GetFaceId(3), v.GetFacePtr(3));
 
-        if (blockPosition.x == 0 || m_gridVoxel[blockIndexInGrid-1] == nullptr) // Left
+        if (blockPosition.x == 0) {
+            if (m_terrainPosition.x == 0)
+                BuildFace(v.GetFaceId(4), v.GetFacePtr(4));
+            else if (GetChunkNeighbor(ChunkNeighbor::Left)->IsEmptyAt(blockIndexInGrid+CHUNK_SIZE-1))
+                BuildFace(v.GetFaceId(4), v.GetFacePtr(4));
+        } else if (m_gridVoxel[blockIndexInGrid-1] == nullptr)
             BuildFace(v.GetFaceId(4), v.GetFacePtr(4));
 
-        if (blockPosition.x == CHUNK_SIZE-1 || m_gridVoxel[blockIndexInGrid+1] == nullptr) // Right
+        if (blockPosition.x == CHUNK_SIZE-1) {
+            if (m_terrainPosition.x == m_terrainSize.x-1)
+                BuildFace(v.GetFaceId(5), v.GetFacePtr(5));
+            else if (GetChunkNeighbor(ChunkNeighbor::Right)->IsEmptyAt(blockIndexInGrid-CHUNK_SIZE+1))
+                BuildFace(v.GetFaceId(5), v.GetFacePtr(5));
+        } else if (m_gridVoxel[blockIndexInGrid+1] == nullptr)
             BuildFace(v.GetFaceId(5), v.GetFacePtr(5));
     }
 }

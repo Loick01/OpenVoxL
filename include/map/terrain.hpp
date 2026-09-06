@@ -21,6 +21,8 @@ class Terrain
     public:
         Terrain(const unsigned int width, const unsigned int depth, const unsigned int height);
 
+        unsigned int GetChunkIndexInGrid(const glm::ivec3& chunkPosition) const;
+
         void Load();
         void Draw(const glm::mat4& projection, const glm::mat4& view) const;
 };
