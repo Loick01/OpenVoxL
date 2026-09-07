@@ -4,8 +4,7 @@
 
 #include "graphic/stb_image_write.h"
 
-MapGenerator::MapGenerator(const unsigned int width, const unsigned int depth, const unsigned int maxBlockHeight, const int octave, const int seed):
-    m_nrBlockWidth(width), m_nrBlockDepth(depth), m_maxBlockHeight(maxBlockHeight)
+MapGenerator::MapGenerator(const int octave, const int seed)
 {
     // enum NoiseType { Value, ValueFractal, Perlin, PerlinFractal, Simplex, SimplexFractal, Cellular, WhiteNoise, Cubic, CubicFractal };
     m_noise.SetNoiseType(FastNoise::SimplexFractal);
@@ -18,18 +17,18 @@ const FastNoise& MapGenerator::GetNoise() const
     return m_noise;
 }
 
-void MapGenerator::GenerateHeightMap() const
+void MapGenerator::GenerateHeightMap(const unsigned int nrBlockWidth, const unsigned int nrBlockDepth, const unsigned int maxBlockHeight) const
 {
-    const unsigned int dataSize = m_nrBlockWidth*m_nrBlockDepth;
+    const unsigned int dataSize = nrBlockWidth*nrBlockDepth;
     unsigned char* data = (unsigned char*)malloc(sizeof(unsigned char)*dataSize);
 
-    for(unsigned int j = 0 ; j < m_nrBlockDepth ; j++) { // Z
-        for(unsigned int i = 0 ; i < m_nrBlockWidth ; i++) { // X
-            const unsigned int height = ((m_noise.GetNoise(i,j)+1)/2)*(m_maxBlockHeight-1);
-            data[j*m_nrBlockWidth+i] = height;
+    for(unsigned int j = 0 ; j < nrBlockDepth ; j++) { // Z
+        for(unsigned int i = 0 ; i < nrBlockWidth ; i++) { // X
+            const unsigned int height = ((m_noise.GetNoise(i,j)+1)/2)*(maxBlockHeight-1);
+            data[j*nrBlockWidth+i] = height;
         }
     }
 
-    stbi_write_png("../data/heightmap/terrain.png", m_nrBlockWidth, m_nrBlockDepth, 1, data, m_nrBlockWidth);
+    stbi_write_png("../data/heightmap/terrain.png", nrBlockWidth, nrBlockDepth, 1, data, nrBlockWidth);
     free(data);
 }

@@ -20,11 +20,12 @@ class Application
         SoundController m_soundController;
         
         Camera m_camera;
-        DebugWindow m_debug;
         Hud m_hud;
         Skybox m_skybox;
         Terrain m_terrain;
         Time m_time;
+
+        DebugWindow m_debug;
         
     public:
         Application();

@@ -9,11 +9,12 @@
 namespace
 {
     const char* cameraStates[] = {"KeyFree", "MouseFree", "Orbital", "Player"};
+    const char* chunkTypes[] = {"Full", "Flat", "Wave", "Editor", "Heightmap", "Cheese"};
 }
 
 DebugWindow::DebugWindow(GLFWwindow* glfwWindow, Camera& camera, Terrain& terrain):
     m_glfwWindow(glfwWindow), m_width(500), m_height(500), m_camera(camera), m_terrain(terrain),
-    m_selectedCameraState((unsigned int)m_camera.GetState()), m_wireframeRendering(false)
+    m_indexCameraState((unsigned int)m_camera.GetState()), m_indexChunkType((unsigned int)m_terrain.GetChunkType()), m_wireframeRendering(false)
 {
     InitImGui();
 }
@@ -69,11 +70,11 @@ void DebugWindow::Draw()
             if (ImGui::SliderFloat("Camera speed", &cameraSpeed, 1.f, 200.f))
                 m_camera.SetSpeed(cameraSpeed);
 
-            if (ImGui::BeginCombo("Camera State", cameraStates[m_selectedCameraState])){ // TODO 
+            if (ImGui::BeginCombo("Camera State", cameraStates[m_indexCameraState])){ // TODO 
                 for (unsigned int i = 0; i < IM_ARRAYSIZE(cameraStates); i++){
-                    if (ImGui::Selectable(cameraStates[i])){
-                        m_selectedCameraState = i;
-                        m_camera.SetState(static_cast<CameraState>(m_selectedCameraState));
+                    if (ImGui::Selectable(cameraStates[i])) {
+                        m_indexCameraState = i;
+                        m_camera.SetState(static_cast<CameraState>(m_indexCameraState));
                     }
                 }
                 ImGui::EndCombo();
@@ -90,6 +91,16 @@ void DebugWindow::Draw()
                 m_terrain.SetSize(terrainSize);
             if (ImGui::SliderInt("Terrain Chunk Depth", &terrainSize.z, 1, 10))
                 m_terrain.SetSize(terrainSize);
+
+            if (ImGui::BeginCombo("Chunk Type", chunkTypes[m_indexChunkType])){ 
+                for (unsigned int i = 0; i < IM_ARRAYSIZE(chunkTypes); i++){
+                    if (ImGui::Selectable(chunkTypes[i])) {
+                        m_indexChunkType = i;
+                        m_terrain.SetChunkType(static_cast<ChunkType>(m_indexChunkType));
+                    }
+                }
+                ImGui::EndCombo();
+            }
             
             if (ImGui::Button("Load Terrain")) {
                 m_terrain.Create();

@@ -17,7 +17,8 @@ class DebugWindow
                 
         int m_width;
         int m_height;
-        unsigned int m_selectedCameraState;
+        unsigned int m_indexCameraState;
+        unsigned int m_indexChunkType;
         bool m_wireframeRendering;
 
         void InitImGui();

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <variant>
 #include <vector>
 
 #include <glad/glad.h>
@@ -9,11 +10,11 @@
 #include "map/voxel.hpp"
 #include "graphic/shader.hpp"
 
-#define CHUNK_SIZE 32 // TODO : 32
+#define CHUNK_SIZE 32
 
 class FastNoise;
 
-enum class ChunkNeighbor // Should not be inly used for Chunk ?
+enum class ChunkNeighbor // Should not be only used for Chunk ?
 {
     Bottom, Top, Back, Front, Left, Right
 };
@@ -22,6 +23,39 @@ enum class ChunkType
 {
     Full, Flat, Wave, Editor, Heightmap, Cheese
 };
+
+struct DataFullChunk{};
+struct DataFlatChunk{};
+
+struct DataWaveChunk
+{
+    float frequency;
+    unsigned int maxBlockHeight;
+};
+
+struct DataEditorChunk{};
+
+struct DataHeightmapChunk
+{
+    const unsigned char* heightmap;
+    int heightmapWidth;
+    int heightmapDepth;
+};
+
+struct DataCheeseChunk
+{
+    const FastNoise& noise; 
+    float frequency;
+};
+
+using DataChunk = std::variant<
+    DataFullChunk,
+    DataFlatChunk,
+    DataWaveChunk,
+    DataEditorChunk,
+    DataHeightmapChunk,
+    DataCheeseChunk
+>; 
 
 class Chunk // 32x32x32
 { 
@@ -38,7 +72,7 @@ class Chunk // 32x32x32
         std::vector<unsigned int> m_faceOrientations;
         std::map<std::string, Face*> m_chunkFaces;
         std::map<ChunkNeighbor, const Chunk*> m_chunkNeighbors;
-        ChunkType m_type;
+        DataChunk m_dataChunk;
         const unsigned int m_blockId; // TODO : Remove
 
         GLuint m_VAO;
@@ -55,17 +89,10 @@ class Chunk // 32x32x32
         void AddFaceIndices(const unsigned int offset);
         void BuildFace(const std::string& faceId, Face* face);
         void BuildFaces();
-
-        void BuildFullChunk();
-        void BuildFlatChunk();
-        void BuildWaveChunk(const float frequency, const unsigned int maxBlockHeight);
-        void BuildEditorChunk();
-        void BuildHeightmapChunk(const unsigned char* heightmap, const unsigned int heightmapWidth, const unsigned int heightmapDepth);
-        void BuildCheeseChunk(const FastNoise& noise, const float frequency);
     
     public:
         Chunk(const std::string& vertexPath, const std::string& fragmentPath, const glm::ivec3 terrainPosition, const glm::ivec3 terrainSize,
-            const glm::vec3 originPosition, const ChunkType type, const unsigned int blockId); // TODO : Remove blockId 
+            const glm::vec3 originPosition, const unsigned int blockId); // TODO : Remove blockId 
         // Chunk(glm::vec3 position, bool referenceChunk); // Used in editor mode only
         ~Chunk();
         
@@ -76,7 +103,12 @@ class Chunk // 32x32x32
 
         bool IsEmptyAt(const unsigned voxelIndex) const;
 
-        void Build();
+        void Build(const DataFullChunk& data);
+        void Build(const DataFlatChunk& data);
+        void Build(const DataWaveChunk& data);
+        void Build(const DataEditorChunk& data);
+        void Build(const DataHeightmapChunk& data);
+        void Build(const DataCheeseChunk& data);
     
         void VoxelComputeData();
         void VoxelBufferData();

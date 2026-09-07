@@ -26,6 +26,7 @@ class Terrain
         ChunkType GetChunkType() const;
         unsigned int GetChunkIndexInGrid(const glm::ivec3& chunkPosition) const;
         void SetSize(const glm::ivec3 size);
+        void SetChunkType(const ChunkType type);
 
         void Create();
         void Load();
