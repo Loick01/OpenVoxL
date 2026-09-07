@@ -45,6 +45,7 @@ class Camera
         CameraState GetState() const;
 
         void SetSpeed(const float speed);
+        void ResetPosition();
 
         void SetState(const CameraState state);
         void KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys);

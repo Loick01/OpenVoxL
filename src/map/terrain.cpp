@@ -2,10 +2,39 @@
 
 #include "graphic/stb_image.h" // stbi_load
 
-Terrain::Terrain(const unsigned int width, const unsigned int depth, const unsigned int height):
-    m_nrChunkWidth(width), m_nrChunkDepth(depth), m_nrChunkHeight(height),
+Terrain::Terrain(const unsigned int width, const unsigned int depth, const unsigned int height, const ChunkType chunkType):
+    m_nrChunkWidth(width), m_nrChunkDepth(depth), m_nrChunkHeight(height), m_chunkType(chunkType),
     m_generator(m_nrChunkWidth*CHUNK_SIZE, m_nrChunkDepth*CHUNK_SIZE, m_nrChunkHeight*CHUNK_SIZE, SEED, OCTAVE)
 {
+    Create();
+    Load();
+}
+
+glm::ivec3 Terrain::GetSize() const
+{
+    return glm::ivec3(m_nrChunkWidth, m_nrChunkHeight, m_nrChunkDepth);
+}
+
+ChunkType Terrain::GetChunkType() const
+{
+    return m_chunkType;
+}
+
+unsigned int Terrain::GetChunkIndexInGrid(const glm::ivec3& chunkPosition) const
+{
+    return chunkPosition.y*m_nrChunkDepth*m_nrChunkWidth + chunkPosition.z*m_nrChunkWidth + chunkPosition.x;
+}
+
+void Terrain::SetSize(const glm::ivec3 size)
+{
+    m_nrChunkWidth = size.x;
+    m_nrChunkHeight = size.y;
+    m_nrChunkDepth = size.z;
+}
+
+void Terrain::Create()
+{
+    m_chunks.clear();
     m_chunks.reserve(m_nrChunkWidth*m_nrChunkDepth*m_nrChunkHeight);
     const glm::ivec3 terrainSize = glm::ivec3(m_nrChunkWidth, m_nrChunkHeight, m_nrChunkDepth);
     
@@ -13,7 +42,7 @@ Terrain::Terrain(const unsigned int width, const unsigned int depth, const unsig
         for (unsigned int j = 0 ; j < m_nrChunkDepth ; j++) { // Z
             for (unsigned int i = 0 ; i < m_nrChunkWidth ; i++) { // X
                 const glm::ivec3 chunkPosition = glm::ivec3(i, k, j);
-                m_chunks.emplace_back("../shader/map/chunk.vs", "../shader/map/chunk.fs", chunkPosition, terrainSize, chunkPosition*CHUNK_SIZE, rand()%35);
+                m_chunks.emplace_back("../shader/map/chunk.vs", "../shader/map/chunk.fs", chunkPosition, terrainSize, chunkPosition*CHUNK_SIZE, m_chunkType, rand()%35);
             }
         }
     }
@@ -34,26 +63,16 @@ Terrain::Terrain(const unsigned int width, const unsigned int depth, const unsig
         if (chunkPosition.x < m_nrChunkWidth-1)
             c.SetChunkNeighbor(ChunkNeighbor::Right, &m_chunks[chunkIndexInGrid+1]);
     }
-    
-    m_generator.GenerateHeightMap();
-    int heightmapWidth, heightmapDepth, channel;
-    const unsigned char* heightmap = stbi_load("../data/heightmap/terrain.png", &heightmapWidth, &heightmapDepth, &channel, 1);
-    if (heightmapWidth != m_nrChunkWidth*CHUNK_SIZE || heightmapDepth != m_nrChunkDepth*CHUNK_SIZE)
-        throw std::runtime_error("The dimensions of the heightmap do not match with the size of the terrain");
 
-    for (Chunk& c : m_chunks) {
-        // c.BuildFlatChunk();
-        // c.BuildWaveChunk(4.5f, m_nrChunkHeight*CHUNK_SIZE);
-        // c.BuildHeightmapChunk(heightmap, heightmapWidth, heightmapDepth);
-        c.BuildCheeseChunk(m_generator.GetNoise(), 4.f);
-    }
-    
-    Load();
-}
+    // BuildHeightmapChunk only
+    // m_generator.GenerateHeightMap();
+    // int heightmapWidth, heightmapDepth, channel;
+    // const unsigned char* heightmap = stbi_load("../data/heightmap/terrain.png", &heightmapWidth, &heightmapDepth, &channel, 1);
+    // if (heightmapWidth != m_nrChunkWidth*CHUNK_SIZE || heightmapDepth != m_nrChunkDepth*CHUNK_SIZE)
+    //     throw std::runtime_error("The dimensions of the heightmap do not match with the size of the terrain");
 
-unsigned int Terrain::GetChunkIndexInGrid(const glm::ivec3& chunkPosition) const
-{
-    return chunkPosition.y*m_nrChunkDepth*m_nrChunkWidth + chunkPosition.z*m_nrChunkWidth + chunkPosition.x;
+    for (Chunk& c : m_chunks)
+        c.Build();
 }
 
 void Terrain::Load()

@@ -4,8 +4,9 @@
 #include "graphic/texture.hpp"
 
 Chunk::Chunk(const std::string& vertexPath, const std::string& fragmentPath, const glm::ivec3 terrainPosition,
-const glm::ivec3 terrainSize, const glm::vec3 originPosition, const unsigned int blockId):
-    m_shader(vertexPath, fragmentPath), m_terrainPosition(terrainPosition), m_terrainSize(terrainSize), m_originPosition(originPosition), m_blockId(blockId)
+const glm::ivec3 terrainSize, const glm::vec3 originPosition, const ChunkType type, const unsigned int blockId):
+    m_shader(vertexPath, fragmentPath), m_terrainPosition(terrainPosition), m_terrainSize(terrainSize), 
+    m_originPosition(originPosition), m_type(type), m_blockId(blockId)
 {
     glGenVertexArrays(1, &m_VAO);
     glGenBuffers(1, &m_VBO);
@@ -134,6 +135,35 @@ void Chunk::BuildFaces()
         } else if (m_gridVoxel[blockIndexInGrid+1] == nullptr)
             BuildFace(v.GetFaceId(5), v.GetFacePtr(5));
     }
+}
+
+void Chunk::Build()
+{
+    switch (m_type) {
+        case ChunkType::Full :
+            BuildFullChunk();
+            break; 
+        case ChunkType::Flat :
+            BuildFlatChunk();
+            break; 
+        case ChunkType::Wave :
+            // BuildWaveChunk(); // TODO
+            break; 
+        case ChunkType::Editor :
+            BuildEditorChunk();
+            break; 
+        case ChunkType::Heightmap :
+            // BuildHeightmapChunk(); // TODO
+            break; 
+        case ChunkType::Cheese : 
+            // BuildCheeseChunk(); // TODO
+            break;
+        default:
+            throw std::runtime_error("Chunk::Build : This ChunkType value should not be used here");
+    }
+    // c.BuildWaveChunk(4.5f, m_nrChunkHeight*CHUNK_SIZE);
+    // c.BuildHeightmapChunk(heightmap, heightmapWidth, heightmapDepth);
+    // c.BuildCheeseChunk(m_generator.GetNoise(), 4.f);
 }
 
 void Chunk::BuildFullChunk()

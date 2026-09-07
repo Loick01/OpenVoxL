@@ -68,6 +68,11 @@ void Camera::SetSpeed(const float speed)
     m_speed = speed;
 }
 
+void Camera::ResetPosition()
+{
+    m_position = glm::vec3(0.f);
+}
+
 void Camera::SetState(const CameraState state)
 {
     m_state = state;

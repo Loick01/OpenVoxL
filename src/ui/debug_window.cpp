@@ -1,17 +1,19 @@
 #include "ui/debug_window.hpp"
 
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include "core/camera.hpp"
+#include "map/terrain.hpp"
 
 namespace
 {
     const char* cameraStates[] = {"KeyFree", "MouseFree", "Orbital", "Player"};
 }
 
-DebugWindow::DebugWindow(GLFWwindow* glfwWindow, Camera& camera):
-    m_glfwWindow(glfwWindow), m_width(500), m_height(500), m_camera(camera),
-    m_selectedCameraState((unsigned int)m_camera.GetState())
+DebugWindow::DebugWindow(GLFWwindow* glfwWindow, Camera& camera, Terrain& terrain):
+    m_glfwWindow(glfwWindow), m_width(500), m_height(500), m_camera(camera), m_terrain(terrain),
+    m_selectedCameraState((unsigned int)m_camera.GetState()), m_wireframeRendering(false)
 {
     InitImGui();
 }
@@ -36,19 +38,34 @@ void DebugWindow::Draw()
 {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
-    float fps = ImGui::GetIO().Framerate;
 
     ImGui::NewFrame();
     ImGui::Begin("Debug Window");
 
     if (ImGui::BeginTabBar("Tabs")){
 
+        if (ImGui::BeginTabItem("General")){
+            const float fps = ImGui::GetIO().Framerate;
+            ImGui::Text("FPS: %.1f", fps);
+
+            if (ImGui::Checkbox("Wireframe", &m_wireframeRendering))
+                if (m_wireframeRendering)
+                    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+                else
+                    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+                
+            ImGui::EndTabItem();
+        }
+        
         if (ImGui::BeginTabItem("Camera")){
             const glm::vec3 cameraPosition = m_camera.GetPosition();
             float cameraSpeed = m_camera.GetSpeed();
             
-            ImGui::Text("FPS: %.1f", fps);
-            ImGui::Text("Camera Position: %.1f %.1f %.1f", cameraPosition.x, cameraPosition.y, cameraPosition.z);
+            ImGui::Text("Camera Position: %.1f/%.1f/%.1f", cameraPosition.x, cameraPosition.y, cameraPosition.z);
+            ImGui::SameLine();
+            if (ImGui::Button("Reset"))
+                m_camera.ResetPosition();
+            
             if (ImGui::SliderFloat("Camera speed", &cameraSpeed, 1.f, 200.f))
                 m_camera.SetSpeed(cameraSpeed);
 
@@ -60,6 +77,23 @@ void DebugWindow::Draw()
                     }
                 }
                 ImGui::EndCombo();
+            }
+            
+            ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem("Terrain")){
+            glm::ivec3 terrainSize = m_terrain.GetSize();
+            if (ImGui::SliderInt("Terrain Chunk Width", &terrainSize.x, 1, 10))
+                m_terrain.SetSize(terrainSize);
+            if (ImGui::SliderInt("Terrain Chunk Height", &terrainSize.y, 1, 10))
+                m_terrain.SetSize(terrainSize);
+            if (ImGui::SliderInt("Terrain Chunk Depth", &terrainSize.z, 1, 10))
+                m_terrain.SetSize(terrainSize);
+            
+            if (ImGui::Button("Load Terrain")) {
+                m_terrain.Create();
+                m_terrain.Load();
             }
             
             ImGui::EndTabItem();
