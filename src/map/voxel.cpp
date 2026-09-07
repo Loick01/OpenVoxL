@@ -67,6 +67,7 @@ void Voxel::BuildVoxel()
     currentFace.vertices.push_back(m_origin + glm::vec3(1, 0, 0));
     currentFace.vertices.push_back(m_origin + glm::vec3(0, 0, 1));
     currentFace.vertices.push_back(m_origin + glm::vec3(1, 0, 1));
+    currentFace.orientation = 0;
     m_faces.push_back(currentFace);
 
     currentFace.vertices.clear();
@@ -75,6 +76,7 @@ void Voxel::BuildVoxel()
     currentFace.vertices.push_back(m_origin + glm::vec3(1, 1, 1));
     currentFace.vertices.push_back(m_origin + glm::vec3(0, 1, 0));
     currentFace.vertices.push_back(m_origin + glm::vec3(1, 1, 0));
+    currentFace.orientation = 1;
     m_faces.push_back(currentFace);
 
     currentFace.vertices.clear();
@@ -83,6 +85,7 @@ void Voxel::BuildVoxel()
     currentFace.vertices.push_back(m_origin);
     currentFace.vertices.push_back(m_origin + glm::vec3(1, 1, 0));
     currentFace.vertices.push_back(m_origin + glm::vec3(0, 1, 0));
+    currentFace.orientation = 2;
     m_faces.push_back(currentFace);
 
     currentFace.vertices.clear();
@@ -91,6 +94,7 @@ void Voxel::BuildVoxel()
     currentFace.vertices.push_back(m_origin + glm::vec3(1, 0, 1));
     currentFace.vertices.push_back(m_origin + glm::vec3(0, 1, 1));
     currentFace.vertices.push_back(m_origin + glm::vec3(1, 1, 1));
+    currentFace.orientation = 3;
     m_faces.push_back(currentFace);
 
     currentFace.vertices.clear();
@@ -99,6 +103,7 @@ void Voxel::BuildVoxel()
     currentFace.vertices.push_back(m_origin + glm::vec3(0, 0, 1));
     currentFace.vertices.push_back(m_origin + glm::vec3(0, 1, 0));
     currentFace.vertices.push_back(m_origin + glm::vec3(0, 1, 1));
+    currentFace.orientation = 4;
     m_faces.push_back(currentFace);
 
     currentFace.vertices.clear();
@@ -107,5 +112,6 @@ void Voxel::BuildVoxel()
     currentFace.vertices.push_back(m_origin + glm::vec3(1, 0, 0));
     currentFace.vertices.push_back(m_origin + glm::vec3(1, 1, 1));
     currentFace.vertices.push_back(m_origin + glm::vec3(1, 1, 0));
+    currentFace.orientation = 5;
     m_faces.push_back(currentFace);
 }

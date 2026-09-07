@@ -10,7 +10,8 @@ const glm::ivec3 terrainSize, const glm::vec3 originPosition, const unsigned int
     glGenVertexArrays(1, &m_VAO);
     glGenBuffers(1, &m_VBO);
     glGenBuffers(1, &m_EBO);
-    glGenBuffers(1, &m_textureId_SBBO);
+    glGenBuffers(1, &m_blockId_SSBO);
+    glGenBuffers(1, &m_faceOrientation_SSBO);
     
     m_textureId = LoadTexture2D("../asset/texture/block/atlas.png");
     m_gridVoxel.resize(CHUNK_SIZE*CHUNK_SIZE*CHUNK_SIZE);
@@ -21,7 +22,8 @@ Chunk::~Chunk()
     glDeleteVertexArrays(1, &m_VAO);
     glDeleteBuffers(1, &m_VBO);
     glDeleteBuffers(1, &m_EBO);
-    glDeleteBuffers(1, &m_textureId_SBBO); 
+    glDeleteBuffers(1, &m_blockId_SSBO); 
+    glDeleteBuffers(1, &m_faceOrientation_SSBO);
 }
 
 const Chunk* Chunk::GetChunkNeighbor(const ChunkNeighbor which) const
@@ -224,13 +226,15 @@ void Chunk::VoxelComputeData()
     m_vertices.clear();
     m_indices.clear();
     // m_blockIds.clear();
+    m_faceOrientations.clear();
 
     unsigned int offset = 0;
     for(std::map<std::string, Face*>::iterator it = m_chunkFaces.begin(); it != m_chunkFaces.end(); ++it) {
         Face* face = it->second;
         const std::vector<glm::vec3>& faceVertices = face->GetVertices();
         m_vertices.insert(m_vertices.end(), faceVertices.begin(), faceVertices.end());
-
+        m_faceOrientations.push_back(face->GetOrientation());
+        
         AddFaceIndices(offset);
         offset += 4;
     }
@@ -248,9 +252,13 @@ void Chunk::VoxelBufferData()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size()* sizeof(unsigned int), m_indices.data(), GL_DYNAMIC_DRAW);
 
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_textureId_SBBO);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_blockId_SSBO);
     glBufferData(GL_SHADER_STORAGE_BUFFER, m_blockIds.size()*sizeof(unsigned int), m_blockIds.data(), GL_DYNAMIC_DRAW);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_textureId_SBBO);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_blockId_SSBO);
+
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_faceOrientation_SSBO);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, m_faceOrientations.size()*sizeof(unsigned int), m_faceOrientations.data(), GL_DYNAMIC_DRAW);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, m_faceOrientation_SSBO);
 }
 
 void Chunk::Load() 
@@ -267,6 +275,7 @@ void Chunk::Draw(const glm::mat4& projection, const glm::mat4& view) const
     m_shader.SetMat4("view", view);
     BindTexture2D(m_shader.GetLocation("atlas"), m_textureId, 0);
     glBindVertexArray(m_VAO);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_textureId_SBBO);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_blockId_SSBO);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, m_faceOrientation_SSBO);
     glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, (void*)0);
 }

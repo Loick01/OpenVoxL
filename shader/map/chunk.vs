@@ -7,6 +7,11 @@ layout(std430, binding = 0) readonly buffer BlockIds
     uint textureIds[];
 };
 
+layout(std430, binding = 1) readonly buffer FaceOrientations
+{
+    uint orientationIds[];
+};
+
 out vec2 texCoords;
 out float vertexShadow;
 
@@ -20,13 +25,13 @@ vec2 atlasTexCoords[4] = vec2[4](
         vec2(0.2, 0.0)
 );
 
-float blockShadow[24] = float[24](
-        0.2,0.2,0.2,0.2, // Bottom
-        1.2,1.2,1.2,1.2, // Top
-        0.8,0.8,0.8,0.8, // Back
-        0.8,0.8,0.8,0.8, // Front
-        0.5,0.5,0.5,0.5, // Left
-        0.5,0.5,0.5,0.5 // Right
+float blockShadow[6] = float[6](
+        0.2, // Bottom
+        1.1, // Top
+        0.8, // Back
+        0.8, // Front
+        0.5, // Left
+        0.5 // Right
 );
 
 void main()
@@ -36,5 +41,5 @@ void main()
     texCoords = atlasTexCoords[gl_VertexID%4];
     texCoords[0] += blockId%5*0.2;
     texCoords[1] += blockId/5*0.1;
-    vertexShadow = blockShadow[gl_VertexID%24]; // TODO : I need faceId SSBO
+    vertexShadow = blockShadow[orientationIds[gl_VertexID/4]];
 };

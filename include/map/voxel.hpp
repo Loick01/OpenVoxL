@@ -8,11 +8,17 @@
 struct Face 
 {
     std::vector<glm::vec3> vertices;
-    std::string id; // TODO uint ? And I'm not really sure face id are necessary
+    std::string id; // TODO uint ?
+    unsigned int orientation;
 
     const std::vector<glm::vec3>& GetVertices() const
     {
         return vertices;
+    }
+
+    unsigned int GetOrientation() const
+    {
+        return orientation;
     }
 };
 
