@@ -1,12 +1,14 @@
 #include "core/camera.hpp"
 
+#include <stdexcept>
+
 #include <glm/gtc/matrix_transform.hpp> // glm::lookAt
 
-Camera::Camera(const float aspectRatio):
+Camera::Camera(GLFWwindow* glfwWindow, const float aspectRatio):
     m_state(CameraState::MouseFree), m_upVector(glm::vec3(0.f, 1.f, 0.f)),
     m_position(glm::vec3(0.f)), m_fov(75.f), m_nearPlane(0.1f), m_farPlane(500.f),
     m_aspectRatio(aspectRatio), m_yaw(-90.f), m_pitch(0.f),
-    m_sensitivity(0.05f), m_speed(20.f)
+    m_sensitivity(0.05f), m_speed(20.f), m_glfwWindow(glfwWindow)
 {
     UpdateCameraVectors();
 }
@@ -30,6 +32,53 @@ void Camera::UpdateCameraVectors()
     m_rightVector = glm::normalize(glm::cross(m_frontVector, m_upVector));
 }
 
+void Camera::SwitchCameraState()
+{
+    switch (m_state) {
+        case CameraState::KeyFree :
+            SetState(CameraState::MouseFree);
+            glfwSetInputMode(m_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            break;
+        case CameraState::MouseFree : 
+            SetState(CameraState::KeyFree);
+            glfwSetInputMode(m_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            break;
+        default:
+            throw std::runtime_error("Camera::SwitchCameraState : This CameraState value should not be used here");
+    }
+}
+
+glm::vec3 Camera::GetPosition() const
+{
+    return m_position;
+}
+
+float Camera::GetSpeed() const
+{
+    return m_speed;
+}
+
+CameraState Camera::GetState() const
+{
+    return m_state;
+}
+
+void Camera::SetSpeed(const float speed)
+{
+    m_speed = speed;
+}
+
+void Camera::SetState(const CameraState state)
+{
+    m_state = state;
+}
+
+void Camera::KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys)
+{
+    if (keys[GLFW_KEY_E])
+        SwitchCameraState();
+}
+
 void Camera::ProcessKeyEvent(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime)
 {
     const float frameSpeed = m_speed * deltaTime;
@@ -50,15 +99,17 @@ void Camera::ProcessKeyEvent(const std::array<bool, GLFW_KEY_LAST+1>& keys, cons
 
 void Camera::CursorPosCallback(double xpos, double ypos)
 {
-    double deltaX = xpos - m_previousXPos;
-    double deltaY = m_previousYPos - ypos;
+    if (m_state == CameraState::MouseFree) {
+        double deltaX = xpos - m_previousXPos;
+        double deltaY = m_previousYPos - ypos;
 
-    m_previousXPos = xpos;
-    m_previousYPos = ypos;
-    
-    m_yaw += deltaX * m_sensitivity;
-    m_pitch += deltaY * m_sensitivity;
-    m_pitch = glm::clamp(m_pitch, -89.0f, 89.0f);
+        m_previousXPos = xpos;
+        m_previousYPos = ypos;
+        
+        m_yaw += deltaX * m_sensitivity;
+        m_pitch += deltaY * m_sensitivity;
+        m_pitch = glm::clamp(m_pitch, -89.0f, 89.0f);
 
-    UpdateCameraVectors();
+        UpdateCameraVectors();
+    }
 }

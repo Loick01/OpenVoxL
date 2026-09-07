@@ -44,8 +44,8 @@ Terrain::Terrain(const unsigned int width, const unsigned int depth, const unsig
     for (Chunk& c : m_chunks) {
         // c.BuildFlatChunk();
         // c.BuildWaveChunk(4.5f, m_nrChunkHeight*CHUNK_SIZE);
-        c.BuildHeightmapChunk(heightmap, heightmapWidth, heightmapDepth);
-        // c.BuildCheeseChunk(m_generator.GetNoise(), 4.f);
+        // c.BuildHeightmapChunk(heightmap, heightmapWidth, heightmapDepth);
+        c.BuildCheeseChunk(m_generator.GetNoise(), 4.f);
     }
     
     Load();

@@ -57,6 +57,7 @@ void EventController::EventKeyCallback(int key, int scancode, int action, int mo
 
     if (action == GLFW_PRESS) {
         m_keys[key] = true;
+        m_camera.KeyCallback(GetKeys());
     } else if (action == GLFW_RELEASE) {
         m_keys[key] = false;
     }

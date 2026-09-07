@@ -1,5 +1,7 @@
 #include "core/window.hpp"
 
+#include <stdexcept>
+
 Window::Window(const std::string& title):
     m_title(title)
 {

@@ -29,14 +29,25 @@ class Camera
         
         CameraState m_state;
 
+        GLFWwindow* m_glfwWindow;
+
         void UpdateCameraVectors();
+        void SwitchCameraState();
         
     public:
-        Camera(const float aspectRatio);
+        Camera(GLFWwindow* glfwWindow, const float aspectRatio);
 
         glm::mat4 GetViewMatrix() const;
         glm::mat4 GetProjectionMatrix() const;
 
+        glm::vec3 GetPosition() const;
+        float GetSpeed() const;
+        CameraState GetState() const;
+
+        void SetSpeed(const float speed);
+
+        void SetState(const CameraState state);
+        void KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys);
         void ProcessKeyEvent(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime);
         void CursorPosCallback(double xpos, double ypos);
 };
