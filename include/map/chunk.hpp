@@ -29,7 +29,7 @@ struct DataFlatChunk{};
 
 struct DataWaveChunk
 {
-    float frequency;
+    float frequency; // [0.5, 10]
     unsigned int maxBlockHeight;
 };
 
@@ -40,12 +40,14 @@ struct DataHeightmapChunk
     const unsigned char* heightmap;
     int heightmapWidth;
     int heightmapDepth;
+    int channel;
 };
 
 struct DataCheeseChunk
 {
     const FastNoise* noise; 
-    float frequency;
+    float frequency; // [0.5, 10]
+    float threshold; // [-1, 1]
 };
 
 using DataChunk = std::variant<

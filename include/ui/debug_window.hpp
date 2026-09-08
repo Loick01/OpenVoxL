@@ -29,12 +29,12 @@ class DebugWindow
 
         void InitImGui();
         
-        void OpenSettings(DataFlatChunk& data);
-        void OpenSettings(DataFullChunk& data);
-        void OpenSettings(DataWaveChunk& data);
-        void OpenSettings(DataEditorChunk& data);
-        void OpenSettings(DataHeightmapChunk& data);
-        void OpenSettings(DataCheeseChunk& data);
+        bool OpenSettings(DataFlatChunk& data);
+        bool OpenSettings(DataFullChunk& data);
+        bool OpenSettings(DataWaveChunk& data);
+        bool OpenSettings(DataEditorChunk& data);
+        bool OpenSettings(DataHeightmapChunk& data);
+        bool OpenSettings(DataCheeseChunk& data);
 
     public:
         DebugWindow(GLFWwindow* glfwWindow, Camera& camera, Terrain& terrain);

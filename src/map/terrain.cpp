@@ -6,7 +6,7 @@ Terrain::Terrain(const unsigned int width, const unsigned int depth, const unsig
     m_nrChunkWidth(width), m_nrChunkDepth(depth), m_nrChunkHeight(height), m_chunkType(chunkType),
     m_generator(SEED, OCTAVE)
 {
-    InitializeDataChunk();
+    CreateDataChunk();
     Create();
     Load();
 }
@@ -41,6 +41,7 @@ void Terrain::SetSize(const glm::ivec3 size)
 void Terrain::SetChunkType(const ChunkType type)
 {
     m_chunkType = type;
+    CreateDataChunk();
 }
 
 void Terrain::SetDataChunk(const DataChunk data)
@@ -48,7 +49,7 @@ void Terrain::SetDataChunk(const DataChunk data)
     m_dataChunk = data;
 }
 
-void Terrain::InitializeDataChunk()
+void Terrain::CreateDataChunk()
 {
     switch (m_chunkType) {
         case ChunkType::Full : {
@@ -60,7 +61,7 @@ void Terrain::InitializeDataChunk()
             break; 
         }
         case ChunkType::Wave : {
-            m_dataChunk = DataWaveChunk{4.5f, m_nrChunkHeight*CHUNK_SIZE};
+            m_dataChunk = DataWaveChunk{1.f, m_nrChunkHeight*CHUNK_SIZE};
             break;
         } 
         case ChunkType::Editor : {
@@ -74,17 +75,42 @@ void Terrain::InitializeDataChunk()
             if (heightmapWidth != m_nrChunkWidth*CHUNK_SIZE || heightmapDepth != m_nrChunkDepth*CHUNK_SIZE)
                 throw std::runtime_error("The dimensions of the heightmap do not match with the size of the terrain");
 
-            m_dataChunk = DataHeightmapChunk{heightmap, heightmapWidth, heightmapDepth};
+            m_dataChunk = DataHeightmapChunk{heightmap, heightmapWidth, heightmapDepth, channel};
             break; 
         }
         case ChunkType::Cheese : {
-            m_dataChunk = DataCheeseChunk{&m_generator.GetNoise(), 4.f};
+            m_dataChunk = DataCheeseChunk{&m_generator.GetNoise(), 1.f, 0.f};
             break;
         }
         default:
             throw std::runtime_error("Terrain::Create : This ChunkType value should not be used here");
     }
 }
+
+void Terrain::UpdateDataChunk(DataFlatChunk& data)
+{}
+
+void Terrain::UpdateDataChunk(DataFullChunk& data)
+{}
+
+void Terrain::UpdateDataChunk(DataWaveChunk& data)
+{
+    data.maxBlockHeight = m_nrChunkHeight*CHUNK_SIZE;
+}
+
+void Terrain::UpdateDataChunk(DataEditorChunk& data)
+{}
+
+void Terrain::UpdateDataChunk(DataHeightmapChunk& data)
+{
+    m_generator.GenerateHeightMap(m_nrChunkWidth*CHUNK_SIZE, m_nrChunkDepth*CHUNK_SIZE, m_nrChunkHeight*CHUNK_SIZE);
+    data.heightmap = stbi_load("../data/heightmap/terrain.png", &data.heightmapWidth, &data.heightmapDepth, &data.channel, 1);
+    if (data.heightmapWidth != m_nrChunkWidth*CHUNK_SIZE || data.heightmapDepth != m_nrChunkDepth*CHUNK_SIZE)
+        throw std::runtime_error("The dimensions of the heightmap do not match with the size of the terrain");
+}
+
+void Terrain::UpdateDataChunk(DataCheeseChunk& data)
+{}
 
 void Terrain::Create()
 {
@@ -118,6 +144,14 @@ void Terrain::Create()
             c.SetChunkNeighbor(ChunkNeighbor::Right, &m_chunks[chunkIndexInGrid+1]);
     }
 
+    std::visit( 
+        [this](auto& m_dataChunk)
+        {
+            UpdateDataChunk(m_dataChunk);
+        },
+        m_dataChunk
+    );
+    
     for (Chunk& c : m_chunks) {
         std::visit( 
             [&c](const auto& m_dataChunk)

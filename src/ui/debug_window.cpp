@@ -35,35 +35,40 @@ void DebugWindow::InitImGui()
     ImPlot::CreateContext();
 }
 
-void DebugWindow::OpenSettings(DataFlatChunk& data)
+bool DebugWindow::OpenSettings(DataFlatChunk& data)
 {
-
+    return false;
 }
 
-void DebugWindow::OpenSettings(DataFullChunk& data)
+bool DebugWindow::OpenSettings(DataFullChunk& data)
 {
-
+    return false;
 }
 
-void DebugWindow::OpenSettings(DataWaveChunk& data)
+bool DebugWindow::OpenSettings(DataWaveChunk& data)
 {
     if (ImGui::SliderFloat("Frequency", &data.frequency, 0.5f, 10.f))
-        m_terrain.SetDataChunk(data);
+        return true;
+    return false;
 }
 
-void DebugWindow::OpenSettings(DataEditorChunk& data)
+bool DebugWindow::OpenSettings(DataEditorChunk& data)
 {
-
+    return false;
 }
 
-void DebugWindow::OpenSettings(DataHeightmapChunk& data)
+bool DebugWindow::OpenSettings(DataHeightmapChunk& data)
 {
-
+    return false;
 }
 
-void DebugWindow::OpenSettings(DataCheeseChunk& data)
+bool DebugWindow::OpenSettings(DataCheeseChunk& data)
 {
-
+    if (ImGui::SliderFloat("Frequency", &data.frequency, 0.5f, 10.f))
+        return true;
+    if (ImGui::SliderFloat("Threshold", &data.threshold, -1.f, 1.f))
+        return true;
+    return false;
 }
 
 void DebugWindow::Draw()
@@ -128,7 +133,6 @@ void DebugWindow::Draw()
                     if (ImGui::Selectable(chunkTypes[i])) {
                         m_indexChunkType = i;
                         m_terrain.SetChunkType(static_cast<ChunkType>(m_indexChunkType));
-                        m_terrain.InitializeDataChunk();
                     }
                 }
                 ImGui::EndCombo();
@@ -138,7 +142,8 @@ void DebugWindow::Draw()
             std::visit( 
                 [this](auto& dataChunk)
                 {
-                    OpenSettings(dataChunk);
+                    if (OpenSettings(dataChunk))
+                        m_terrain.SetDataChunk(dataChunk);
                 },
                 dataChunk
             );

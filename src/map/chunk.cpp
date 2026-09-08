@@ -208,7 +208,7 @@ void Chunk::Build(const DataCheeseChunk& data)
         for (unsigned int j = 0 ; j < CHUNK_SIZE ; j++) { // Z
             for (unsigned int i = 0 ; i < CHUNK_SIZE ; i++) { // X
                 const float density = data.noise->GetNoise(data.frequency*(m_originPosition.x + i), data.frequency*(m_originPosition.y + k), data.frequency*(m_originPosition.z + j));
-                if (density > 0.f)
+                if (density > data.threshold)
                     AddVoxel(glm::vec3(i, k, j), m_blockId);
             }
         }

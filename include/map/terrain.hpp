@@ -19,6 +19,15 @@ class Terrain
         std::vector<Chunk> m_chunks; 
         ChunkType m_chunkType;
         DataChunk m_dataChunk;
+
+        void CreateDataChunk();
+
+        void UpdateDataChunk(DataFlatChunk& data);
+        void UpdateDataChunk(DataFullChunk& data);
+        void UpdateDataChunk(DataWaveChunk& data);
+        void UpdateDataChunk(DataEditorChunk& data);
+        void UpdateDataChunk(DataHeightmapChunk& data);
+        void UpdateDataChunk(DataCheeseChunk& data);
     
     public:
         Terrain(const unsigned int width, const unsigned int depth, const unsigned int height, const ChunkType chunkType);
@@ -32,7 +41,7 @@ class Terrain
         
         unsigned int GetChunkIndexInGrid(const glm::ivec3& chunkPosition) const;
 
-        void InitializeDataChunk();
+        void UpdateDataChunk();
         void Create();
         void Load();
         void Draw(const glm::mat4& projection, const glm::mat4& view) const;
