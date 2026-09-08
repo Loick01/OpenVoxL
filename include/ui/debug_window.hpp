@@ -5,6 +5,12 @@
 #include <imgui_impl_opengl3.h>
 #include <implot.h>
 
+class DataFlatChunk;
+class DataFullChunk;
+class DataWaveChunk;
+class DataEditorChunk;
+class DataHeightmapChunk;
+class DataCheeseChunk;
 class Camera;
 class Terrain;
 
@@ -22,6 +28,13 @@ class DebugWindow
         bool m_wireframeRendering;
 
         void InitImGui();
+        
+        void OpenSettings(DataFlatChunk& data);
+        void OpenSettings(DataFullChunk& data);
+        void OpenSettings(DataWaveChunk& data);
+        void OpenSettings(DataEditorChunk& data);
+        void OpenSettings(DataHeightmapChunk& data);
+        void OpenSettings(DataCheeseChunk& data);
 
     public:
         DebugWindow(GLFWwindow* glfwWindow, Camera& camera, Terrain& terrain);

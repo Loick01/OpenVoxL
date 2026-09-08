@@ -44,7 +44,7 @@ struct DataHeightmapChunk
 
 struct DataCheeseChunk
 {
-    const FastNoise& noise; 
+    const FastNoise* noise; 
     float frequency;
 };
 

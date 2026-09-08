@@ -87,7 +87,7 @@ void Chunk::BuildFaces()
         const glm::ivec3 blockPosition = v.GetOrigin() - m_originPosition;
         const int blockIndexInGrid = GetBlockIndexInGrid(blockPosition); // Do not use unsigned int
 
-        if (blockPosition.y == 0) {
+        if (blockPosition.y == 0) { // Bottom
             if (m_terrainPosition.y == 0)
                 BuildFace(v.GetFaceId(0), v.GetFacePtr(0));
             else if (GetChunkNeighbor(ChunkNeighbor::Bottom)->IsEmptyAt(blockIndexInGrid+CHUNK_SIZE*CHUNK_SIZE*(CHUNK_SIZE-1)))
@@ -95,7 +95,7 @@ void Chunk::BuildFaces()
         } else if (m_gridVoxel[blockIndexInGrid-CHUNK_SIZE*CHUNK_SIZE] == nullptr)
             BuildFace(v.GetFaceId(0), v.GetFacePtr(0));
 
-        if (blockPosition.y == CHUNK_SIZE-1) {
+        if (blockPosition.y == CHUNK_SIZE-1) { // Top
             if (m_terrainPosition.y == m_terrainSize.y-1)
                 BuildFace(v.GetFaceId(1), v.GetFacePtr(1));
             else if (GetChunkNeighbor(ChunkNeighbor::Top)->IsEmptyAt(blockIndexInGrid-CHUNK_SIZE*CHUNK_SIZE*(CHUNK_SIZE-1)))
@@ -103,7 +103,7 @@ void Chunk::BuildFaces()
         } else if (m_gridVoxel[blockIndexInGrid+CHUNK_SIZE*CHUNK_SIZE] == nullptr)
             BuildFace(v.GetFaceId(1), v.GetFacePtr(1));
 
-        if (blockPosition.z == 0) {
+        if (blockPosition.z == 0) { // Back
             if (m_terrainPosition.z == 0)
                 BuildFace(v.GetFaceId(2), v.GetFacePtr(2));
             else if (GetChunkNeighbor(ChunkNeighbor::Back)->IsEmptyAt(blockIndexInGrid+CHUNK_SIZE*(CHUNK_SIZE-1)))
@@ -111,7 +111,7 @@ void Chunk::BuildFaces()
         } else if (m_gridVoxel[blockIndexInGrid-CHUNK_SIZE] == nullptr)
             BuildFace(v.GetFaceId(2), v.GetFacePtr(2));
 
-        if (blockPosition.z == CHUNK_SIZE-1) {
+        if (blockPosition.z == CHUNK_SIZE-1) { // Front
             if (m_terrainPosition.z == m_terrainSize.z-1)
                 BuildFace(v.GetFaceId(3), v.GetFacePtr(3));
             else if (GetChunkNeighbor(ChunkNeighbor::Front)->IsEmptyAt(blockIndexInGrid-CHUNK_SIZE*(CHUNK_SIZE-1)))
@@ -119,7 +119,7 @@ void Chunk::BuildFaces()
         } else if (m_gridVoxel[blockIndexInGrid+CHUNK_SIZE] == nullptr)
             BuildFace(v.GetFaceId(3), v.GetFacePtr(3));
 
-        if (blockPosition.x == 0) {
+        if (blockPosition.x == 0) { // Left
             if (m_terrainPosition.x == 0)
                 BuildFace(v.GetFaceId(4), v.GetFacePtr(4));
             else if (GetChunkNeighbor(ChunkNeighbor::Left)->IsEmptyAt(blockIndexInGrid+CHUNK_SIZE-1))
@@ -127,7 +127,7 @@ void Chunk::BuildFaces()
         } else if (m_gridVoxel[blockIndexInGrid-1] == nullptr)
             BuildFace(v.GetFaceId(4), v.GetFacePtr(4));
 
-        if (blockPosition.x == CHUNK_SIZE-1) {
+        if (blockPosition.x == CHUNK_SIZE-1) { // Right
             if (m_terrainPosition.x == m_terrainSize.x-1)
                 BuildFace(v.GetFaceId(5), v.GetFacePtr(5));
             else if (GetChunkNeighbor(ChunkNeighbor::Right)->IsEmptyAt(blockIndexInGrid-CHUNK_SIZE+1))
@@ -207,7 +207,7 @@ void Chunk::Build(const DataCheeseChunk& data)
     for (unsigned int k = 0 ; k < CHUNK_SIZE ; k++) { // Y
         for (unsigned int j = 0 ; j < CHUNK_SIZE ; j++) { // Z
             for (unsigned int i = 0 ; i < CHUNK_SIZE ; i++) { // X
-                const float density = data.noise.GetNoise(data.frequency*(m_originPosition.x + i), data.frequency*(m_originPosition.y + k), data.frequency*(m_originPosition.z + j));
+                const float density = data.noise->GetNoise(data.frequency*(m_originPosition.x + i), data.frequency*(m_originPosition.y + k), data.frequency*(m_originPosition.z + j));
                 if (density > 0.f)
                     AddVoxel(glm::vec3(i, k, j), m_blockId);
             }

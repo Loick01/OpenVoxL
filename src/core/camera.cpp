@@ -8,7 +8,7 @@ Camera::Camera(GLFWwindow* glfwWindow, const float aspectRatio):
     m_state(CameraState::MouseFree), m_upVector(glm::vec3(0.f, 1.f, 0.f)),
     m_position(glm::vec3(0.f)), m_fov(75.f), m_nearPlane(0.1f), m_farPlane(500.f),
     m_aspectRatio(aspectRatio), m_yaw(-90.f), m_pitch(0.f),
-    m_sensitivity(0.05f), m_speed(20.f), m_glfwWindow(glfwWindow)
+    m_sensitivity(0.05f), m_speed(50.f), m_glfwWindow(glfwWindow)
 {
     UpdateCameraVectors();
 }

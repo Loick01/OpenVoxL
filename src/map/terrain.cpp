@@ -6,6 +6,7 @@ Terrain::Terrain(const unsigned int width, const unsigned int depth, const unsig
     m_nrChunkWidth(width), m_nrChunkDepth(depth), m_nrChunkHeight(height), m_chunkType(chunkType),
     m_generator(SEED, OCTAVE)
 {
+    InitializeDataChunk();
     Create();
     Load();
 }
@@ -18,6 +19,11 @@ glm::ivec3 Terrain::GetSize() const
 ChunkType Terrain::GetChunkType() const
 {
     return m_chunkType;
+}
+
+const DataChunk& Terrain::GetDataChunk() const
+{
+    return m_dataChunk;
 }
 
 unsigned int Terrain::GetChunkIndexInGrid(const glm::ivec3& chunkPosition) const
@@ -35,6 +41,49 @@ void Terrain::SetSize(const glm::ivec3 size)
 void Terrain::SetChunkType(const ChunkType type)
 {
     m_chunkType = type;
+}
+
+void Terrain::SetDataChunk(const DataChunk data)
+{
+    m_dataChunk = data;
+}
+
+void Terrain::InitializeDataChunk()
+{
+    switch (m_chunkType) {
+        case ChunkType::Full : {
+            m_dataChunk = DataFullChunk{};
+            break; 
+        }
+        case ChunkType::Flat : {
+            m_dataChunk = DataFlatChunk{};
+            break; 
+        }
+        case ChunkType::Wave : {
+            m_dataChunk = DataWaveChunk{4.5f, m_nrChunkHeight*CHUNK_SIZE};
+            break;
+        } 
+        case ChunkType::Editor : {
+            m_dataChunk = DataEditorChunk{};
+            break; 
+        }
+        case ChunkType::Heightmap : {
+            m_generator.GenerateHeightMap(m_nrChunkWidth*CHUNK_SIZE, m_nrChunkDepth*CHUNK_SIZE, m_nrChunkHeight*CHUNK_SIZE);
+            int heightmapWidth, heightmapDepth, channel;
+            const unsigned char* heightmap = stbi_load("../data/heightmap/terrain.png", &heightmapWidth, &heightmapDepth, &channel, 1);
+            if (heightmapWidth != m_nrChunkWidth*CHUNK_SIZE || heightmapDepth != m_nrChunkDepth*CHUNK_SIZE)
+                throw std::runtime_error("The dimensions of the heightmap do not match with the size of the terrain");
+
+            m_dataChunk = DataHeightmapChunk{heightmap, heightmapWidth, heightmapDepth};
+            break; 
+        }
+        case ChunkType::Cheese : {
+            m_dataChunk = DataCheeseChunk{&m_generator.GetNoise(), 4.f};
+            break;
+        }
+        default:
+            throw std::runtime_error("Terrain::Create : This ChunkType value should not be used here");
+    }
 }
 
 void Terrain::Create()
@@ -68,51 +117,14 @@ void Terrain::Create()
         if (chunkPosition.x < m_nrChunkWidth-1)
             c.SetChunkNeighbor(ChunkNeighbor::Right, &m_chunks[chunkIndexInGrid+1]);
     }
-    
-    DataChunk data;
-    switch (m_chunkType) {
-        case ChunkType::Full : {
-            data = DataFullChunk{};
-            break; 
-        }
-        case ChunkType::Flat : {
-            data = DataFlatChunk{};
-            break; 
-        }
-        case ChunkType::Wave : {
-            data = DataWaveChunk{4.5f, m_nrChunkHeight*CHUNK_SIZE};
-            break;
-        } 
-        case ChunkType::Editor : {
-            data = DataEditorChunk{};
-            break; 
-        }
-        case ChunkType::Heightmap : {
-            m_generator.GenerateHeightMap(m_nrChunkWidth*CHUNK_SIZE, m_nrChunkDepth*CHUNK_SIZE, m_nrChunkHeight*CHUNK_SIZE);
-            int heightmapWidth, heightmapDepth, channel;
-            const unsigned char* heightmap = stbi_load("../data/heightmap/terrain.png", &heightmapWidth, &heightmapDepth, &channel, 1);
-            if (heightmapWidth != m_nrChunkWidth*CHUNK_SIZE || heightmapDepth != m_nrChunkDepth*CHUNK_SIZE)
-                throw std::runtime_error("The dimensions of the heightmap do not match with the size of the terrain");
-
-            data = DataHeightmapChunk{heightmap, heightmapWidth, heightmapDepth};
-            break; 
-        }
-        case ChunkType::Cheese : {
-            data = DataFlatChunk();
-            // data = DataCheeseChunk{m_generator.GetNoise(), 4.f}; // TODO
-            break;
-        }
-        default:
-            throw std::runtime_error("Terrain::Create : This ChunkType value should not be used here");
-    }
 
     for (Chunk& c : m_chunks) {
         std::visit( 
-            [&c](const auto& data)
+            [&c](const auto& m_dataChunk)
             {
-                c.Build(data);
+                c.Build(m_dataChunk);
             },
-            data
+            m_dataChunk
         );
     }
 }

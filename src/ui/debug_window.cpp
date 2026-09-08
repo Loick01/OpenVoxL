@@ -35,6 +35,37 @@ void DebugWindow::InitImGui()
     ImPlot::CreateContext();
 }
 
+void DebugWindow::OpenSettings(DataFlatChunk& data)
+{
+
+}
+
+void DebugWindow::OpenSettings(DataFullChunk& data)
+{
+
+}
+
+void DebugWindow::OpenSettings(DataWaveChunk& data)
+{
+    if (ImGui::SliderFloat("Frequency", &data.frequency, 0.5f, 10.f))
+        m_terrain.SetDataChunk(data);
+}
+
+void DebugWindow::OpenSettings(DataEditorChunk& data)
+{
+
+}
+
+void DebugWindow::OpenSettings(DataHeightmapChunk& data)
+{
+
+}
+
+void DebugWindow::OpenSettings(DataCheeseChunk& data)
+{
+
+}
+
 void DebugWindow::Draw()
 {
     ImGui_ImplOpenGL3_NewFrame();
@@ -97,10 +128,20 @@ void DebugWindow::Draw()
                     if (ImGui::Selectable(chunkTypes[i])) {
                         m_indexChunkType = i;
                         m_terrain.SetChunkType(static_cast<ChunkType>(m_indexChunkType));
+                        m_terrain.InitializeDataChunk();
                     }
                 }
                 ImGui::EndCombo();
             }
+
+            DataChunk dataChunk = m_terrain.GetDataChunk();
+            std::visit( 
+                [this](auto& dataChunk)
+                {
+                    OpenSettings(dataChunk);
+                },
+                dataChunk
+            );
             
             if (ImGui::Button("Load Terrain")) {
                 m_terrain.Create();

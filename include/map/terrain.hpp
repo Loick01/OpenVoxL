@@ -18,16 +18,21 @@ class Terrain
         MapGenerator m_generator;    
         std::vector<Chunk> m_chunks; 
         ChunkType m_chunkType;
+        DataChunk m_dataChunk;
     
     public:
         Terrain(const unsigned int width, const unsigned int depth, const unsigned int height, const ChunkType chunkType);
 
         glm::ivec3 GetSize() const;
         ChunkType GetChunkType() const;
-        unsigned int GetChunkIndexInGrid(const glm::ivec3& chunkPosition) const;
+        const DataChunk& GetDataChunk() const;
         void SetSize(const glm::ivec3 size);
         void SetChunkType(const ChunkType type);
+        void SetDataChunk(const DataChunk data);
+        
+        unsigned int GetChunkIndexInGrid(const glm::ivec3& chunkPosition) const;
 
+        void InitializeDataChunk();
         void Create();
         void Load();
         void Draw(const glm::mat4& projection, const glm::mat4& view) const;
