@@ -7,6 +7,7 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
+#include "core/FastNoise.h" // FastNoise::NoiseType
 #include "map/voxel.hpp"
 #include "graphic/shader.hpp"
 
@@ -41,6 +42,10 @@ struct DataHeightmapChunk
     int heightmapWidth;
     int heightmapDepth;
     int channel;
+
+    int octaves;
+    int seed;
+    FastNoise::NoiseType noiseType;
 };
 
 struct DataCheeseChunk

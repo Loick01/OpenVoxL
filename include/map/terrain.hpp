@@ -5,8 +5,9 @@
 #include "map/chunk.hpp"
 #include "map/map_generator.hpp"
 
+// Default values
+#define OCTAVES 0
 #define SEED 0
-#define OCTAVE 4
 
 class Terrain
 {

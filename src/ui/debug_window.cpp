@@ -10,11 +10,13 @@ namespace
 {
     const char* cameraStates[] = {"KeyFree", "MouseFree", "Orbital", "Player"};
     const char* chunkTypes[] = {"Full", "Flat", "Wave", "Editor", "Heightmap", "Cheese"};
+    const char* noiseTypes[] = {"Value", "ValueFractal", "Perlin", "PerlinFractal", "Simplex", "SimplexFractal", "Cellular", "WhiteNoise", "Cubic", "CubicFractal"};
 }
 
 DebugWindow::DebugWindow(GLFWwindow* glfwWindow, Camera& camera, Terrain& terrain):
     m_glfwWindow(glfwWindow), m_width(500), m_height(500), m_camera(camera), m_terrain(terrain),
-    m_indexCameraState((unsigned int)m_camera.GetState()), m_indexChunkType((unsigned int)m_terrain.GetChunkType()), m_wireframeRendering(false)
+    m_indexCameraState((unsigned int)m_camera.GetState()), m_indexChunkType((unsigned int)m_terrain.GetChunkType()),
+    m_indexNoiseType(5), m_wireframeRendering(false)
 {
     InitImGui();
 }
@@ -59,7 +61,23 @@ bool DebugWindow::OpenSettings(DataEditorChunk& data)
 
 bool DebugWindow::OpenSettings(DataHeightmapChunk& data)
 {
-    return false;
+    if (ImGui::SliderInt("Octaves", &data.octaves, 0, 8))
+        return true;
+    if (ImGui::SliderInt("Seed", &data.seed, 0, 8))
+        return true;
+    
+    bool hasChanged = false;
+    if (ImGui::BeginCombo("Noise Type", noiseTypes[m_indexNoiseType])){ 
+        for (unsigned int i = 0; i < IM_ARRAYSIZE(noiseTypes); i++){
+            if (ImGui::Selectable(noiseTypes[i])) {
+                m_indexNoiseType = i;
+                data.noiseType = static_cast<FastNoise::NoiseType>(m_indexNoiseType);
+                hasChanged = true;
+            }
+        }
+        ImGui::EndCombo();
+    }
+    return hasChanged;
 }
 
 bool DebugWindow::OpenSettings(DataCheeseChunk& data)

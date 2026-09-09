@@ -1,6 +1,5 @@
 #include "map/chunk.hpp"
 
-#include "core/FastNoise.h" // Used in BuildCheeseChunk. Remove ?
 #include "graphic/texture.hpp"
 
 Chunk::Chunk(const std::string& vertexPath, const std::string& fragmentPath, const glm::ivec3 terrainPosition,
