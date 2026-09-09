@@ -61,32 +61,35 @@ bool DebugWindow::OpenSettings(DataEditorChunk& data)
 
 bool DebugWindow::OpenSettings(DataHeightmapChunk& data)
 {
+    bool needUpdate = false;
+    if (ImGui::SliderFloat("Frequency", &data.frequency, 0.5f, 10.f))
+        needUpdate = true;
     if (ImGui::SliderInt("Octaves", &data.octaves, 0, 8))
-        return true;
+        needUpdate = true;
     if (ImGui::SliderInt("Seed", &data.seed, 0, 8))
-        return true;
+        needUpdate = true;
     
-    bool hasChanged = false;
     if (ImGui::BeginCombo("Noise Type", noiseTypes[m_indexNoiseType])){ 
         for (unsigned int i = 0; i < IM_ARRAYSIZE(noiseTypes); i++){
             if (ImGui::Selectable(noiseTypes[i])) {
                 m_indexNoiseType = i;
                 data.noiseType = static_cast<FastNoise::NoiseType>(m_indexNoiseType);
-                hasChanged = true;
+                needUpdate = true;
             }
         }
         ImGui::EndCombo();
     }
-    return hasChanged;
+    return needUpdate;
 }
 
 bool DebugWindow::OpenSettings(DataCheeseChunk& data)
 {
+    bool needUpdate = false;
     if (ImGui::SliderFloat("Frequency", &data.frequency, 0.5f, 10.f))
-        return true;
+        needUpdate = true;
     if (ImGui::SliderFloat("Threshold", &data.threshold, -1.f, 1.f))
-        return true;
-    return false;
+        needUpdate = true;
+    return needUpdate;
 }
 
 void DebugWindow::Draw()
@@ -139,12 +142,16 @@ void DebugWindow::Draw()
 
         if (ImGui::BeginTabItem("Terrain")){
             glm::ivec3 terrainSize = m_terrain.GetSize();
+            int surfaceChunkHeight = m_terrain.GetSurfaceChunkHeight();
+
             if (ImGui::SliderInt("Terrain Chunk Width", &terrainSize.x, 1, 10))
                 m_terrain.SetSize(terrainSize);
             if (ImGui::SliderInt("Terrain Chunk Height", &terrainSize.y, 1, 10))
                 m_terrain.SetSize(terrainSize);
             if (ImGui::SliderInt("Terrain Chunk Depth", &terrainSize.z, 1, 10))
                 m_terrain.SetSize(terrainSize);
+            if (ImGui::SliderInt("Surface Chunk Height", &surfaceChunkHeight, 0, terrainSize.y))
+                m_terrain.SetSurfaceChunkHeight(surfaceChunkHeight);
 
             if (ImGui::BeginCombo("Chunk Type", chunkTypes[m_indexChunkType])){ 
                 for (unsigned int i = 0; i < IM_ARRAYSIZE(chunkTypes); i++){

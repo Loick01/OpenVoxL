@@ -6,17 +6,19 @@ class MapGenerator
 {
     private:
         FastNoise m_noise;
-
+        float m_frequency;
         unsigned int m_maxBlockHeight;
         
     public:
-        MapGenerator(const int octaves, const int seed, FastNoise::NoiseType type);
+        MapGenerator(const float frequency, const int octaves, const int seed, FastNoise::NoiseType type);
 
         const FastNoise& GetNoise() const;
+        float GetFrequency() const;
         int GetOctaves() const;
         int GetSeed() const;
         FastNoise::NoiseType GetNoiseType() const;
 
+        void SetFrequency(const float frequency);
         void SetOctaves(const int octaves);
         void SetSeed(const int seed);
         void SetNoiseType(const FastNoise::NoiseType type);

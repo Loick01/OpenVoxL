@@ -3,8 +3,8 @@
 #include "graphic/stb_image.h" // stbi_load
 
 Terrain::Terrain(const unsigned int width, const unsigned int depth, const unsigned int height, const ChunkType chunkType):
-    m_nrChunkWidth(width), m_nrChunkDepth(depth), m_nrChunkHeight(height), m_chunkType(chunkType),
-    m_generator(OCTAVES, SEED, FastNoise::SimplexFractal)
+    m_nrChunkWidth(width), m_nrChunkDepth(depth), m_nrChunkHeight(height), m_chunkType(chunkType), m_surfaceChunkHeight(height),
+    m_generator(FREQUENCY, OCTAVES, SEED, FastNoise::SimplexFractal)
 {
     CreateDataChunk();
     Create();
@@ -24,6 +24,11 @@ ChunkType Terrain::GetChunkType() const
 const DataChunk& Terrain::GetDataChunk() const
 {
     return m_dataChunk;
+}
+
+unsigned int Terrain::GetSurfaceChunkHeight() const
+{
+    return m_surfaceChunkHeight;
 }
 
 unsigned int Terrain::GetChunkIndexInGrid(const glm::ivec3& chunkPosition) const
@@ -47,6 +52,11 @@ void Terrain::SetChunkType(const ChunkType type)
 void Terrain::SetDataChunk(const DataChunk data)
 {
     m_dataChunk = data;
+}
+
+void Terrain::SetSurfaceChunkHeight(const unsigned int surfaceChunkHeight)
+{
+    m_surfaceChunkHeight = surfaceChunkHeight;
 }
 
 void Terrain::CreateDataChunk()
@@ -76,7 +86,7 @@ void Terrain::CreateDataChunk()
                 throw std::runtime_error("The dimensions of the heightmap do not match with the size of the terrain");
 
             m_dataChunk = DataHeightmapChunk{heightmap, heightmapWidth, heightmapDepth, channel,
-                m_generator.GetOctaves(), m_generator.GetSeed(), m_generator.GetNoiseType()};
+                m_generator.GetFrequency(), m_generator.GetOctaves(), m_generator.GetSeed(), m_generator.GetNoiseType()};
             break; 
         }
         case ChunkType::Cheese : {
@@ -104,6 +114,7 @@ void Terrain::UpdateDataChunk(DataEditorChunk& data)
 
 void Terrain::UpdateDataChunk(DataHeightmapChunk& data)
 {
+    m_generator.SetFrequency(data.frequency);
     m_generator.SetOctaves(data.octaves);
     m_generator.SetSeed(data.seed);
     m_generator.SetNoiseType(data.noiseType);

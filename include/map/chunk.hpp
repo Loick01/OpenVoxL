@@ -43,6 +43,7 @@ struct DataHeightmapChunk
     int heightmapDepth;
     int channel;
 
+    float frequency;
     int octaves;
     int seed;
     FastNoise::NoiseType noiseType;

@@ -4,7 +4,8 @@
 
 #include "graphic/stb_image_write.h"
 
-MapGenerator::MapGenerator(const int octaves, const int seed, FastNoise::NoiseType type)
+MapGenerator::MapGenerator(const float frequency, const int octaves, const int seed, FastNoise::NoiseType type):
+    m_frequency(frequency)
 {
     SetOctaves(octaves);
     SetSeed(seed);
@@ -14,6 +15,11 @@ MapGenerator::MapGenerator(const int octaves, const int seed, FastNoise::NoiseTy
 const FastNoise& MapGenerator::GetNoise() const
 {
     return m_noise;
+}
+
+float MapGenerator::GetFrequency() const
+{
+    return m_frequency;
 }
 
 int MapGenerator::GetOctaves() const
@@ -29,6 +35,11 @@ int MapGenerator::GetSeed() const
 FastNoise::NoiseType MapGenerator::GetNoiseType() const
 {
     return m_noise.GetNoiseType();
+}
+
+void MapGenerator::SetFrequency(const float frequency)
+{
+    m_frequency = frequency;
 }
 
 void MapGenerator::SetOctaves(const int octaves)
@@ -53,7 +64,7 @@ void MapGenerator::GenerateHeightMap(const unsigned int nrBlockWidth, const unsi
 
     for(unsigned int j = 0 ; j < nrBlockDepth ; j++) { // Z
         for(unsigned int i = 0 ; i < nrBlockWidth ; i++) { // X
-            const unsigned int height = ((m_noise.GetNoise(i,j)+1)/2)*(maxBlockHeight-1);
+            const unsigned int height = ((m_noise.GetNoise(i*m_frequency,j*m_frequency)+1)/2)*(maxBlockHeight-1);
             data[j*nrBlockWidth+i] = height;
         }
     }

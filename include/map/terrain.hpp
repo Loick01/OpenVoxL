@@ -6,6 +6,7 @@
 #include "map/map_generator.hpp"
 
 // Default values
+#define FREQUENCY 1.f
 #define OCTAVES 0
 #define SEED 0
 
@@ -20,6 +21,7 @@ class Terrain
         std::vector<Chunk> m_chunks; 
         ChunkType m_chunkType;
         DataChunk m_dataChunk;
+        unsigned int m_surfaceChunkHeight;
 
         void CreateDataChunk();
 
@@ -36,9 +38,11 @@ class Terrain
         glm::ivec3 GetSize() const;
         ChunkType GetChunkType() const;
         const DataChunk& GetDataChunk() const;
+        unsigned int GetSurfaceChunkHeight() const;
         void SetSize(const glm::ivec3 size);
         void SetChunkType(const ChunkType type);
         void SetDataChunk(const DataChunk data);
+        void SetSurfaceChunkHeight(const unsigned int surfaceChunkHeight);
         
         unsigned int GetChunkIndexInGrid(const glm::ivec3& chunkPosition) const;
 
