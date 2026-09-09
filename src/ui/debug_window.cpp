@@ -79,6 +79,13 @@ bool DebugWindow::OpenSettings(DataHeightmapChunk& data)
         }
         ImGui::EndCombo();
     }
+
+    if (ImGui::Checkbox("Use spline", &data.useSpline))
+        needUpdate = true;
+
+    if (data.useSpline)
+        needUpdate |= OpenSplinePlot(data.plotX, data.plotY);
+    
     return needUpdate;
 }
 
@@ -89,6 +96,48 @@ bool DebugWindow::OpenSettings(DataCheeseChunk& data)
         needUpdate = true;
     if (ImGui::SliderFloat("Threshold", &data.threshold, -1.f, 1.f))
         needUpdate = true;
+    return needUpdate;
+}
+
+bool DebugWindow::OpenSplinePlot(std::vector<float>& plotX, std::vector<float>& plotY)
+{
+    bool needUpdate = false;
+
+    if (ImPlot::BeginPlot("Surface height spline")) {
+        ImPlot::SetupAxis(ImAxis_X1, "Noise value", ImPlotAxisFlags_LockMin | ImPlotAxisFlags_LockMax);
+        ImPlot::SetupAxis(ImAxis_Y1, "Height", ImPlotAxisFlags_LockMin | ImPlotAxisFlags_LockMax);
+        ImPlot::SetupAxisLimits(ImAxis_X1, 0., 1.);
+
+        if (!plotX.empty() && !plotY.empty()) { // Should test plotX.size() != plotY.size() ?
+            ImPlot::PlotScatter("Points", plotX.data(), plotY.data(), plotX.size());
+            ImPlot::PlotLine("Points", plotX.data(), plotY.data(), plotX.size());
+        }
+        if (ImPlot::IsPlotHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
+            ImPlotPoint mouse_pos = ImPlot::GetPlotMousePos();
+            float x = mouse_pos.x;
+            float y = mouse_pos.y;
+            if (plotX.size() != 0){
+                for (unsigned int i = 0 ; i < plotX.size() ; i++){
+                    if (plotX[i] > x){
+                        plotX.insert(plotX.begin()+i, x);
+                        plotY.insert(plotY.begin()+i, y);
+                        break;
+                    }else if (i == plotX.size()-1){
+                        plotX.push_back(x);
+                        plotY.push_back(y);
+                        break;
+                    }
+                }
+            }else{
+                plotX.push_back(x);
+                plotY.push_back(y);
+            }
+            needUpdate = true;
+        }
+
+        ImPlot::EndPlot();
+    }
+    
     return needUpdate;
 }
 

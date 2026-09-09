@@ -5,6 +5,8 @@
 #include <imgui_impl_opengl3.h>
 #include <implot.h>
 
+#include <vector>
+
 class DataFlatChunk;
 class DataFullChunk;
 class DataWaveChunk;
@@ -36,6 +38,8 @@ class DebugWindow
         bool OpenSettings(DataEditorChunk& data);
         bool OpenSettings(DataHeightmapChunk& data);
         bool OpenSettings(DataCheeseChunk& data);
+
+        bool OpenSplinePlot(std::vector<float>& plotX, std::vector<float>& plotY);
 
     public:
         DebugWindow(GLFWwindow* glfwWindow, Camera& camera, Terrain& terrain);

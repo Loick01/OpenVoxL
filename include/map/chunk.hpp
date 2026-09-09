@@ -47,6 +47,11 @@ struct DataHeightmapChunk
     int octaves;
     int seed;
     FastNoise::NoiseType noiseType;
+
+    // TODO : Rename
+    std::vector<float> plotX;
+    std::vector<float> plotY;
+    bool useSpline;
 };
 
 struct DataCheeseChunk
