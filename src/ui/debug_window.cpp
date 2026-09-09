@@ -107,6 +107,7 @@ bool DebugWindow::OpenSplinePlot(std::vector<float>& plotX, std::vector<float>& 
         ImPlot::SetupAxis(ImAxis_X1, "Noise value", ImPlotAxisFlags_LockMin | ImPlotAxisFlags_LockMax);
         ImPlot::SetupAxis(ImAxis_Y1, "Height", ImPlotAxisFlags_LockMin | ImPlotAxisFlags_LockMax);
         ImPlot::SetupAxisLimits(ImAxis_X1, 0., 1.);
+        ImPlot::SetupAxisLimits(ImAxis_Y1, 0., 1.);
 
         if (!plotX.empty() && !plotY.empty()) { // Should test plotX.size() != plotY.size() ?
             ImPlot::PlotScatter("Points", plotX.data(), plotY.data(), plotX.size());
@@ -132,6 +133,21 @@ bool DebugWindow::OpenSplinePlot(std::vector<float>& plotX, std::vector<float>& 
                 plotX.push_back(x);
                 plotY.push_back(y);
             }
+            needUpdate = true;
+        }
+
+        ImGui::SetNextItemWidth(150.0f);
+        if (ImGui::SliderFloat("First", &plotY.front(), 0.f, 1.f))
+            needUpdate = true;
+        ImGui::SameLine();
+        ImGui::SetNextItemWidth(150.0f);
+        if (ImGui::SliderFloat("Last", &plotY.back(), 0.f, 1.f))
+            needUpdate = true;
+        ImGui::SameLine();
+        if (ImGui::Button("Clean")) {
+            // data.spline.Reset(); // TODO : Add Spline struct
+            plotX = {0.f, 1.f}; // Remove
+            plotY = {0.f, 1.f}; // Remove
             needUpdate = true;
         }
 

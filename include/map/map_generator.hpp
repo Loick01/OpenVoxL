@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include "core/FastNoise.h"
 
 class MapGenerator
@@ -24,4 +26,6 @@ class MapGenerator
         void SetNoiseType(const FastNoise::NoiseType type);
 
         void GenerateHeightMap(const unsigned int nrBlockWidth, const unsigned int nrBlockDepth, const unsigned int maxBlockHeight) const;
+        void GenerateHeightMapWithSpline(const unsigned int nrBlockWidth, const unsigned int nrBlockDepth, const unsigned int maxBlockHeight, 
+            const std::vector<float>& plotX, const std::vector<float>& plotY) const; // TODO : Rename plotX and plotY
 };

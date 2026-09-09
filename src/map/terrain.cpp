@@ -87,7 +87,7 @@ void Terrain::CreateDataChunk()
 
             m_dataChunk = DataHeightmapChunk{heightmap, heightmapWidth, heightmapDepth, channel,
                 m_generator.GetFrequency(), m_generator.GetOctaves(), m_generator.GetSeed(), m_generator.GetNoiseType(), 
-                {}, {}, false};
+                {0.f, 1.f}, {0.f, 1.f}, false};
             break; 
         }
         case ChunkType::Cheese : {
@@ -119,7 +119,10 @@ void Terrain::UpdateDataChunk(DataHeightmapChunk& data)
     m_generator.SetOctaves(data.octaves);
     m_generator.SetSeed(data.seed);
     m_generator.SetNoiseType(data.noiseType);
-    m_generator.GenerateHeightMap(m_nrChunkWidth*CHUNK_SIZE, m_nrChunkDepth*CHUNK_SIZE, m_nrChunkHeight*CHUNK_SIZE);
+    if (data.useSpline)
+        m_generator.GenerateHeightMapWithSpline(m_nrChunkWidth*CHUNK_SIZE, m_nrChunkDepth*CHUNK_SIZE, m_nrChunkHeight*CHUNK_SIZE, data.plotX, data.plotY);
+    else
+        m_generator.GenerateHeightMap(m_nrChunkWidth*CHUNK_SIZE, m_nrChunkDepth*CHUNK_SIZE, m_nrChunkHeight*CHUNK_SIZE);
     data.heightmap = stbi_load("../data/heightmap/terrain.png", &data.heightmapWidth, &data.heightmapDepth, &data.channel, 1);
     if (data.heightmapWidth != m_nrChunkWidth*CHUNK_SIZE || data.heightmapDepth != m_nrChunkDepth*CHUNK_SIZE)
         throw std::runtime_error("The dimensions of the heightmap do not match with the size of the terrain");
