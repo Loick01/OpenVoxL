@@ -8,9 +8,9 @@ Camera::Camera(GLFWwindow* glfwWindow, const float aspectRatio):
     m_state(CameraState::MouseFree), m_upVector(glm::vec3(0.f, 1.f, 0.f)),
     m_position(glm::vec3(0.f)), m_fov(75.f), m_nearPlane(0.1f), m_farPlane(500.f),
     m_aspectRatio(aspectRatio), m_yaw(-90.f), m_pitch(0.f),
-    m_sensitivity(0.05f), m_speed(50.f), m_glfwWindow(glfwWindow)
+    m_sensitivity(0.05f), m_speed(50.f), m_glfwWindow(glfwWindow), m_targetTerrain(glm::vec3(0.f))
 {
-    UpdateCameraVectors();
+    UpdateVectors();
 }
 
 glm::mat4 Camera::GetViewMatrix() const
@@ -23,7 +23,7 @@ glm::mat4 Camera::GetProjectionMatrix() const
     return glm::perspective(glm::radians(m_fov), m_aspectRatio, m_nearPlane, m_farPlane);
 }
 
-void Camera::UpdateCameraVectors()
+void Camera::UpdateVectors()
 {
     const float x = cos(glm::radians(m_yaw)) * cos(glm::radians(m_pitch));
     const float y = sin(glm::radians(m_pitch));
@@ -32,19 +32,24 @@ void Camera::UpdateCameraVectors()
     m_rightVector = glm::normalize(glm::cross(m_frontVector, m_upVector));
 }
 
-void Camera::SwitchCameraState()
+void Camera::UpdateVectorsToTarget(const glm::vec3 target)
+{
+    m_frontVector = glm::normalize(target-m_position);
+    m_rightVector = glm::normalize(glm::cross(m_frontVector, m_upVector));
+}
+
+void Camera::CheckInputMode()
 {
     switch (m_state) {
         case CameraState::KeyFree :
-            SetState(CameraState::MouseFree);
-            glfwSetInputMode(m_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-            break;
-        case CameraState::MouseFree : 
-            SetState(CameraState::KeyFree);
+        case CameraState::Orbital :
             glfwSetInputMode(m_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
             break;
+        case CameraState::MouseFree :
+            glfwSetInputMode(m_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            break;
         default:
-            throw std::runtime_error("Camera::SwitchCameraState : This CameraState value should not be used here");
+            throw std::runtime_error("Camera::CheckInputMode : This CameraState value should not be used here");
     }
 }
 
@@ -73,15 +78,25 @@ void Camera::ResetPosition()
     m_position = glm::vec3(0.f);
 }
 
+void Camera::SetTargetTerrain(const glm::vec3 target)
+{
+    m_targetTerrain = target;
+}
+
 void Camera::SetState(const CameraState state)
 {
     m_state = state;
+    CheckInputMode();
 }
 
 void Camera::KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys)
 {
-    if (keys[GLFW_KEY_E])
-        SwitchCameraState();
+    if (keys[GLFW_KEY_E]) {
+        if (m_state == CameraState::MouseFree)
+            SetState(CameraState::KeyFree);
+        else
+            SetState(CameraState::MouseFree);
+    }
 }
 
 void Camera::ProcessKeyEvent(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime)
@@ -100,6 +115,9 @@ void Camera::ProcessKeyEvent(const std::array<bool, GLFW_KEY_LAST+1>& keys, cons
         m_position += frameSpeed * m_upVector;
     if (keys[GLFW_KEY_LEFT_CONTROL])
         m_position -= frameSpeed * m_upVector;
+            
+    if (m_state == CameraState::Orbital)
+        UpdateVectorsToTarget(m_targetTerrain); 
 }
 
 void Camera::CursorPosCallback(double xpos, double ypos)
@@ -115,6 +133,6 @@ void Camera::CursorPosCallback(double xpos, double ypos)
         m_pitch += deltaY * m_sensitivity;
         m_pitch = glm::clamp(m_pitch, -89.0f, 89.0f);
 
-        UpdateCameraVectors();
+        UpdateVectors();
     }
 }

@@ -5,7 +5,7 @@
 
 enum class CameraState
 {
-    KeyFree, MouseFree, Orbital, Player
+    KeyFree, MouseFree, Orbital //, Player
 };
 
 class Camera
@@ -15,6 +15,7 @@ class Camera
         glm::vec3 m_frontVector;
         glm::vec3 m_rightVector;
         glm::vec3 m_position;
+        glm::vec3 m_targetTerrain;
         const float m_nearPlane;
         const float m_farPlane;
         const float m_aspectRatio;
@@ -31,8 +32,9 @@ class Camera
 
         GLFWwindow* m_glfwWindow;
 
-        void UpdateCameraVectors();
-        void SwitchCameraState();
+        void UpdateVectors();
+        void UpdateVectorsToTarget(const glm::vec3 target);
+        void CheckInputMode();
         
     public:
         Camera(GLFWwindow* glfwWindow, const float aspectRatio);
@@ -46,6 +48,7 @@ class Camera
 
         void SetSpeed(const float speed);
         void ResetPosition();
+        void SetTargetTerrain(const glm::vec3 target);
 
         void SetState(const CameraState state);
         void KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys);

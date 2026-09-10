@@ -8,7 +8,7 @@
 
 namespace
 {
-    const char* cameraStates[] = {"KeyFree", "MouseFree", "Orbital", "Player"};
+    const char* cameraStates[] = {"KeyFree", "MouseFree", "Orbital"}; //, "Player"};
     const char* chunkTypes[] = {"Full", "Flat", "Wave", "Editor", "Heightmap", "Cheese"};
     const char* noiseTypes[] = {"Value", "ValueFractal", "Perlin", "PerlinFractal", "Simplex", "SimplexFractal", "Cellular", "WhiteNoise", "Cubic", "CubicFractal"};
 }
@@ -183,7 +183,8 @@ void DebugWindow::Draw()
         if (ImGui::BeginTabItem("Camera")){
             const glm::vec3 cameraPosition = m_camera.GetPosition();
             float cameraSpeed = m_camera.GetSpeed();
-            
+            m_indexCameraState = (unsigned int)m_camera.GetState();
+
             ImGui::Text("Camera Position: %.1f/%.1f/%.1f", cameraPosition.x, cameraPosition.y, cameraPosition.z);
             ImGui::SameLine();
             if (ImGui::Button("Reset"))
@@ -192,12 +193,10 @@ void DebugWindow::Draw()
             if (ImGui::SliderFloat("Camera speed", &cameraSpeed, 1.f, 200.f))
                 m_camera.SetSpeed(cameraSpeed);
 
-            if (ImGui::BeginCombo("Camera State", cameraStates[m_indexCameraState])){ // TODO 
+            if (ImGui::BeginCombo("Camera State", cameraStates[m_indexCameraState])) {
                 for (unsigned int i = 0; i < IM_ARRAYSIZE(cameraStates); i++){
-                    if (ImGui::Selectable(cameraStates[i])) {
-                        m_indexCameraState = i;
-                        m_camera.SetState(static_cast<CameraState>(m_indexCameraState));
-                    }
+                    if (ImGui::Selectable(cameraStates[i]))
+                        m_camera.SetState(static_cast<CameraState>(i));
                 }
                 ImGui::EndCombo();
             }
@@ -217,7 +216,7 @@ void DebugWindow::Draw()
                 m_terrain.SetSize(terrainSize);
             if (ImGui::SliderInt("Surface Chunk Height", &surfaceChunkHeight, 0, terrainSize.y))
                 m_terrain.SetSurfaceChunkHeight(surfaceChunkHeight);
-
+            
             if (ImGui::BeginCombo("Chunk Type", chunkTypes[m_indexChunkType])){ 
                 for (unsigned int i = 0; i < IM_ARRAYSIZE(chunkTypes); i++){
                     if (ImGui::Selectable(chunkTypes[i])) {
@@ -241,6 +240,7 @@ void DebugWindow::Draw()
             if (ImGui::Button("Load Terrain")) {
                 m_terrain.Create();
                 m_terrain.Load();
+                m_camera.SetTargetTerrain(glm::vec3(m_terrain.GetSize()*CHUNK_SIZE)/2.f);
             }
             
             ImGui::EndTabItem();

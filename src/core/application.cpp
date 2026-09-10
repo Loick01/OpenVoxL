@@ -17,7 +17,8 @@ Application::Application():
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
 
-    m_soundController.PlayRandonMusic();
+    m_camera.SetTargetTerrain(glm::vec3(m_terrain.GetSize()*CHUNK_SIZE)/2.f);
+    // m_soundController.PlayRandonMusic();
 }
 
 bool Application::Run()
