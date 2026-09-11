@@ -10,6 +10,11 @@
 #define OCTAVES 0
 #define SEED 0
 
+enum class ChunkLayer
+{
+    Surface, Inner
+};
+
 class Terrain
 {
     private:
@@ -19,11 +24,10 @@ class Terrain
         
         MapGenerator m_generator;    
         std::vector<Chunk> m_chunks; 
-        ChunkType m_chunkType;
-        DataChunk m_dataChunk;
-        unsigned int m_surfaceChunkHeight;
+        std::map<ChunkLayer, std::pair<ChunkType, DataChunk>> m_dataChunks;
+        unsigned int m_surfaceChunkHeight; // Number of Chunks used for the height of the surface. Thus Inner layer will have m_nrChunkHeight-m_surfaceChunkHeight
 
-        void CreateDataChunk();
+        DataChunk CreateDataChunk(const ChunkType type);
 
         void UpdateDataChunk(DataFlatChunk& data);
         void UpdateDataChunk(DataFullChunk& data);
@@ -33,15 +37,15 @@ class Terrain
         void UpdateDataChunk(DataCheeseChunk& data);
     
     public:
-        Terrain(const unsigned int width, const unsigned int depth, const unsigned int height, const ChunkType chunkType);
+        Terrain(const unsigned int width, const unsigned int depth, const unsigned int height);
 
         glm::ivec3 GetSize() const;
-        ChunkType GetChunkType() const;
-        const DataChunk& GetDataChunk() const;
+        ChunkType GetChunkType(const ChunkLayer layer) const;
+        const DataChunk& GetDataChunk(const ChunkLayer layer) const;
         unsigned int GetSurfaceChunkHeight() const;
         void SetSize(const glm::ivec3 size);
-        void SetChunkType(const ChunkType type);
-        void SetDataChunk(const DataChunk data);
+        void SetChunkType(const ChunkLayer layer, const ChunkType type);
+        void SetDataChunk(const ChunkLayer layer, const DataChunk data);
         void SetSurfaceChunkHeight(const unsigned int surfaceChunkHeight);
         
         unsigned int GetChunkIndexInGrid(const glm::ivec3& chunkPosition) const;

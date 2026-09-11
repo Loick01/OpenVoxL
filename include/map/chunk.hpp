@@ -22,7 +22,7 @@ enum class ChunkNeighbor // Should not be only used for Chunk ?
 
 enum class ChunkType
 {
-    Full, Flat, Wave, Editor, Heightmap, Cheese
+    Full, Flat, Wave, Editor, Heightmap, Cheese //, Cave
 };
 
 struct DataFullChunk{};
@@ -85,7 +85,6 @@ class Chunk // 32x32x32
         std::vector<unsigned int> m_faceOrientations;
         std::map<std::string, Face*> m_chunkFaces;
         std::map<ChunkNeighbor, const Chunk*> m_chunkNeighbors;
-        DataChunk m_dataChunk;
         const unsigned int m_blockId; // TODO : Remove
 
         GLuint m_VAO;

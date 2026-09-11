@@ -174,7 +174,7 @@ void Chunk::Build(const DataWaveChunk& data)
                 const float s = (float)i/CHUNK_SIZE+m_terrainPosition.x-1; // (i+m_terrainPosition.x*CHUNK_SIZE)/CHUNK_SIZE = i/CHUNK_SIZE+m_terrainPosition.x
                 float v = (std::sin(data.frequency*(s+t))+1.0f)*0.5f; // [0, 1]
                 const unsigned int maxHeight = v*(data.maxBlockHeight-1);
-                const unsigned int blockHeightPosition = m_originPosition.y + k;
+                const unsigned int blockHeightPosition = m_originPosition.y + k; // m_originPosition = m_terrainPosition*CHUNK_SIZE
 
                 if (blockHeightPosition <= maxHeight)
                     AddVoxel(glm::vec3(i, k, j), m_blockId);

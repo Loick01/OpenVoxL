@@ -2,11 +2,13 @@
 
 #include "graphic/stb_image.h" // stbi_load
 
-Terrain::Terrain(const unsigned int width, const unsigned int depth, const unsigned int height, const ChunkType chunkType):
-    m_nrChunkWidth(width), m_nrChunkDepth(depth), m_nrChunkHeight(height), m_chunkType(chunkType), m_surfaceChunkHeight(height),
+Terrain::Terrain(const unsigned int width, const unsigned int depth, const unsigned int height):
+    m_nrChunkWidth(width), m_nrChunkDepth(depth), m_nrChunkHeight(height), m_surfaceChunkHeight(height),
     m_generator(FREQUENCY, OCTAVES, SEED, FastNoise::SimplexFractal)
 {
-    CreateDataChunk();
+    SetChunkType(ChunkLayer::Surface, ChunkType::Heightmap);
+    SetChunkType(ChunkLayer::Inner, ChunkType::Cheese);
+
     Create();
     Load();
 }
@@ -16,14 +18,14 @@ glm::ivec3 Terrain::GetSize() const
     return glm::ivec3(m_nrChunkWidth, m_nrChunkHeight, m_nrChunkDepth);
 }
 
-ChunkType Terrain::GetChunkType() const
+ChunkType Terrain::GetChunkType(const ChunkLayer layer) const
 {
-    return m_chunkType;
+    return m_dataChunks.at(layer).first;
 }
 
-const DataChunk& Terrain::GetDataChunk() const
+const DataChunk& Terrain::GetDataChunk(const ChunkLayer layer) const
 {
-    return m_dataChunk;
+    return m_dataChunks.at(layer).second;
 }
 
 unsigned int Terrain::GetSurfaceChunkHeight() const
@@ -43,15 +45,14 @@ void Terrain::SetSize(const glm::ivec3 size)
     m_nrChunkDepth = size.z;
 }
 
-void Terrain::SetChunkType(const ChunkType type)
+void Terrain::SetChunkType(const ChunkLayer layer, const ChunkType type)
 {
-    m_chunkType = type;
-    CreateDataChunk();
+    m_dataChunks[layer] = {type, CreateDataChunk(type)};
 }
 
-void Terrain::SetDataChunk(const DataChunk data)
+void Terrain::SetDataChunk(const ChunkLayer layer, const DataChunk data)
 {
-    m_dataChunk = data;
+    m_dataChunks.at(layer) = {GetChunkType(layer), data};
 }
 
 void Terrain::SetSurfaceChunkHeight(const unsigned int surfaceChunkHeight)
@@ -59,23 +60,24 @@ void Terrain::SetSurfaceChunkHeight(const unsigned int surfaceChunkHeight)
     m_surfaceChunkHeight = surfaceChunkHeight;
 }
 
-void Terrain::CreateDataChunk()
+DataChunk Terrain::CreateDataChunk(const ChunkType type)
 {
-    switch (m_chunkType) {
+    DataChunk data;
+    switch (type) {
         case ChunkType::Full : {
-            m_dataChunk = DataFullChunk{};
+            data = DataFullChunk{};
             break; 
         }
         case ChunkType::Flat : {
-            m_dataChunk = DataFlatChunk{};
+            data = DataFlatChunk{};
             break; 
         }
         case ChunkType::Wave : {
-            m_dataChunk = DataWaveChunk{1.f, m_nrChunkHeight*CHUNK_SIZE};
+            data = DataWaveChunk{1.f, m_nrChunkHeight*CHUNK_SIZE};
             break;
         } 
         case ChunkType::Editor : {
-            m_dataChunk = DataEditorChunk{};
+            data = DataEditorChunk{};
             break; 
         }
         case ChunkType::Heightmap : {
@@ -85,18 +87,19 @@ void Terrain::CreateDataChunk()
             if (heightmapWidth != m_nrChunkWidth*CHUNK_SIZE || heightmapDepth != m_nrChunkDepth*CHUNK_SIZE)
                 throw std::runtime_error("The dimensions of the heightmap do not match with the size of the terrain");
 
-            m_dataChunk = DataHeightmapChunk{heightmap, heightmapWidth, heightmapDepth, channel,
+            data = DataHeightmapChunk{heightmap, heightmapWidth, heightmapDepth, channel,
                 m_generator.GetFrequency(), m_generator.GetOctaves(), m_generator.GetSeed(), m_generator.GetNoiseType(), 
                 {0.f, 1.f}, {0.f, 1.f}, false};
             break; 
         }
         case ChunkType::Cheese : {
-            m_dataChunk = DataCheeseChunk{&m_generator.GetNoise(), 1.f, 0.f};
+            data = DataCheeseChunk{&m_generator.GetNoise(), 1.f, 0.f};
             break;
         }
         default:
             throw std::runtime_error("Terrain::Create : This ChunkType value should not be used here");
     }
+    return data;
 }
 
 void Terrain::UpdateDataChunk(DataFlatChunk& data)
@@ -163,21 +166,25 @@ void Terrain::Create()
             c.SetChunkNeighbor(ChunkNeighbor::Right, &m_chunks[chunkIndexInGrid+1]);
     }
 
-    std::visit( 
-        [this](auto& m_dataChunk)
-        {
-            UpdateDataChunk(m_dataChunk);
-        },
-        m_dataChunk
-    );
+    for (auto& it : m_dataChunks) {
+        std::visit( 
+            [this](auto& data)
+            {
+                UpdateDataChunk(data);
+            },
+            it.second.second
+        );
+    }
     
     for (Chunk& c : m_chunks) {
         std::visit( 
-            [&c](const auto& m_dataChunk)
+            [&c](const auto& data)
             {
-                c.Build(m_dataChunk);
+                c.Build(data);
             },
-            m_dataChunk
+            c.GetTerrainPosition().y >= m_nrChunkHeight-m_surfaceChunkHeight ?
+                m_dataChunks[ChunkLayer::Surface].second :
+                m_dataChunks[ChunkLayer::Inner].second
         );
     }
 }
