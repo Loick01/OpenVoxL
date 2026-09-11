@@ -12,7 +12,7 @@ MapGenerator::MapGenerator(const float frequency, const int octaves, const int s
     SetNoiseType(type);
 }
 
-const FastNoise& MapGenerator::GetNoise() const
+FastNoise& MapGenerator::GetNoise()
 {
     return m_noise;
 }

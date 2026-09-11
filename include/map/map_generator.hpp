@@ -14,7 +14,7 @@ class MapGenerator
     public:
         MapGenerator(const float frequency, const int octaves, const int seed, FastNoise::NoiseType type);
 
-        const FastNoise& GetNoise() const;
+        FastNoise& GetNoise();
         float GetFrequency() const;
         int GetOctaves() const;
         int GetSeed() const;

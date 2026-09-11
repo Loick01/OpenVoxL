@@ -3,9 +3,9 @@
 #include "graphic/texture.hpp"
 
 Chunk::Chunk(const std::string& vertexPath, const std::string& fragmentPath, const glm::ivec3 terrainPosition,
-const glm::ivec3 terrainSize, const glm::vec3 originPosition, const unsigned int blockId):
-    m_shader(vertexPath, fragmentPath), m_terrainPosition(terrainPosition), m_terrainSize(terrainSize), 
-    m_originPosition(originPosition), m_blockId(blockId)
+const glm::ivec3 layerPosition, const glm::ivec3 terrainSize, const glm::vec3 originPosition, const unsigned int blockId):
+    m_shader(vertexPath, fragmentPath), m_terrainPosition(terrainPosition), m_layerPosition(layerPosition),
+    m_terrainSize(terrainSize), m_originPosition(originPosition), m_blockId(blockId)
 {
     glGenVertexArrays(1, &m_VAO);
     glGenBuffers(1, &m_VBO);
@@ -174,7 +174,7 @@ void Chunk::Build(const DataWaveChunk& data)
                 const float s = (float)i/CHUNK_SIZE+m_terrainPosition.x-1; // (i+m_terrainPosition.x*CHUNK_SIZE)/CHUNK_SIZE = i/CHUNK_SIZE+m_terrainPosition.x
                 float v = (std::sin(data.frequency*(s+t))+1.0f)*0.5f; // [0, 1]
                 const unsigned int maxHeight = v*(data.maxBlockHeight-1);
-                const unsigned int blockHeightPosition = m_originPosition.y + k; // m_originPosition = m_terrainPosition*CHUNK_SIZE
+                const unsigned int blockHeightPosition = m_layerPosition.y*CHUNK_SIZE + k; // Block height position in its ChunkLayer
 
                 if (blockHeightPosition <= maxHeight)
                     AddVoxel(glm::vec3(i, k, j), m_blockId);
@@ -191,7 +191,7 @@ void Chunk::Build(const DataHeightmapChunk& data)
         for (unsigned int j = 0 ; j < CHUNK_SIZE ; j++) { // Z
             for (unsigned int i = 0 ; i < CHUNK_SIZE ; i++) { // X
                 const unsigned int hmIndex = m_originPosition.z*data.heightmapWidth  + m_originPosition.x + j*data.heightmapWidth + i; 
-                const unsigned int blockHeightPosition = m_originPosition.y + k;
+                const unsigned int blockHeightPosition = m_layerPosition.y*CHUNK_SIZE + k; // Block height position in its ChunkLayer
                 if (blockHeightPosition <= data.heightmap[hmIndex])
                     AddVoxel(glm::vec3(i, k, j), m_blockId);
             }
@@ -202,11 +202,13 @@ void Chunk::Build(const DataHeightmapChunk& data)
 void Chunk::Build(const DataCheeseChunk& data)
 {
     m_voxels.clear();
-
+    data.noise->SetFractalOctaves(data.octaves);
+    
     for (unsigned int k = 0 ; k < CHUNK_SIZE ; k++) { // Y
         for (unsigned int j = 0 ; j < CHUNK_SIZE ; j++) { // Z
             for (unsigned int i = 0 ; i < CHUNK_SIZE ; i++) { // X
-                const float density = data.noise->GetNoise(data.frequency*(m_originPosition.x + i), data.frequency*(m_originPosition.y + k), data.frequency*(m_originPosition.z + j));
+                const unsigned int blockHeightPosition = m_layerPosition.y*CHUNK_SIZE + k; // Block height position in its ChunkLayer
+                const float density = data.noise->GetNoise(data.frequency*(m_originPosition.x + i), data.frequency*blockHeightPosition, data.frequency*(m_originPosition.z + j));
                 if (density > data.threshold)
                     AddVoxel(glm::vec3(i, k, j), m_blockId);
             }

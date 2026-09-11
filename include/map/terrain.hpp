@@ -27,14 +27,14 @@ class Terrain
         std::map<ChunkLayer, std::pair<ChunkType, DataChunk>> m_dataChunks;
         unsigned int m_surfaceChunkHeight; // Number of Chunks used for the height of the surface. Thus Inner layer will have m_nrChunkHeight-m_surfaceChunkHeight
 
-        DataChunk CreateDataChunk(const ChunkType type);
+        DataChunk CreateDataChunk(const ChunkLayer layer, const ChunkType type);
 
-        void UpdateDataChunk(DataFlatChunk& data);
-        void UpdateDataChunk(DataFullChunk& data);
-        void UpdateDataChunk(DataWaveChunk& data);
-        void UpdateDataChunk(DataEditorChunk& data);
-        void UpdateDataChunk(DataHeightmapChunk& data);
-        void UpdateDataChunk(DataCheeseChunk& data);
+        void UpdateDataChunk(const ChunkLayer layer, DataFlatChunk& data);
+        void UpdateDataChunk(const ChunkLayer layer, DataFullChunk& data);
+        void UpdateDataChunk(const ChunkLayer layer, DataWaveChunk& data);
+        void UpdateDataChunk(const ChunkLayer layer, DataEditorChunk& data);
+        void UpdateDataChunk(const ChunkLayer layer, DataHeightmapChunk& data);
+        void UpdateDataChunk(const ChunkLayer layer, DataCheeseChunk& data);
     
     public:
         Terrain(const unsigned int width, const unsigned int depth, const unsigned int height);
@@ -48,9 +48,9 @@ class Terrain
         void SetDataChunk(const ChunkLayer layer, const DataChunk data);
         void SetSurfaceChunkHeight(const unsigned int surfaceChunkHeight);
         
+        unsigned int GetMaxHeightForLayer(const ChunkLayer layer) const;
         unsigned int GetChunkIndexInGrid(const glm::ivec3& chunkPosition) const;
 
-        void UpdateDataChunk();
         void Create();
         void Load();
         void Draw(const glm::mat4& projection, const glm::mat4& view) const;

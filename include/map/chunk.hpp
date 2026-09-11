@@ -56,9 +56,10 @@ struct DataHeightmapChunk
 
 struct DataCheeseChunk
 {
-    const FastNoise* noise; 
+    FastNoise* noise; 
     float frequency; // [0.5, 10]
     float threshold; // [-1, 1]
+    int octaves;
 };
 
 using DataChunk = std::variant<
@@ -74,6 +75,7 @@ class Chunk // 32x32x32
 { 
     private:
         glm::ivec3 m_terrainPosition; // Position Column/Row/Depth 
+        glm::ivec3 m_layerPosition; // Position of the Chunk in its layer (Surface/Inner)
         glm::ivec3 m_terrainSize;
         glm::vec3 m_originPosition; // Back-bottom-left position (m_originPosition = m_terrainPosition*CHUNKSIZE)
         std::vector<Voxel> m_voxels;
@@ -103,8 +105,8 @@ class Chunk // 32x32x32
         void BuildFaces();
     
     public:
-        Chunk(const std::string& vertexPath, const std::string& fragmentPath, const glm::ivec3 terrainPosition, const glm::ivec3 terrainSize,
-            const glm::vec3 originPosition, const unsigned int blockId); // TODO : Remove blockId 
+        Chunk(const std::string& vertexPath, const std::string& fragmentPath, const glm::ivec3 terrainPosition, 
+            const glm::ivec3 layerPosition, const glm::ivec3 terrainSize, const glm::vec3 originPosition, const unsigned int blockId); // TODO : Remove blockId 
         // Chunk(glm::vec3 position, bool referenceChunk); // Used in editor mode only
         ~Chunk();
         

@@ -32,7 +32,7 @@ class DebugWindow
         bool m_wireframeRendering;
 
         void InitImGui();
-        
+         
         bool OpenSettings(DataFlatChunk& data);
         bool OpenSettings(DataFullChunk& data);
         bool OpenSettings(DataWaveChunk& data);

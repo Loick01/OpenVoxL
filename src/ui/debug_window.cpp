@@ -51,7 +51,7 @@ bool DebugWindow::OpenSettings(DataFullChunk& data)
 
 bool DebugWindow::OpenSettings(DataWaveChunk& data)
 {
-    if (ImGui::SliderFloat("Frequency", &data.frequency, 0.5f, 10.f))
+    if (ImGui::SliderFloat("Frequency##Wave", &data.frequency, 0.5f, 10.f))
         return true;
     return false;
 }
@@ -64,11 +64,11 @@ bool DebugWindow::OpenSettings(DataEditorChunk& data)
 bool DebugWindow::OpenSettings(DataHeightmapChunk& data)
 {
     bool needUpdate = false;
-    if (ImGui::SliderFloat("Frequency", &data.frequency, 0.5f, 10.f))
+    if (ImGui::SliderFloat("Frequency##Heightmap", &data.frequency, 0.5f, 10.f))
         needUpdate = true;
-    if (ImGui::SliderInt("Octaves", &data.octaves, 0, 8))
+    if (ImGui::SliderInt("Octaves##Heightmap", &data.octaves, 0, 8))
         needUpdate = true;
-    if (ImGui::SliderInt("Seed", &data.seed, 0, 8))
+    if (ImGui::SliderInt("Seed##Heightmap", &data.seed, 0, 8))
         needUpdate = true;
     
     if (ImGui::BeginCombo("Noise Type", noiseTypes[m_indexNoiseType])){ 
@@ -94,9 +94,11 @@ bool DebugWindow::OpenSettings(DataHeightmapChunk& data)
 bool DebugWindow::OpenSettings(DataCheeseChunk& data)
 {
     bool needUpdate = false;
-    if (ImGui::SliderFloat("Frequency", &data.frequency, 0.5f, 10.f))
+    if (ImGui::SliderFloat("Frequency##Cheese", &data.frequency, 0.5f, 10.f))
         needUpdate = true;
-    if (ImGui::SliderFloat("Threshold", &data.threshold, -1.f, 1.f))
+    if (ImGui::SliderFloat("Threshold##Cheese", &data.threshold, -1.f, 1.f))
+        needUpdate = true;
+    if (ImGui::SliderInt("Octaves##Cheese", &data.octaves, 0, 8))
         needUpdate = true;
     return needUpdate;
 }
