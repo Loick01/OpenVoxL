@@ -35,6 +35,8 @@ class Voxel
         glm::vec3 m_origin; // Back-bottom-left vertex
         unsigned int m_blockId;
         
+        static unsigned int GetFaceTextureId(const unsigned int blockId, const unsigned int orientation);
+ 
     public:
         Voxel(const glm::vec3 origin, const unsigned int blockId);
 

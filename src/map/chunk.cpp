@@ -190,7 +190,7 @@ void Chunk::Build(const DataHeightmapChunk& data)
                 const unsigned int hmIndex = m_originPosition.z*data.heightmapWidth  + m_originPosition.x + j*data.heightmapWidth + i; 
                 const unsigned int blockHeightPosition = m_layerPosition.y*CHUNK_SIZE + k; // Block height position in its ChunkLayer
                 if (blockHeightPosition <= data.heightmap[hmIndex])
-                    AddVoxel(glm::vec3(i, k, j), 0);
+                    AddVoxel(glm::vec3(i, k, j), 13);
             }
         }
     }

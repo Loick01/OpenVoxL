@@ -1,5 +1,16 @@
 #include "map/voxel.hpp"
 
+namespace {
+    constexpr glm::vec3 voxelVertices[24] = {
+        {0, 0, 0}, {1, 0, 0}, {0, 0, 1}, {1, 0, 1}, // Bottom
+        {0, 1, 1}, {1, 1, 1}, {0, 1, 0}, {1, 1, 0}, // Top
+        {1, 0, 0}, {0, 0, 0}, {1, 1, 0}, {0, 1, 0}, // Back
+        {0, 0, 1}, {1, 0, 1}, {0, 1, 1}, {1, 1, 1}, // Front
+        {0, 0, 0}, {0, 0, 1}, {0, 1, 0}, {0, 1, 1}, // Left
+        {1, 0, 1}, {1, 0, 0}, {1, 1, 1}, {1, 1, 0}  // Right
+    };
+}
+
 Voxel::Voxel(const glm::vec3 origin, const unsigned int blockId):
     m_origin(origin), m_blockId(blockId)
 {
@@ -47,67 +58,26 @@ std::vector<glm::vec3> Voxel::GetVertices() const
 //     m_blockId = blockId;
 // }
 
+unsigned int Voxel::GetFaceTextureId(const unsigned int blockId, const unsigned int orientation)
+{
+    if (blockId == 13) { // TODO : List of blocks with different textures
+        return blockId + std::min(orientation, 2u); // TODO
+    }
+    return blockId;
+}
+
 void Voxel::BuildVoxel()
 {
     const std::string rootId = GetRootFaceId();
 
     Face currentFace;
-    currentFace.id = rootId + std::to_string(0); // Bottom
-    currentFace.vertices.push_back(m_origin);
-    currentFace.vertices.push_back(m_origin + glm::vec3(1, 0, 0));
-    currentFace.vertices.push_back(m_origin + glm::vec3(0, 0, 1));
-    currentFace.vertices.push_back(m_origin + glm::vec3(1, 0, 1));
-    currentFace.blockId = m_blockId;
-    currentFace.orientation = 0;
-    m_faces.push_back(currentFace);
-
-    currentFace.vertices.clear();
-    currentFace.id = rootId + std::to_string(1); // Top
-    currentFace.vertices.push_back(m_origin + glm::vec3(0, 1, 1));
-    currentFace.vertices.push_back(m_origin + glm::vec3(1, 1, 1));
-    currentFace.vertices.push_back(m_origin + glm::vec3(0, 1, 0));
-    currentFace.vertices.push_back(m_origin + glm::vec3(1, 1, 0));
-    currentFace.blockId = m_blockId;
-    currentFace.orientation = 1;
-    m_faces.push_back(currentFace);
-
-    currentFace.vertices.clear();
-    currentFace.id = rootId + std::to_string(2); // Back
-    currentFace.vertices.push_back(m_origin + glm::vec3(1, 0, 0));
-    currentFace.vertices.push_back(m_origin);
-    currentFace.vertices.push_back(m_origin + glm::vec3(1, 1, 0));
-    currentFace.vertices.push_back(m_origin + glm::vec3(0, 1, 0));
-    currentFace.blockId = m_blockId;
-    currentFace.orientation = 2;
-    m_faces.push_back(currentFace);
-
-    currentFace.vertices.clear();
-    currentFace.id = rootId + std::to_string(3); // Front
-    currentFace.vertices.push_back(m_origin + glm::vec3(0, 0, 1));
-    currentFace.vertices.push_back(m_origin + glm::vec3(1, 0, 1));
-    currentFace.vertices.push_back(m_origin + glm::vec3(0, 1, 1));
-    currentFace.vertices.push_back(m_origin + glm::vec3(1, 1, 1));
-    currentFace.blockId = m_blockId;
-    currentFace.orientation = 3;
-    m_faces.push_back(currentFace);
-
-    currentFace.vertices.clear();
-    currentFace.id = rootId + std::to_string(4); // Left
-    currentFace.vertices.push_back(m_origin + glm::vec3(0, 0, 0));
-    currentFace.vertices.push_back(m_origin + glm::vec3(0, 0, 1));
-    currentFace.vertices.push_back(m_origin + glm::vec3(0, 1, 0));
-    currentFace.vertices.push_back(m_origin + glm::vec3(0, 1, 1));
-    currentFace.blockId = m_blockId;
-    currentFace.orientation = 4;
-    m_faces.push_back(currentFace);
-
-    currentFace.vertices.clear();
-    currentFace.id = rootId + std::to_string(5); // Right
-    currentFace.vertices.push_back(m_origin + glm::vec3(1, 0, 1));
-    currentFace.vertices.push_back(m_origin + glm::vec3(1, 0, 0));
-    currentFace.vertices.push_back(m_origin + glm::vec3(1, 1, 1));
-    currentFace.vertices.push_back(m_origin + glm::vec3(1, 1, 0));
-    currentFace.blockId = m_blockId;
-    currentFace.orientation = 5;
-    m_faces.push_back(currentFace);
+    for (unsigned int i = 0 ; i < 6 ; i++) {
+        currentFace.id = rootId + std::to_string(i);
+        for (unsigned int n = 0 ; n < 4 ; n++)
+            currentFace.vertices.push_back(m_origin + voxelVertices[i*4+n]);
+        currentFace.blockId = GetFaceTextureId(m_blockId, i);
+        currentFace.orientation = i;
+        m_faces.push_back(currentFace);
+        currentFace.vertices.clear();
+    }
 }
