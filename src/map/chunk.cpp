@@ -3,9 +3,9 @@
 #include "graphic/texture.hpp"
 
 Chunk::Chunk(const std::string& vertexPath, const std::string& fragmentPath, const glm::ivec3 terrainPosition,
-const glm::ivec3 layerPosition, const glm::ivec3 terrainSize, const glm::vec3 originPosition, const unsigned int blockId):
+const glm::ivec3 layerPosition, const glm::ivec3 terrainSize, const glm::vec3 originPosition):
     m_shader(vertexPath, fragmentPath), m_terrainPosition(terrainPosition), m_layerPosition(layerPosition),
-    m_terrainSize(terrainSize), m_originPosition(originPosition), m_blockId(blockId)
+    m_terrainSize(terrainSize), m_originPosition(originPosition)
 {
     glGenVertexArrays(1, &m_VAO);
     glGenBuffers(1, &m_VBO);
@@ -70,17 +70,14 @@ void Chunk::AddFaceIndices(const unsigned int offset)
     m_indices.push_back(offset + 1);
 }
 
-void Chunk::BuildFace(const std::string& faceId, Face* face)
+void Chunk::AddFace(const std::string& faceId, Face* face)
 {
     m_chunkFaces[faceId] = face;
-    // TODO : Use texture from face instead from block (+ I can't even use Voxel::m_blockId)
-    m_blockIds.push_back(m_blockId); // One blockId for each face
 }
 
 void Chunk::BuildFaces()
 {
     m_chunkFaces.clear();
-    m_blockIds.clear(); // TODO : Will be removed when I use face textures instead of block textures
 
     for (Voxel& v : m_voxels) {
         const glm::ivec3 blockPosition = v.GetOrigin() - m_originPosition;
@@ -88,51 +85,51 @@ void Chunk::BuildFaces()
 
         if (blockPosition.y == 0) { // Bottom
             if (m_terrainPosition.y == 0)
-                BuildFace(v.GetFaceId(0), v.GetFacePtr(0));
+                AddFace(v.GetFaceId(0), v.GetFacePtr(0));
             else if (GetChunkNeighbor(ChunkNeighbor::Bottom)->IsEmptyAt(blockIndexInGrid+CHUNK_SIZE*CHUNK_SIZE*(CHUNK_SIZE-1)))
-                BuildFace(v.GetFaceId(0), v.GetFacePtr(0));
+                AddFace(v.GetFaceId(0), v.GetFacePtr(0));
         } else if (m_gridVoxel[blockIndexInGrid-CHUNK_SIZE*CHUNK_SIZE] == nullptr)
-            BuildFace(v.GetFaceId(0), v.GetFacePtr(0));
+            AddFace(v.GetFaceId(0), v.GetFacePtr(0));
 
         if (blockPosition.y == CHUNK_SIZE-1) { // Top
             if (m_terrainPosition.y == m_terrainSize.y-1)
-                BuildFace(v.GetFaceId(1), v.GetFacePtr(1));
+                AddFace(v.GetFaceId(1), v.GetFacePtr(1));
             else if (GetChunkNeighbor(ChunkNeighbor::Top)->IsEmptyAt(blockIndexInGrid-CHUNK_SIZE*CHUNK_SIZE*(CHUNK_SIZE-1)))
-                BuildFace(v.GetFaceId(1), v.GetFacePtr(1));
+                AddFace(v.GetFaceId(1), v.GetFacePtr(1));
         } else if (m_gridVoxel[blockIndexInGrid+CHUNK_SIZE*CHUNK_SIZE] == nullptr)
-            BuildFace(v.GetFaceId(1), v.GetFacePtr(1));
+            AddFace(v.GetFaceId(1), v.GetFacePtr(1));
 
         if (blockPosition.z == 0) { // Back
             if (m_terrainPosition.z == 0)
-                BuildFace(v.GetFaceId(2), v.GetFacePtr(2));
+                AddFace(v.GetFaceId(2), v.GetFacePtr(2));
             else if (GetChunkNeighbor(ChunkNeighbor::Back)->IsEmptyAt(blockIndexInGrid+CHUNK_SIZE*(CHUNK_SIZE-1)))
-                BuildFace(v.GetFaceId(2), v.GetFacePtr(2));
+                AddFace(v.GetFaceId(2), v.GetFacePtr(2));
         } else if (m_gridVoxel[blockIndexInGrid-CHUNK_SIZE] == nullptr)
-            BuildFace(v.GetFaceId(2), v.GetFacePtr(2));
+            AddFace(v.GetFaceId(2), v.GetFacePtr(2));
 
         if (blockPosition.z == CHUNK_SIZE-1) { // Front
             if (m_terrainPosition.z == m_terrainSize.z-1)
-                BuildFace(v.GetFaceId(3), v.GetFacePtr(3));
+                AddFace(v.GetFaceId(3), v.GetFacePtr(3));
             else if (GetChunkNeighbor(ChunkNeighbor::Front)->IsEmptyAt(blockIndexInGrid-CHUNK_SIZE*(CHUNK_SIZE-1)))
-                BuildFace(v.GetFaceId(3), v.GetFacePtr(3));
+                AddFace(v.GetFaceId(3), v.GetFacePtr(3));
         } else if (m_gridVoxel[blockIndexInGrid+CHUNK_SIZE] == nullptr)
-            BuildFace(v.GetFaceId(3), v.GetFacePtr(3));
+            AddFace(v.GetFaceId(3), v.GetFacePtr(3));
 
         if (blockPosition.x == 0) { // Left
             if (m_terrainPosition.x == 0)
-                BuildFace(v.GetFaceId(4), v.GetFacePtr(4));
+                AddFace(v.GetFaceId(4), v.GetFacePtr(4));
             else if (GetChunkNeighbor(ChunkNeighbor::Left)->IsEmptyAt(blockIndexInGrid+CHUNK_SIZE-1))
-                BuildFace(v.GetFaceId(4), v.GetFacePtr(4));
+                AddFace(v.GetFaceId(4), v.GetFacePtr(4));
         } else if (m_gridVoxel[blockIndexInGrid-1] == nullptr)
-            BuildFace(v.GetFaceId(4), v.GetFacePtr(4));
+            AddFace(v.GetFaceId(4), v.GetFacePtr(4));
 
         if (blockPosition.x == CHUNK_SIZE-1) { // Right
             if (m_terrainPosition.x == m_terrainSize.x-1)
-                BuildFace(v.GetFaceId(5), v.GetFacePtr(5));
+                AddFace(v.GetFaceId(5), v.GetFacePtr(5));
             else if (GetChunkNeighbor(ChunkNeighbor::Right)->IsEmptyAt(blockIndexInGrid-CHUNK_SIZE+1))
-                BuildFace(v.GetFaceId(5), v.GetFacePtr(5));
+                AddFace(v.GetFaceId(5), v.GetFacePtr(5));
         } else if (m_gridVoxel[blockIndexInGrid+1] == nullptr)
-            BuildFace(v.GetFaceId(5), v.GetFacePtr(5));
+            AddFace(v.GetFaceId(5), v.GetFacePtr(5));
     }
 }
 
@@ -143,7 +140,7 @@ void Chunk::Build(const DataFullChunk& data)
     for (unsigned int k = 0 ; k < CHUNK_SIZE ; k++) { // Y
         for (unsigned int j = 0 ; j < CHUNK_SIZE ; j++) { // Z
             for (unsigned int i = 0 ; i < CHUNK_SIZE ; i++) { // X
-                AddVoxel(glm::vec3(i, k, j), m_blockId);
+                AddVoxel(glm::vec3(i, k, j), 0);
             }
         }
     }
@@ -156,7 +153,7 @@ void Chunk::Build(const DataFlatChunk& data)
     if (m_terrainPosition.y == 0) {
         for (unsigned int j = 0 ; j < CHUNK_SIZE ; j++) { // Z
             for (unsigned int i = 0 ; i < CHUNK_SIZE ; i++) { // X
-                AddVoxel(glm::vec3(i, 0.f, j), m_blockId);
+                AddVoxel(glm::vec3(i, 0.f, j), 0);
             }
         }
     }
@@ -177,7 +174,7 @@ void Chunk::Build(const DataWaveChunk& data)
                 const unsigned int blockHeightPosition = m_layerPosition.y*CHUNK_SIZE + k; // Block height position in its ChunkLayer
 
                 if (blockHeightPosition <= maxHeight)
-                    AddVoxel(glm::vec3(i, k, j), m_blockId);
+                    AddVoxel(glm::vec3(i, k, j), 0);
             }
         }
     }
@@ -193,7 +190,7 @@ void Chunk::Build(const DataHeightmapChunk& data)
                 const unsigned int hmIndex = m_originPosition.z*data.heightmapWidth  + m_originPosition.x + j*data.heightmapWidth + i; 
                 const unsigned int blockHeightPosition = m_layerPosition.y*CHUNK_SIZE + k; // Block height position in its ChunkLayer
                 if (blockHeightPosition <= data.heightmap[hmIndex])
-                    AddVoxel(glm::vec3(i, k, j), m_blockId);
+                    AddVoxel(glm::vec3(i, k, j), 0);
             }
         }
     }
@@ -210,7 +207,7 @@ void Chunk::Build(const DataCheeseChunk& data)
                 const unsigned int blockHeightPosition = m_layerPosition.y*CHUNK_SIZE + k; // Block height position in its ChunkLayer
                 const float density = data.noise->GetNoise(data.frequency*(m_originPosition.x + i), data.frequency*blockHeightPosition, data.frequency*(m_originPosition.z + j));
                 if (density > data.threshold)
-                    AddVoxel(glm::vec3(i, k, j), m_blockId);
+                    AddVoxel(glm::vec3(i, k, j), 0);
             }
         }
     }
@@ -219,14 +216,14 @@ void Chunk::Build(const DataCheeseChunk& data)
 void Chunk::Build(const DataEditorChunk& data)
 {
     const glm::vec3 centerPosition = glm::vec3(CHUNK_SIZE/2);
-    AddVoxel(centerPosition, m_blockId);
+    AddVoxel(centerPosition, 0);
 }
 
 void Chunk::VoxelComputeData()
 {
     m_vertices.clear();
     m_indices.clear();
-    // m_blockIds.clear();
+    m_blockIds.clear();
     m_faceOrientations.clear();
 
     unsigned int offset = 0;
@@ -234,8 +231,9 @@ void Chunk::VoxelComputeData()
         Face* face = it->second;
         const std::vector<glm::vec3>& faceVertices = face->GetVertices();
         m_vertices.insert(m_vertices.end(), faceVertices.begin(), faceVertices.end());
+        m_blockIds.push_back(face->GetBlockId());
         m_faceOrientations.push_back(face->GetOrientation());
-        
+
         AddFaceIndices(offset);
         offset += 4;
     }

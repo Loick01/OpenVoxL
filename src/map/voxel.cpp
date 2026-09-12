@@ -37,24 +37,14 @@ std::vector<glm::vec3> Voxel::GetVertices() const
     return vertices;
 }
 
-// unsigned int Voxel::GetIdInChunk() const
+// unsigned int Voxel::GetBlockId() const
 // {
-//     return m_idInChunk;
+//     return m_blockId;
 // }
 
-unsigned int Voxel::GetBlockId() const
-{
-    return m_blockId;
-}
-
-void Voxel::SetBlockId(const unsigned int blockId)
-{
-    m_blockId = blockId;
-}
-
-// void Voxel::SetIdInChunk(const unsigned int idInChunk)
+// void Voxel::SetBlockId(const unsigned int blockId)
 // {
-//     m_idInChunk = idInChunk;
+//     m_blockId = blockId;
 // }
 
 void Voxel::BuildVoxel()
@@ -67,6 +57,7 @@ void Voxel::BuildVoxel()
     currentFace.vertices.push_back(m_origin + glm::vec3(1, 0, 0));
     currentFace.vertices.push_back(m_origin + glm::vec3(0, 0, 1));
     currentFace.vertices.push_back(m_origin + glm::vec3(1, 0, 1));
+    currentFace.blockId = m_blockId;
     currentFace.orientation = 0;
     m_faces.push_back(currentFace);
 
@@ -76,6 +67,7 @@ void Voxel::BuildVoxel()
     currentFace.vertices.push_back(m_origin + glm::vec3(1, 1, 1));
     currentFace.vertices.push_back(m_origin + glm::vec3(0, 1, 0));
     currentFace.vertices.push_back(m_origin + glm::vec3(1, 1, 0));
+    currentFace.blockId = m_blockId;
     currentFace.orientation = 1;
     m_faces.push_back(currentFace);
 
@@ -85,6 +77,7 @@ void Voxel::BuildVoxel()
     currentFace.vertices.push_back(m_origin);
     currentFace.vertices.push_back(m_origin + glm::vec3(1, 1, 0));
     currentFace.vertices.push_back(m_origin + glm::vec3(0, 1, 0));
+    currentFace.blockId = m_blockId;
     currentFace.orientation = 2;
     m_faces.push_back(currentFace);
 
@@ -94,6 +87,7 @@ void Voxel::BuildVoxel()
     currentFace.vertices.push_back(m_origin + glm::vec3(1, 0, 1));
     currentFace.vertices.push_back(m_origin + glm::vec3(0, 1, 1));
     currentFace.vertices.push_back(m_origin + glm::vec3(1, 1, 1));
+    currentFace.blockId = m_blockId;
     currentFace.orientation = 3;
     m_faces.push_back(currentFace);
 
@@ -103,6 +97,7 @@ void Voxel::BuildVoxel()
     currentFace.vertices.push_back(m_origin + glm::vec3(0, 0, 1));
     currentFace.vertices.push_back(m_origin + glm::vec3(0, 1, 0));
     currentFace.vertices.push_back(m_origin + glm::vec3(0, 1, 1));
+    currentFace.blockId = m_blockId;
     currentFace.orientation = 4;
     m_faces.push_back(currentFace);
 
@@ -112,6 +107,7 @@ void Voxel::BuildVoxel()
     currentFace.vertices.push_back(m_origin + glm::vec3(1, 0, 0));
     currentFace.vertices.push_back(m_origin + glm::vec3(1, 1, 1));
     currentFace.vertices.push_back(m_origin + glm::vec3(1, 1, 0));
+    currentFace.blockId = m_blockId;
     currentFace.orientation = 5;
     m_faces.push_back(currentFace);
 }

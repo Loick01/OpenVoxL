@@ -170,7 +170,7 @@ void Terrain::Create()
                     positionInLayer -= glm::ivec3(0, nrChunkBelowSurface, 0);
                 
                 m_chunks.emplace_back("../shader/map/chunk.vs", "../shader/map/chunk.fs", positionInTerrain,
-                    positionInLayer, terrainSize, positionInTerrain*CHUNK_SIZE, rand()%35);
+                    positionInLayer, terrainSize, positionInTerrain*CHUNK_SIZE);
             }
         }
     }

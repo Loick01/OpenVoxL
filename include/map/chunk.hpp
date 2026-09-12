@@ -87,7 +87,6 @@ class Chunk // 32x32x32
         std::vector<unsigned int> m_faceOrientations;
         std::map<std::string, Face*> m_chunkFaces;
         std::map<ChunkNeighbor, const Chunk*> m_chunkNeighbors;
-        const unsigned int m_blockId; // TODO : Remove
 
         GLuint m_VAO;
         GLuint m_VBO;
@@ -101,12 +100,12 @@ class Chunk // 32x32x32
         unsigned int GetBlockIndexInGrid(const glm::ivec3& blockPosition) const;
         void AddVoxel(const glm::vec3 blockPosition, const unsigned int blockId);
         void AddFaceIndices(const unsigned int offset);
-        void BuildFace(const std::string& faceId, Face* face);
+        void AddFace(const std::string& faceId, Face* face);
         void BuildFaces();
     
     public:
         Chunk(const std::string& vertexPath, const std::string& fragmentPath, const glm::ivec3 terrainPosition, 
-            const glm::ivec3 layerPosition, const glm::ivec3 terrainSize, const glm::vec3 originPosition, const unsigned int blockId); // TODO : Remove blockId 
+            const glm::ivec3 layerPosition, const glm::ivec3 terrainSize, const glm::vec3 originPosition);
         // Chunk(glm::vec3 position, bool referenceChunk); // Used in editor mode only
         ~Chunk();
         
