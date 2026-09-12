@@ -7,7 +7,7 @@ Terrain::Terrain(const unsigned int width, const unsigned int depth, const unsig
     m_generator(FREQUENCY, OCTAVES, SEED, FastNoise::SimplexFractal)
 {
     SetChunkType(ChunkLayer::Surface, ChunkType::Heightmap);
-    SetChunkType(ChunkLayer::Inner, ChunkType::Cheese);
+    SetChunkType(ChunkLayer::Below, ChunkType::Cheese);
 
     Create();
     Load();
@@ -38,7 +38,7 @@ unsigned int Terrain::GetMaxHeightForLayer(const ChunkLayer layer) const
     switch (layer) {
         case ChunkLayer::Surface : 
             return m_surfaceChunkHeight*CHUNK_SIZE;
-        case ChunkLayer::Inner : 
+        case ChunkLayer::Below : 
             return (m_nrChunkHeight-m_surfaceChunkHeight)*CHUNK_SIZE;
         default :   
             throw std::runtime_error("Terrain::GetMaxHeightForLayer : This ChunkLayer value should not be used here");
@@ -212,7 +212,7 @@ void Terrain::Create()
             },
             c.GetTerrainPosition().y >= m_nrChunkHeight-m_surfaceChunkHeight ? // It works because I only use two ChunkLayer
                 m_dataChunks[ChunkLayer::Surface].second :
-                m_dataChunks[ChunkLayer::Inner].second
+                m_dataChunks[ChunkLayer::Below].second
         );
     }
 }

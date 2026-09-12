@@ -12,7 +12,7 @@
 
 enum class ChunkLayer
 {
-    Surface, Inner
+    Surface, Below
 };
 
 class Terrain
@@ -25,7 +25,7 @@ class Terrain
         MapGenerator m_generator;    
         std::vector<Chunk> m_chunks; 
         std::map<ChunkLayer, std::pair<ChunkType, DataChunk>> m_dataChunks;
-        unsigned int m_surfaceChunkHeight; // Number of Chunks used for the height of the surface. Thus Inner layer will have m_nrChunkHeight-m_surfaceChunkHeight
+        unsigned int m_surfaceChunkHeight; // Number of Chunks used for the height of the surface. Thus Below layer will have m_nrChunkHeight-m_surfaceChunkHeight
 
         DataChunk CreateDataChunk(const ChunkLayer layer, const ChunkType type);
 

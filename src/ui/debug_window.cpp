@@ -17,7 +17,7 @@ DebugWindow::DebugWindow(GLFWwindow* glfwWindow, Camera& camera, Terrain& terrai
     m_glfwWindow(glfwWindow), m_width(500), m_height(500), m_camera(camera), m_terrain(terrain),
     m_indexCameraState((unsigned int)m_camera.GetState()), 
     m_indexSurfaceChunkType((unsigned int)m_terrain.GetChunkType(ChunkLayer::Surface)), 
-    m_indexInnerChunkType((unsigned int)m_terrain.GetChunkType(ChunkLayer::Inner)),
+    m_indexBelowChunkType((unsigned int)m_terrain.GetChunkType(ChunkLayer::Below)),
     m_indexNoiseType(5), m_wireframeRendering(false)
 {
     InitImGui();
@@ -221,7 +221,7 @@ void DebugWindow::Draw()
             if (ImGui::SliderInt("Surface Chunk Height", &surfaceChunkHeight, 0, terrainSize.y))
                 m_terrain.SetSurfaceChunkHeight(surfaceChunkHeight);
             
-            // TODO : Merge Surface with Inner
+            // TODO : Merge Surface with Below
             if (ImGui::CollapsingHeader("Surface")) {
                 if (ImGui::BeginCombo("Surface Chunk Type", chunkTypes[m_indexSurfaceChunkType])){ 
                     for (unsigned int i = 0; i < IM_ARRAYSIZE(chunkTypes); i++){
@@ -244,25 +244,25 @@ void DebugWindow::Draw()
                 );
             }
 
-            if (ImGui::CollapsingHeader("Inner")) {
-                if (ImGui::BeginCombo("Inner Chunk Type", chunkTypes[m_indexInnerChunkType])){ 
+            if (ImGui::CollapsingHeader("Below")) {
+                if (ImGui::BeginCombo("Below Chunk Type", chunkTypes[m_indexBelowChunkType])){ 
                     for (unsigned int i = 0; i < IM_ARRAYSIZE(chunkTypes); i++){
                         if (ImGui::Selectable(chunkTypes[i])) {
-                            m_indexInnerChunkType = i;
-                            m_terrain.SetChunkType(ChunkLayer::Inner, static_cast<ChunkType>(m_indexInnerChunkType));
+                            m_indexBelowChunkType = i;
+                            m_terrain.SetChunkType(ChunkLayer::Below, static_cast<ChunkType>(m_indexBelowChunkType));
                         }
                     }
                     ImGui::EndCombo();
                 }
 
-                DataChunk innerDataChunk = m_terrain.GetDataChunk(ChunkLayer::Inner);
+                DataChunk belowDataChunk = m_terrain.GetDataChunk(ChunkLayer::Below);
                 std::visit( 
                     [this](auto& data)
                     {
                         if (OpenSettings(data))
-                            m_terrain.SetDataChunk(ChunkLayer::Inner, data);
+                            m_terrain.SetDataChunk(ChunkLayer::Below, data);
                     },
-                    innerDataChunk
+                    belowDataChunk
                 );
             }
             

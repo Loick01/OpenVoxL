@@ -75,7 +75,7 @@ class Chunk // 32x32x32
 { 
     private:
         glm::ivec3 m_terrainPosition; // Position Column/Row/Depth 
-        glm::ivec3 m_layerPosition; // Position of the Chunk in its layer (Surface/Inner)
+        glm::ivec3 m_layerPosition; // Position of the Chunk in its layer (Surface/Below)
         glm::ivec3 m_terrainSize;
         glm::vec3 m_originPosition; // Back-bottom-left position (m_originPosition = m_terrainPosition*CHUNKSIZE)
         std::vector<Voxel> m_voxels;
