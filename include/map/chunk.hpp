@@ -43,6 +43,7 @@ struct DataHeightmapChunk
     int heightmapDepth;
     int channel;
 
+    // TODO : Merge with the same lines in DataCheeseChunk
     float frequency;
     int octaves;
     int seed;
@@ -57,9 +58,13 @@ struct DataHeightmapChunk
 struct DataCheeseChunk
 {
     FastNoise* noise; 
+
+    // TODO : Merge with the same lines in DataHeightmapChunk (without threshold)
     float frequency; // [0.5, 10]
     float threshold; // [-1, 1]
     int octaves;
+    int seed;
+    FastNoise::NoiseType noiseType;
 };
 
 using DataChunk = std::variant<

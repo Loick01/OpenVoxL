@@ -200,6 +200,8 @@ void Chunk::Build(const DataCheeseChunk& data)
 {
     m_voxels.clear();
     data.noise->SetFractalOctaves(data.octaves);
+    data.noise->SetSeed(data.seed);
+    data.noise->SetNoiseType(data.noiseType);
     
     for (unsigned int k = 0 ; k < CHUNK_SIZE ; k++) { // Y
         for (unsigned int j = 0 ; j < CHUNK_SIZE ; j++) { // Z

@@ -18,7 +18,7 @@ DebugWindow::DebugWindow(GLFWwindow* glfwWindow, Camera& camera, Terrain& terrai
     m_indexCameraState((unsigned int)m_camera.GetState()), 
     m_indexSurfaceChunkType((unsigned int)m_terrain.GetChunkType(ChunkLayer::Surface)), 
     m_indexBelowChunkType((unsigned int)m_terrain.GetChunkType(ChunkLayer::Below)),
-    m_indexNoiseType(5), m_wireframeRendering(false)
+    m_indexNoiseTypeForHeightmap(5), m_indexNoiseTypeForCheese(5), m_wireframeRendering(false)
 {
     InitImGui();
 }
@@ -63,19 +63,20 @@ bool DebugWindow::OpenSettings(DataEditorChunk& data)
 
 bool DebugWindow::OpenSettings(DataHeightmapChunk& data)
 {
+    // TODO : Merge with the same lines in OpenSettings(DataCheeseChunk)
     bool needUpdate = false;
     if (ImGui::SliderFloat("Frequency##Heightmap", &data.frequency, 0.5f, 10.f))
         needUpdate = true;
     if (ImGui::SliderInt("Octaves##Heightmap", &data.octaves, 0, 8))
         needUpdate = true;
-    if (ImGui::SliderInt("Seed##Heightmap", &data.seed, 0, 8))
+    if (ImGui::SliderInt("Seed##Heightmap", &data.seed, 0, 255))
         needUpdate = true;
     
-    if (ImGui::BeginCombo("Noise Type", noiseTypes[m_indexNoiseType])){ 
+    if (ImGui::BeginCombo("Noise Type##Heightmap", noiseTypes[m_indexNoiseTypeForHeightmap])){ 
         for (unsigned int i = 0; i < IM_ARRAYSIZE(noiseTypes); i++){
             if (ImGui::Selectable(noiseTypes[i])) {
-                m_indexNoiseType = i;
-                data.noiseType = static_cast<FastNoise::NoiseType>(m_indexNoiseType);
+                m_indexNoiseTypeForHeightmap = i;
+                data.noiseType = static_cast<FastNoise::NoiseType>(m_indexNoiseTypeForHeightmap);
                 needUpdate = true;
             }
         }
@@ -93,6 +94,7 @@ bool DebugWindow::OpenSettings(DataHeightmapChunk& data)
 
 bool DebugWindow::OpenSettings(DataCheeseChunk& data)
 {
+    // TODO : Merge with the same lines in OpenSettings(DataHeightmapChunk) (without threshold)
     bool needUpdate = false;
     if (ImGui::SliderFloat("Frequency##Cheese", &data.frequency, 0.5f, 10.f))
         needUpdate = true;
@@ -100,6 +102,20 @@ bool DebugWindow::OpenSettings(DataCheeseChunk& data)
         needUpdate = true;
     if (ImGui::SliderInt("Octaves##Cheese", &data.octaves, 0, 8))
         needUpdate = true;
+    if (ImGui::SliderInt("Seed##Cheese", &data.seed, 0, 255))
+        needUpdate = true;
+    
+    if (ImGui::BeginCombo("Noise Type##Cheese", noiseTypes[m_indexNoiseTypeForCheese])){ 
+        for (unsigned int i = 0; i < IM_ARRAYSIZE(noiseTypes); i++){
+            if (ImGui::Selectable(noiseTypes[i])) {
+                m_indexNoiseTypeForCheese = i;
+                data.noiseType = static_cast<FastNoise::NoiseType>(m_indexNoiseTypeForCheese);
+                needUpdate = true;
+            }
+        }
+        ImGui::EndCombo();
+    }
+
     return needUpdate;
 }
 

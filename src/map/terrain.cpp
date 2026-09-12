@@ -107,7 +107,8 @@ DataChunk Terrain::CreateDataChunk(const ChunkLayer layer, const ChunkType type)
             break; 
         }
         case ChunkType::Cheese : {
-            data = DataCheeseChunk{&m_generator.GetNoise(), 1.f, 0.f, m_generator.GetOctaves()};
+            data = DataCheeseChunk{&m_generator.GetNoise(), 1.f, 0.f, 
+                m_generator.GetOctaves(), m_generator.GetSeed(), m_generator.GetNoiseType()};
             break;
         }
         default:

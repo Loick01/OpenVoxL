@@ -1,13 +1,20 @@
 #include "map/voxel.hpp"
 
+#include <array>
+#include <map>
+
 namespace {
-    constexpr glm::vec3 voxelVertices[24] = {
+    constexpr std::array<glm::vec3, 24> voxelVertices = {{
         {0, 0, 0}, {1, 0, 0}, {0, 0, 1}, {1, 0, 1}, // Bottom
         {0, 1, 1}, {1, 1, 1}, {0, 1, 0}, {1, 1, 0}, // Top
         {1, 0, 0}, {0, 0, 0}, {1, 1, 0}, {0, 1, 0}, // Back
         {0, 0, 1}, {1, 0, 1}, {0, 1, 1}, {1, 1, 1}, // Front
         {0, 0, 0}, {0, 0, 1}, {0, 1, 0}, {0, 1, 1}, // Left
         {1, 0, 1}, {1, 0, 0}, {1, 1, 1}, {1, 1, 0}  // Right
+    }};
+
+    const std::map<unsigned int, std::array<unsigned int, 6>> blockMultipleTextureId = {
+        {13, {13, 14, 15, 15, 15, 15}}
     };
 }
 
@@ -48,22 +55,12 @@ std::vector<glm::vec3> Voxel::GetVertices() const
     return vertices;
 }
 
-// unsigned int Voxel::GetBlockId() const
-// {
-//     return m_blockId;
-// }
-
-// void Voxel::SetBlockId(const unsigned int blockId)
-// {
-//     m_blockId = blockId;
-// }
-
 unsigned int Voxel::GetFaceTextureId(const unsigned int blockId, const unsigned int orientation)
 {
-    if (blockId == 13) { // TODO : List of blocks with different textures
-        return blockId + std::min(orientation, 2u); // TODO
-    }
-    return blockId;
+    if (blockMultipleTextureId.find(blockId) == blockMultipleTextureId.end())
+        return blockId;
+    
+    return blockMultipleTextureId.at(blockId)[orientation];
 }
 
 void Voxel::BuildVoxel()
