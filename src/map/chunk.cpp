@@ -199,15 +199,15 @@ void Chunk::Build(const DataHeightmapChunk& data)
 void Chunk::Build(const DataCheeseChunk& data)
 {
     m_voxels.clear();
-    data.noise->SetFractalOctaves(data.octaves);
-    data.noise->SetSeed(data.seed);
-    data.noise->SetNoiseType(data.noiseType);
+    data.noise->SetFractalOctaves(data.noiseParams.octaves);
+    data.noise->SetSeed(data.noiseParams.seed);
+    data.noise->SetNoiseType(data.noiseParams.noiseType);
     
     for (unsigned int k = 0 ; k < CHUNK_SIZE ; k++) { // Y
         for (unsigned int j = 0 ; j < CHUNK_SIZE ; j++) { // Z
             for (unsigned int i = 0 ; i < CHUNK_SIZE ; i++) { // X
                 const unsigned int blockHeightPosition = m_layerPosition.y*CHUNK_SIZE + k; // Block height position in its ChunkLayer
-                const float density = data.noise->GetNoise(data.frequency*(m_originPosition.x + i), data.frequency*blockHeightPosition, data.frequency*(m_originPosition.z + j));
+                const float density = data.noise->GetNoise(data.noiseParams.frequency*(m_originPosition.x + i), data.noiseParams.frequency*blockHeightPosition, data.noiseParams.frequency*(m_originPosition.z + j));
                 if (density > data.threshold)
                     AddVoxel(glm::vec3(i, k, j), 0);
             }

@@ -15,7 +15,7 @@
 
 class FastNoise;
 
-enum class ChunkNeighbor // Should not be only used for Chunk ?
+enum class ChunkNeighbor
 {
     Bottom, Top, Back, Front, Left, Right
 };
@@ -23,6 +23,15 @@ enum class ChunkNeighbor // Should not be only used for Chunk ?
 enum class ChunkType
 {
     Full, Flat, Wave, Editor, Heightmap, Cheese //, Cave
+};
+
+// Will be in MapGenerator
+struct NoiseParameter
+{
+    float frequency;
+    int octaves;
+    int seed;
+    FastNoise::NoiseType noiseType;
 };
 
 struct DataFullChunk{};
@@ -43,11 +52,7 @@ struct DataHeightmapChunk
     int heightmapDepth;
     int channel;
 
-    // TODO : Merge with the same lines in DataCheeseChunk
-    float frequency;
-    int octaves;
-    int seed;
-    FastNoise::NoiseType noiseType;
+    NoiseParameter noiseParams;
 
     // TODO : Rename
     std::vector<float> plotX;
@@ -59,12 +64,8 @@ struct DataCheeseChunk
 {
     FastNoise* noise; 
 
-    // TODO : Merge with the same lines in DataHeightmapChunk (without threshold)
-    float frequency; // [0.5, 10]
     float threshold; // [-1, 1]
-    int octaves;
-    int seed;
-    FastNoise::NoiseType noiseType;
+    NoiseParameter noiseParams;
 };
 
 using DataChunk = std::variant<

@@ -102,13 +102,13 @@ DataChunk Terrain::CreateDataChunk(const ChunkLayer layer, const ChunkType type)
                 throw std::runtime_error("The dimensions of the heightmap do not match with the size of the terrain");
 
             data = DataHeightmapChunk{heightmap, heightmapWidth, heightmapDepth, channel,
-                m_generator.GetFrequency(), m_generator.GetOctaves(), m_generator.GetSeed(), m_generator.GetNoiseType(), 
+                {m_generator.GetFrequency(), m_generator.GetOctaves(), m_generator.GetSeed(), m_generator.GetNoiseType()}, 
                 {0.f, 1.f}, {0.f, 1.f}, false};
             break; 
         }
         case ChunkType::Cheese : {
-            data = DataCheeseChunk{&m_generator.GetNoise(), 1.f, 0.f, 
-                m_generator.GetOctaves(), m_generator.GetSeed(), m_generator.GetNoiseType()};
+            data = DataCheeseChunk{&m_generator.GetNoise(), 0.f,
+                {1.f, m_generator.GetOctaves(), m_generator.GetSeed(), m_generator.GetNoiseType()}};
             break;
         }
         default:
@@ -135,10 +135,10 @@ void Terrain::UpdateDataChunk(const ChunkLayer layer, DataHeightmapChunk& data)
 {
     const unsigned int maxHeight = GetMaxHeightForLayer(layer);
     
-    m_generator.SetFrequency(data.frequency);
-    m_generator.SetOctaves(data.octaves);
-    m_generator.SetSeed(data.seed);
-    m_generator.SetNoiseType(data.noiseType);
+    m_generator.SetFrequency(data.noiseParams.frequency);
+    m_generator.SetOctaves(data.noiseParams.octaves);
+    m_generator.SetSeed(data.noiseParams.seed);
+    m_generator.SetNoiseType(data.noiseParams.noiseType);
 
     if (data.useSpline)
         m_generator.GenerateHeightMapWithSpline(m_nrChunkWidth*CHUNK_SIZE, m_nrChunkDepth*CHUNK_SIZE, maxHeight, data.plotX, data.plotY);

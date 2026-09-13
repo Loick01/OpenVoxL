@@ -5,8 +5,10 @@
 #include <imgui_impl_opengl3.h>
 #include <implot.h>
 
+#include <string>
 #include <vector>
 
+struct NoiseParameter;
 class DataFlatChunk;
 class DataFullChunk;
 class DataWaveChunk;
@@ -33,7 +35,9 @@ class DebugWindow
         bool m_wireframeRendering;
 
         void InitImGui();
-         
+        
+        bool OpenNoiseSettings(NoiseParameter& noiseParams, const std::string& labelSuffix, unsigned int& indexNoiseType);
+        
         bool OpenSettings(DataFlatChunk& data);
         bool OpenSettings(DataFullChunk& data);
         bool OpenSettings(DataWaveChunk& data);

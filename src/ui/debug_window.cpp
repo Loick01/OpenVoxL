@@ -39,6 +39,29 @@ void DebugWindow::InitImGui()
     ImPlot::CreateContext();
 }
 
+bool DebugWindow::OpenNoiseSettings(NoiseParameter& noiseParams, const std::string& labelSuffix, unsigned int& indexNoiseType)
+{
+    bool needUpdate = false;
+    if (ImGui::SliderFloat(("Frequency##"+labelSuffix).c_str(), &noiseParams.frequency, 0.5f, 10.f))
+        needUpdate = true;
+    if (ImGui::SliderInt(("Octaves##"+labelSuffix).c_str(), &noiseParams.octaves, 0, 8))
+        needUpdate = true;
+    if (ImGui::SliderInt(("Seed##"+labelSuffix).c_str(), &noiseParams.seed, 0, 255))
+        needUpdate = true;
+    
+    if (ImGui::BeginCombo("Noise Type##Heightmap", noiseTypes[indexNoiseType])){ 
+        for (unsigned int i = 0; i < IM_ARRAYSIZE(noiseTypes); i++){
+            if (ImGui::Selectable(noiseTypes[i])) {
+                indexNoiseType = i;
+                noiseParams.noiseType = static_cast<FastNoise::NoiseType>(indexNoiseType);
+                needUpdate = true;
+            }
+        }
+        ImGui::EndCombo();
+    }
+    return needUpdate;
+}
+
 bool DebugWindow::OpenSettings(DataFlatChunk& data)
 {
     return false;
@@ -63,25 +86,9 @@ bool DebugWindow::OpenSettings(DataEditorChunk& data)
 
 bool DebugWindow::OpenSettings(DataHeightmapChunk& data)
 {
-    // TODO : Merge with the same lines in OpenSettings(DataCheeseChunk)
     bool needUpdate = false;
-    if (ImGui::SliderFloat("Frequency##Heightmap", &data.frequency, 0.5f, 10.f))
-        needUpdate = true;
-    if (ImGui::SliderInt("Octaves##Heightmap", &data.octaves, 0, 8))
-        needUpdate = true;
-    if (ImGui::SliderInt("Seed##Heightmap", &data.seed, 0, 255))
-        needUpdate = true;
-    
-    if (ImGui::BeginCombo("Noise Type##Heightmap", noiseTypes[m_indexNoiseTypeForHeightmap])){ 
-        for (unsigned int i = 0; i < IM_ARRAYSIZE(noiseTypes); i++){
-            if (ImGui::Selectable(noiseTypes[i])) {
-                m_indexNoiseTypeForHeightmap = i;
-                data.noiseType = static_cast<FastNoise::NoiseType>(m_indexNoiseTypeForHeightmap);
-                needUpdate = true;
-            }
-        }
-        ImGui::EndCombo();
-    }
+
+    needUpdate = OpenNoiseSettings(data.noiseParams, "Heightmap", m_indexNoiseTypeForHeightmap);
 
     if (ImGui::Checkbox("Use spline", &data.useSpline))
         needUpdate = true;
@@ -94,27 +101,12 @@ bool DebugWindow::OpenSettings(DataHeightmapChunk& data)
 
 bool DebugWindow::OpenSettings(DataCheeseChunk& data)
 {
-    // TODO : Merge with the same lines in OpenSettings(DataHeightmapChunk) (without threshold)
     bool needUpdate = false;
-    if (ImGui::SliderFloat("Frequency##Cheese", &data.frequency, 0.5f, 10.f))
-        needUpdate = true;
+
     if (ImGui::SliderFloat("Threshold##Cheese", &data.threshold, -1.f, 1.f))
         needUpdate = true;
-    if (ImGui::SliderInt("Octaves##Cheese", &data.octaves, 0, 8))
-        needUpdate = true;
-    if (ImGui::SliderInt("Seed##Cheese", &data.seed, 0, 255))
-        needUpdate = true;
-    
-    if (ImGui::BeginCombo("Noise Type##Cheese", noiseTypes[m_indexNoiseTypeForCheese])){ 
-        for (unsigned int i = 0; i < IM_ARRAYSIZE(noiseTypes); i++){
-            if (ImGui::Selectable(noiseTypes[i])) {
-                m_indexNoiseTypeForCheese = i;
-                data.noiseType = static_cast<FastNoise::NoiseType>(m_indexNoiseTypeForCheese);
-                needUpdate = true;
-            }
-        }
-        ImGui::EndCombo();
-    }
+
+    needUpdate = OpenNoiseSettings(data.noiseParams, "Cheese", m_indexNoiseTypeForCheese);
 
     return needUpdate;
 }
