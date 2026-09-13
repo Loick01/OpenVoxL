@@ -39,7 +39,7 @@ void DebugWindow::InitImGui()
     ImPlot::CreateContext();
 }
 
-bool DebugWindow::OpenNoiseSettings(NoiseParameter& noiseParams, const std::string& labelSuffix, unsigned int& indexNoiseType)
+bool DebugWindow::OpenNoiseSettings(NoiseParameters& noiseParams, const std::string& labelSuffix, unsigned int& indexNoiseType)
 {
     bool needUpdate = false;
     if (ImGui::SliderFloat(("Frequency##"+labelSuffix).c_str(), &noiseParams.frequency, 0.5f, 10.f))
@@ -49,7 +49,7 @@ bool DebugWindow::OpenNoiseSettings(NoiseParameter& noiseParams, const std::stri
     if (ImGui::SliderInt(("Seed##"+labelSuffix).c_str(), &noiseParams.seed, 0, 255))
         needUpdate = true;
     
-    if (ImGui::BeginCombo("Noise Type##Heightmap", noiseTypes[indexNoiseType])){ 
+    if (ImGui::BeginCombo(("Noise Type##"+labelSuffix).c_str(), noiseTypes[indexNoiseType])){ 
         for (unsigned int i = 0; i < IM_ARRAYSIZE(noiseTypes); i++){
             if (ImGui::Selectable(noiseTypes[i])) {
                 indexNoiseType = i;
@@ -59,55 +59,6 @@ bool DebugWindow::OpenNoiseSettings(NoiseParameter& noiseParams, const std::stri
         }
         ImGui::EndCombo();
     }
-    return needUpdate;
-}
-
-bool DebugWindow::OpenSettings(DataFlatChunk& data)
-{
-    return false;
-}
-
-bool DebugWindow::OpenSettings(DataFullChunk& data)
-{
-    return false;
-}
-
-bool DebugWindow::OpenSettings(DataWaveChunk& data)
-{
-    if (ImGui::SliderFloat("Frequency##Wave", &data.frequency, 0.5f, 10.f))
-        return true;
-    return false;
-}
-
-bool DebugWindow::OpenSettings(DataEditorChunk& data)
-{
-    return false;
-}
-
-bool DebugWindow::OpenSettings(DataHeightmapChunk& data)
-{
-    bool needUpdate = false;
-
-    needUpdate = OpenNoiseSettings(data.noiseParams, "Heightmap", m_indexNoiseTypeForHeightmap);
-
-    if (ImGui::Checkbox("Use spline", &data.useSpline))
-        needUpdate = true;
-
-    if (data.useSpline)
-        needUpdate |= OpenSplinePlot(data.plotX, data.plotY);
-    
-    return needUpdate;
-}
-
-bool DebugWindow::OpenSettings(DataCheeseChunk& data)
-{
-    bool needUpdate = false;
-
-    if (ImGui::SliderFloat("Threshold##Cheese", &data.threshold, -1.f, 1.f))
-        needUpdate = true;
-
-    needUpdate = OpenNoiseSettings(data.noiseParams, "Cheese", m_indexNoiseTypeForCheese);
-
     return needUpdate;
 }
 
@@ -166,6 +117,55 @@ bool DebugWindow::OpenSplinePlot(std::vector<float>& plotX, std::vector<float>& 
         ImPlot::EndPlot();
     }
     
+    return needUpdate;
+}
+
+bool DebugWindow::OpenSettings(DataFlatChunk& data)
+{
+    return false;
+}
+
+bool DebugWindow::OpenSettings(DataFullChunk& data)
+{
+    return false;
+}
+
+bool DebugWindow::OpenSettings(DataWaveChunk& data)
+{
+    if (ImGui::SliderFloat("Frequency##Wave", &data.frequency, 0.5f, 10.f))
+        return true;
+    return false;
+}
+
+bool DebugWindow::OpenSettings(DataEditorChunk& data)
+{
+    return false;
+}
+
+bool DebugWindow::OpenSettings(DataHeightmapChunk& data)
+{
+    bool needUpdate = false;
+
+    needUpdate |= OpenNoiseSettings(data.noiseParams, "Heightmap", m_indexNoiseTypeForHeightmap);
+
+    if (ImGui::Checkbox("Use spline", &data.useSpline))
+        needUpdate = true;
+
+    if (data.useSpline)
+        needUpdate |= OpenSplinePlot(data.plotX, data.plotY);
+    
+    return needUpdate;
+}
+
+bool DebugWindow::OpenSettings(DataCheeseChunk& data)
+{
+    bool needUpdate = false;
+
+    if (ImGui::SliderFloat("Threshold##Cheese", &data.threshold, -1.f, 1.f))
+        needUpdate = true;
+
+    needUpdate |= OpenNoiseSettings(data.noiseParams, "Cheese", m_indexNoiseTypeForCheese);
+
     return needUpdate;
 }
 

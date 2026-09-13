@@ -8,7 +8,7 @@
 #include <string>
 #include <vector>
 
-struct NoiseParameter;
+struct NoiseParameters;
 class DataFlatChunk;
 class DataFullChunk;
 class DataWaveChunk;
@@ -36,7 +36,8 @@ class DebugWindow
 
         void InitImGui();
         
-        bool OpenNoiseSettings(NoiseParameter& noiseParams, const std::string& labelSuffix, unsigned int& indexNoiseType);
+        bool OpenNoiseSettings(NoiseParameters& noiseParams, const std::string& labelSuffix, unsigned int& indexNoiseType);
+        bool OpenSplinePlot(std::vector<float>& plotX, std::vector<float>& plotY);
         
         bool OpenSettings(DataFlatChunk& data);
         bool OpenSettings(DataFullChunk& data);
@@ -44,8 +45,6 @@ class DebugWindow
         bool OpenSettings(DataEditorChunk& data);
         bool OpenSettings(DataHeightmapChunk& data);
         bool OpenSettings(DataCheeseChunk& data);
-
-        bool OpenSplinePlot(std::vector<float>& plotX, std::vector<float>& plotY);
 
     public:
         DebugWindow(GLFWwindow* glfwWindow, Camera& camera, Terrain& terrain);

@@ -7,13 +7,11 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
-#include "core/FastNoise.h" // FastNoise::NoiseType
 #include "map/voxel.hpp"
+#include "map/map_generator.hpp"
 #include "graphic/shader.hpp"
 
 #define CHUNK_SIZE 32
-
-class FastNoise;
 
 enum class ChunkNeighbor
 {
@@ -23,15 +21,6 @@ enum class ChunkNeighbor
 enum class ChunkType
 {
     Full, Flat, Wave, Editor, Heightmap, Cheese //, Cave
-};
-
-// Will be in MapGenerator
-struct NoiseParameter
-{
-    float frequency;
-    int octaves;
-    int seed;
-    FastNoise::NoiseType noiseType;
 };
 
 struct DataFullChunk{};
@@ -47,12 +36,13 @@ struct DataEditorChunk{};
 
 struct DataHeightmapChunk
 {
+    // Merge heightmap values in a struct ? (I will use the same for DataCaveChunk)
     const unsigned char* heightmap;
     int heightmapWidth;
     int heightmapDepth;
     int channel;
 
-    NoiseParameter noiseParams;
+    NoiseParameters noiseParams;
 
     // TODO : Rename
     std::vector<float> plotX;
@@ -62,10 +52,9 @@ struct DataHeightmapChunk
 
 struct DataCheeseChunk
 {
-    FastNoise* noise; 
-
+    MapGenerator* generator;
+    NoiseParameters noiseParams;
     float threshold; // [-1, 1]
-    NoiseParameter noiseParams;
 };
 
 using DataChunk = std::variant<

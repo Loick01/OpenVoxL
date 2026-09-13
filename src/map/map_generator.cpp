@@ -12,29 +12,17 @@ MapGenerator::MapGenerator(const float frequency, const int octaves, const int s
     SetNoiseType(type);
 }
 
-FastNoise& MapGenerator::GetNoise()
+NoiseParameters MapGenerator::GetNoiseParams() const
 {
-    return m_noise;
+    return {m_frequency, m_noise.GetFractalOctaves(), m_noise.GetSeed(), m_noise.GetNoiseType()};
 }
 
-float MapGenerator::GetFrequency() const
+void MapGenerator::SetNoiseParams(const NoiseParameters& params)
 {
-    return m_frequency;
-}
-
-int MapGenerator::GetOctaves() const
-{
-    return m_noise.GetFractalOctaves();
-}
-
-int MapGenerator::GetSeed() const
-{
-    return m_noise.GetSeed();
-}
-
-FastNoise::NoiseType MapGenerator::GetNoiseType() const
-{
-    return m_noise.GetNoiseType();
+    SetFrequency(params.frequency);
+    SetOctaves(params.octaves);
+    SetSeed(params.seed);
+    SetNoiseType(params.noiseType);
 }
 
 void MapGenerator::SetFrequency(const float frequency)
@@ -55,6 +43,11 @@ void MapGenerator::SetSeed(const int seed)
 void MapGenerator::SetNoiseType(const FastNoise::NoiseType type)
 {
     m_noise.SetNoiseType(type);
+}
+
+float MapGenerator::GetNoise3D(const float x, const float y, const float z) const
+{
+    return m_noise.GetNoise(x, y, z);
 }
 
 void MapGenerator::GenerateHeightMap(const unsigned int nrBlockWidth, const unsigned int nrBlockDepth, const unsigned int maxBlockHeight) const
