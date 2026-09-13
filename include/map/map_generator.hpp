@@ -10,6 +10,16 @@ struct NoiseParameters
     int octaves;
     int seed;
     FastNoise::NoiseType noiseType;
+    FastNoise::Interp interp; // Used in Value and Perlin
+    FastNoise::FractalType fractalType; // Used in ValueFractal, PerlinFractal, SimplexFractal and CubicFractal
+    FastNoise::CellularDistanceFunction cellularDistanceFunction; // Used in Cellular
+    FastNoise::CellularReturnType cellularReturnType; // Used in Cellular
+
+    // enum NoiseType { Value, ValueFractal, Perlin, PerlinFractal, Simplex, SimplexFractal, Cellular, WhiteNoise, Cubic, CubicFractal }; Default = Simplex
+	// enum Interp { Linear, Hermite, Quintic };                                                                                          Default = Quintic
+	// enum FractalType { FBM, Billow, RigidMulti };                                                                                      Default = FBM
+	// enum CellularDistanceFunction { Euclidean, Manhattan, Natural };                                                                   Default = Euclidean
+	// enum CellularReturnType { CellValue, NoiseLookup, Distance, Distance2, Distance2Add, Distance2Sub, Distance2Mul, Distance2Div };   Default = CellValue
 };
 
 class MapGenerator
@@ -18,11 +28,6 @@ class MapGenerator
         FastNoise m_noise;
         float m_frequency;
         unsigned int m_maxBlockHeight;
-        
-        void SetFrequency(const float frequency);
-        void SetOctaves(const int octaves);
-        void SetSeed(const int seed);
-        void SetNoiseType(const FastNoise::NoiseType type);
         
     public:
         MapGenerator(const float frequency, const int octaves, const int seed, FastNoise::NoiseType type);

@@ -7,9 +7,9 @@
 MapGenerator::MapGenerator(const float frequency, const int octaves, const int seed, FastNoise::NoiseType type):
     m_frequency(frequency)
 {
-    SetOctaves(octaves);
-    SetSeed(seed);
-    SetNoiseType(type);
+    m_noise.SetFractalOctaves(octaves);
+    m_noise.SetSeed(seed);
+    m_noise.SetNoiseType(type);
 }
 
 NoiseParameters MapGenerator::GetNoiseParams() const
@@ -19,30 +19,14 @@ NoiseParameters MapGenerator::GetNoiseParams() const
 
 void MapGenerator::SetNoiseParams(const NoiseParameters& params)
 {
-    SetFrequency(params.frequency);
-    SetOctaves(params.octaves);
-    SetSeed(params.seed);
-    SetNoiseType(params.noiseType);
-}
-
-void MapGenerator::SetFrequency(const float frequency)
-{
-    m_frequency = frequency;
-}
-
-void MapGenerator::SetOctaves(const int octaves)
-{
-    m_noise.SetFractalOctaves(octaves);
-}
-
-void MapGenerator::SetSeed(const int seed)
-{
-    m_noise.SetSeed(seed);
-}
-
-void MapGenerator::SetNoiseType(const FastNoise::NoiseType type)
-{
-    m_noise.SetNoiseType(type);
+    m_frequency = params.frequency;
+    m_noise.SetFractalOctaves(params.octaves);
+    m_noise.SetSeed(params.seed);
+    m_noise.SetNoiseType(params.noiseType);
+    m_noise.SetInterp(params.interp);
+    m_noise.SetFractalType(params.fractalType);
+    m_noise.SetCellularDistanceFunction(params.cellularDistanceFunction);
+    m_noise.SetCellularReturnType(params.cellularReturnType);
 }
 
 float MapGenerator::GetNoise3D(const float x, const float y, const float z) const

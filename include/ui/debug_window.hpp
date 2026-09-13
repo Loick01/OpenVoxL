@@ -30,13 +30,26 @@ class DebugWindow
         unsigned int m_indexCameraState;
         unsigned int m_indexSurfaceChunkType;
         unsigned int m_indexBelowChunkType;
+
+        // TODO : Merge indexForHeightmap with indexForCheese
         unsigned int m_indexNoiseTypeForHeightmap;
+        unsigned int m_indexInterpForHeightmap;
+        unsigned int m_indexFractalTypeForHeightmap;
+        unsigned int m_indexCellularDistanceFunctionForHeightmap;
+        unsigned int m_indexCellularReturnTypeForHeightmap;
+
         unsigned int m_indexNoiseTypeForCheese;
+        unsigned int m_indexInterpForCheese;
+        unsigned int m_indexFractalTypeForCheese;
+        unsigned int m_indexCellularDistanceFunctionForCheese;
+        unsigned int m_indexCellularReturnTypeForCheese;
+
         bool m_wireframeRendering;
 
         void InitImGui();
         
-        bool OpenNoiseSettings(NoiseParameters& noiseParams, const std::string& labelSuffix, unsigned int& indexNoiseType);
+        bool OpenNoiseSettings(NoiseParameters& noiseParams, const std::string& labelSuffix,
+            unsigned int& indexNoiseType, unsigned int& indexInterp, unsigned int& indexFractalType, unsigned int& indexCellularDistanceFunction, unsigned int& indexCellularReturnType); // TODO : Remove index... parameters
         bool OpenSplinePlot(std::vector<float>& plotX, std::vector<float>& plotY);
         
         bool OpenSettings(DataFlatChunk& data);
