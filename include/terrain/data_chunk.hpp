@@ -21,7 +21,12 @@ struct SplineData
 {
     std::vector<float> plotX;
     std::vector<float> plotY;
-    bool use; // TODO : Rename
+    bool use;
+
+    void Reset() {
+        plotX = {0.f, 1.f};
+        plotY = {0.f, 1.f};
+    }
 };
 
 struct DataFullChunk{};
@@ -38,9 +43,7 @@ struct DataEditorChunk{};
 struct DataHeightmapChunk
 {
     HeightmapData heightmap;
-
     NoiseParameters noiseParams;
-
     SplineData spline;
 };
 
@@ -53,8 +56,8 @@ struct DataCheeseChunk
 
 struct DataCaveChunk
 {
-    // HeightmapData heightmap;
-    // SplineData spline;
+    HeightmapData heightmap;
+    SplineData spline;
 };
 
 using DataChunk = std::variant<

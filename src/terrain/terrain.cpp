@@ -94,14 +94,17 @@ DataChunk Terrain::CreateDataChunk(const ChunkLayer layer, const ChunkType type)
             break; 
         }
         case ChunkType::Heightmap : {
+            // TODO : Remove ?
             const unsigned int maxHeight = GetMaxHeightForLayer(layer);
             m_generator.GenerateHeightMap(m_nrChunkWidth*CHUNK_SIZE, m_nrChunkDepth*CHUNK_SIZE, maxHeight);
-            int heightmapWidth, heightmapDepth, channel;
-            const unsigned char* heightmap = stbi_load("../data/heightmap/terrain.png", &heightmapWidth, &heightmapDepth, &channel, 1);
-            if (heightmapWidth != m_nrChunkWidth*CHUNK_SIZE || heightmapDepth != m_nrChunkDepth*CHUNK_SIZE)
+            int width, depth, channel;
+            const unsigned char* heightmap = stbi_load("../data/heightmap/terrain.png", &width, &depth, &channel, 1);
+            if (width != m_nrChunkWidth*CHUNK_SIZE || depth != m_nrChunkDepth*CHUNK_SIZE)
                 throw std::runtime_error("The dimensions of the heightmap do not match with the size of the terrain");
 
-            data = DataHeightmapChunk{heightmap, heightmapWidth, heightmapDepth, channel, m_generator.GetNoiseParams(), 
+            data = DataHeightmapChunk{
+                HeightmapData{heightmap, width, depth, channel}, 
+                m_generator.GetNoiseParams(), 
                 SplineData{{0.f, 1.f}, {0.f, 1.f}, false}};
             break; 
         }
@@ -110,7 +113,17 @@ DataChunk Terrain::CreateDataChunk(const ChunkLayer layer, const ChunkType type)
             break;
         }
         case ChunkType::Cave : {
-            data = DataCaveChunk{}; // TODO
+            // TODO : Remove ?
+            m_generator.GenerateCaveHeightMap(m_nrChunkWidth*CHUNK_SIZE, m_nrChunkDepth*CHUNK_SIZE, 5, 4);
+            int width, depth, channel;
+            const unsigned char* caveHeightmap = stbi_load("../data/heightmap/cave.png", &width, &depth, &channel, 1);
+            if (width != m_nrChunkWidth*CHUNK_SIZE || depth != m_nrChunkDepth*CHUNK_SIZE)
+                throw std::runtime_error("The dimensions of the cave heightmap do not match with the size of the terrain");
+            
+            data = DataCaveChunk{
+                HeightmapData{caveHeightmap, width, depth, channel},
+                SplineData{{0.f, 1.f}, {0.f, 1.f}, false}
+            };
             break;
         }
         default:

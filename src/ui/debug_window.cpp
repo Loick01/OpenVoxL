@@ -165,9 +165,7 @@ bool DebugWindow::OpenSplinePlot(SplineData& spline)
             needUpdate = true;
         ImGui::SameLine();
         if (ImGui::Button("Clean")) {
-            // data.spline.Reset(); // TODO : Add Spline struct
-            plotX = {0.f, 1.f}; // Remove
-            plotY = {0.f, 1.f}; // Remove
+            spline.Reset();
             needUpdate = true;
         }
 

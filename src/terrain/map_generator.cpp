@@ -79,3 +79,33 @@ void MapGenerator::GenerateHeightMapWithSpline(const unsigned int nrBlockWidth, 
     stbi_write_png("../data/heightmap/terrain.png", nrBlockWidth, nrBlockDepth, 1, data, nrBlockWidth);
     free(data);    
 }
+
+void MapGenerator::GenerateCaveHeightMap(const unsigned int nrBlockWidth, const unsigned int nrBlockDepth, const unsigned int nrIteration, const unsigned int threshold) const
+{
+    std::vector<unsigned char> grid(nrBlockWidth*nrBlockDepth);
+    std::vector<unsigned char> nextGrid(nrBlockWidth*nrBlockDepth);
+    
+    for (unsigned char& c : grid)
+        c = rand()%2 ? 0 : 255;
+
+    for (unsigned int n = 0 ; n < nrIteration ; n++) {
+        for(int j = 0 ; j < nrBlockDepth ; j++) { // Z
+            for(int i = 0 ; i < nrBlockWidth ; i++) { // X
+                unsigned int countNeighbor = 0;
+                for (int a = -1 ; a <= 1 ; a++) {
+                    for (int b = -1 ; b <= 1 ; b++) {
+                        if (j+b < 0 || j+b >= nrBlockDepth || i+a < 0 || i+a >= nrBlockWidth)
+                            continue;
+
+                        if (grid[(j+b)*nrBlockWidth + i+a])
+                            countNeighbor++;
+                    }
+                }
+                nextGrid[j*nrBlockWidth+i] = countNeighbor > threshold ? 255 : 0;
+            }
+        }
+        std::swap(grid, nextGrid);
+    }
+
+    stbi_write_png("../data/heightmap/cave.png", nrBlockWidth, nrBlockDepth, 1, grid.data(), nrBlockWidth);    
+}
