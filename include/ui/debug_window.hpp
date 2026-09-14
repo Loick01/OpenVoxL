@@ -6,15 +6,9 @@
 #include <implot.h>
 
 #include <string>
-#include <vector>
 
-struct NoiseParameters;
-class DataFlatChunk;
-class DataFullChunk;
-class DataWaveChunk;
-class DataEditorChunk;
-class DataHeightmapChunk;
-class DataCheeseChunk;
+#include "terrain/data_chunk.hpp"
+
 class Camera;
 class Terrain;
 
@@ -50,7 +44,7 @@ class DebugWindow
         
         bool OpenNoiseSettings(NoiseParameters& noiseParams, const std::string& labelSuffix,
             unsigned int& indexNoiseType, unsigned int& indexInterp, unsigned int& indexFractalType, unsigned int& indexCellularDistanceFunction, unsigned int& indexCellularReturnType); // TODO : Remove index... parameters
-        bool OpenSplinePlot(std::vector<float>& plotX, std::vector<float>& plotY);
+        bool OpenSplinePlot(SplineData& spline);
         
         bool OpenSettings(DataFlatChunk& data);
         bool OpenSettings(DataFullChunk& data);
@@ -58,6 +52,7 @@ class DebugWindow
         bool OpenSettings(DataEditorChunk& data);
         bool OpenSettings(DataHeightmapChunk& data);
         bool OpenSettings(DataCheeseChunk& data);
+        bool OpenSettings(DataCaveChunk& data);
 
     public:
         DebugWindow(GLFWwindow* glfwWindow, Camera& camera, Terrain& terrain);

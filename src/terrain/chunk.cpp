@@ -1,4 +1,4 @@
-#include "map/chunk.hpp"
+#include "terrain/chunk.hpp"
 
 #include "graphic/texture.hpp"
 
@@ -183,13 +183,14 @@ void Chunk::Build(const DataWaveChunk& data)
 void Chunk::Build(const DataHeightmapChunk& data)
 {
     m_voxels.clear();
-
+    const unsigned char* heightmap = data.heightmap.values;
+    
     for (unsigned int k = 0 ; k < CHUNK_SIZE ; k++) { // Y
         for (unsigned int j = 0 ; j < CHUNK_SIZE ; j++) { // Z
             for (unsigned int i = 0 ; i < CHUNK_SIZE ; i++) { // X
-                const unsigned int hmIndex = m_originPosition.z*data.heightmapWidth  + m_originPosition.x + j*data.heightmapWidth + i; 
+                const unsigned int hmIndex = m_originPosition.z*data.heightmap.width  + m_originPosition.x + j*data.heightmap.width + i; 
                 const unsigned int blockHeightPosition = m_layerPosition.y*CHUNK_SIZE + k; // Block height position in its ChunkLayer
-                if (blockHeightPosition <= data.heightmap[hmIndex])
+                if (blockHeightPosition <= heightmap[hmIndex])
                     AddVoxel(glm::vec3(i, k, j), 13);
             }
         }
@@ -209,6 +210,19 @@ void Chunk::Build(const DataCheeseChunk& data)
                 const float density = data.generator->GetNoise3D(freq*(m_originPosition.x + i), freq*blockHeightPosition, freq*(m_originPosition.z + j));
                 if (density > data.threshold)
                     AddVoxel(glm::vec3(i, k, j), 0);
+            }
+        }
+    }
+}
+
+void Chunk::Build(const DataCaveChunk& data) // TODO
+{
+    m_voxels.clear();
+
+    for (unsigned int k = 0 ; k < CHUNK_SIZE ; k++) { // Y
+        for (unsigned int j = 0 ; j < CHUNK_SIZE ; j++) { // Z
+            for (unsigned int i = 0 ; i < CHUNK_SIZE ; i++) { // X
+                AddVoxel(glm::vec3(i, k, j), 0);
             }
         }
     }

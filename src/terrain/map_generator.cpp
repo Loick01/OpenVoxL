@@ -1,4 +1,4 @@
-#include "map/map_generator.hpp"
+#include "terrain/map_generator.hpp"
 
 #include <cstdlib>
 

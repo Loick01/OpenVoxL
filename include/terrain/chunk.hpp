@@ -1,14 +1,13 @@
 #pragma once
 
 #include <map>
-#include <variant>
 #include <vector>
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
-#include "map/voxel.hpp"
-#include "map/map_generator.hpp"
+#include "terrain/data_chunk.hpp"
+#include "terrain/voxel.hpp"
 #include "graphic/shader.hpp"
 
 #define CHUNK_SIZE 32
@@ -17,54 +16,6 @@ enum class ChunkNeighbor
 {
     Bottom, Top, Back, Front, Left, Right
 };
-
-enum class ChunkType
-{
-    Full, Flat, Wave, Editor, Heightmap, Cheese //, Cave
-};
-
-struct DataFullChunk{};
-struct DataFlatChunk{};
-
-struct DataWaveChunk
-{
-    float frequency; // [0.5, 10]
-    unsigned int maxBlockHeight;
-};
-
-struct DataEditorChunk{};
-
-struct DataHeightmapChunk
-{
-    // Merge heightmap values in a struct ? (I will use the same for DataCaveChunk)
-    const unsigned char* heightmap;
-    int heightmapWidth;
-    int heightmapDepth;
-    int channel;
-
-    NoiseParameters noiseParams;
-
-    // TODO : Rename
-    std::vector<float> plotX;
-    std::vector<float> plotY;
-    bool useSpline;
-};
-
-struct DataCheeseChunk
-{
-    MapGenerator* generator;
-    NoiseParameters noiseParams;
-    float threshold; // [-1, 1]
-};
-
-using DataChunk = std::variant<
-    DataFullChunk,
-    DataFlatChunk,
-    DataWaveChunk,
-    DataEditorChunk,
-    DataHeightmapChunk,
-    DataCheeseChunk
->; 
 
 class Chunk // 32x32x32
 { 
@@ -117,7 +68,8 @@ class Chunk // 32x32x32
         void Build(const DataEditorChunk& data);
         void Build(const DataHeightmapChunk& data);
         void Build(const DataCheeseChunk& data);
-    
+        void Build(const DataCaveChunk& data);
+
         void VoxelComputeData();
         void VoxelBufferData();
         void Load();

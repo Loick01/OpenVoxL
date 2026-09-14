@@ -2,8 +2,8 @@
 
 #include <vector>
 
-#include "map/chunk.hpp"
-#include "map/map_generator.hpp"
+#include "terrain/chunk.hpp"
+#include "terrain/map_generator.hpp"
 
 // Default values
 #define FREQUENCY 1.f
@@ -35,6 +35,7 @@ class Terrain
         void UpdateDataChunk(const ChunkLayer layer, DataEditorChunk& data);
         void UpdateDataChunk(const ChunkLayer layer, DataHeightmapChunk& data);
         void UpdateDataChunk(const ChunkLayer layer, DataCheeseChunk& data);
+        void UpdateDataChunk(const ChunkLayer layer, DataCaveChunk& data);
     
     public:
         Terrain(const unsigned int width, const unsigned int depth, const unsigned int height);

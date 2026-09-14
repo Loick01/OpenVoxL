@@ -2,7 +2,7 @@
 
 #include <glad/glad.h>
 
-#include "map/terrain.hpp"
+#include "terrain/terrain.hpp"
 #include "core/camera.hpp"
 #include "core/time.hpp"
 #include "core/window.hpp"

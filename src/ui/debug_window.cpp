@@ -1,15 +1,17 @@
 #include "ui/debug_window.hpp"
 
+#include <vector>
+
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include "core/camera.hpp"
-#include "map/terrain.hpp"
+#include "terrain/terrain.hpp"
 
 namespace
 {
     const char* cameraStates[] = {"KeyFree", "MouseFree", "Orbital"}; //, "Player"};
-    const char* chunkTypes[] = {"Full", "Flat", "Wave", "Editor", "Heightmap", "Cheese"};
+    const char* chunkTypes[] = {"Full", "Flat", "Wave", "Editor", "Heightmap", "Cheese", "Cave"};
 
     const char* noiseTypes[] = {"Value", "ValueFractal", "Perlin", "PerlinFractal", "Simplex", "SimplexFractal", "Cellular", "WhiteNoise", "Cubic", "CubicFractal"};
     const char* interps[] = {"Linear", "Hermite", "Quintic"};
@@ -115,7 +117,7 @@ bool DebugWindow::OpenNoiseSettings(NoiseParameters& noiseParams, const std::str
     return needUpdate;
 }
 
-bool DebugWindow::OpenSplinePlot(std::vector<float>& plotX, std::vector<float>& plotY)
+bool DebugWindow::OpenSplinePlot(SplineData& spline)
 {
     bool needUpdate = false;
 
@@ -125,6 +127,8 @@ bool DebugWindow::OpenSplinePlot(std::vector<float>& plotX, std::vector<float>& 
         ImPlot::SetupAxisLimits(ImAxis_X1, 0., 1.);
         ImPlot::SetupAxisLimits(ImAxis_Y1, 0., 1.);
 
+        std::vector<float>& plotX = spline.plotX;
+        std::vector<float>& plotY = spline.plotY;
         if (!plotX.empty() && !plotY.empty()) { // Should test plotX.size() != plotY.size() ?
             ImPlot::PlotScatter("Points", plotX.data(), plotY.data(), plotX.size());
             ImPlot::PlotLine("Points", plotX.data(), plotY.data(), plotX.size());
@@ -202,11 +206,11 @@ bool DebugWindow::OpenSettings(DataHeightmapChunk& data)
     needUpdate |= OpenNoiseSettings(data.noiseParams, "Heightmap",
         m_indexNoiseTypeForHeightmap, m_indexInterpForHeightmap, m_indexFractalTypeForHeightmap, m_indexCellularDistanceFunctionForHeightmap, m_indexCellularReturnTypeForHeightmap);
 
-    if (ImGui::Checkbox("Use spline", &data.useSpline))
+    if (ImGui::Checkbox("Use spline", &data.spline.use))
         needUpdate = true;
 
-    if (data.useSpline)
-        needUpdate |= OpenSplinePlot(data.plotX, data.plotY);
+    if (data.spline.use)
+        needUpdate |= OpenSplinePlot(data.spline);
     
     return needUpdate;
 }
@@ -222,6 +226,11 @@ bool DebugWindow::OpenSettings(DataCheeseChunk& data)
         m_indexNoiseTypeForCheese, m_indexInterpForCheese, m_indexFractalTypeForCheese, m_indexCellularDistanceFunctionForCheese, m_indexCellularReturnTypeForCheese);
 
     return needUpdate;
+}
+
+bool DebugWindow::OpenSettings(DataCaveChunk& data) // TODO
+{
+    return false;
 }
 
 void DebugWindow::Draw()

@@ -1,4 +1,4 @@
-#include "map/terrain.hpp"
+#include "terrain/terrain.hpp"
 
 #include "graphic/stb_image.h" // stbi_load
 
@@ -102,11 +102,15 @@ DataChunk Terrain::CreateDataChunk(const ChunkLayer layer, const ChunkType type)
                 throw std::runtime_error("The dimensions of the heightmap do not match with the size of the terrain");
 
             data = DataHeightmapChunk{heightmap, heightmapWidth, heightmapDepth, channel, m_generator.GetNoiseParams(), 
-                {0.f, 1.f}, {0.f, 1.f}, false};
+                SplineData{{0.f, 1.f}, {0.f, 1.f}, false}};
             break; 
         }
         case ChunkType::Cheese : {
             data = DataCheeseChunk{&m_generator, m_generator.GetNoiseParams(), 0.f};
+            break;
+        }
+        case ChunkType::Cave : {
+            data = DataCaveChunk{}; // TODO
             break;
         }
         default:
@@ -135,17 +139,20 @@ void Terrain::UpdateDataChunk(const ChunkLayer layer, DataHeightmapChunk& data)
     
     m_generator.SetNoiseParams(data.noiseParams);
 
-    if (data.useSpline)
-        m_generator.GenerateHeightMapWithSpline(m_nrChunkWidth*CHUNK_SIZE, m_nrChunkDepth*CHUNK_SIZE, maxHeight, data.plotX, data.plotY);
+    if (data.spline.use)
+        m_generator.GenerateHeightMapWithSpline(m_nrChunkWidth*CHUNK_SIZE, m_nrChunkDepth*CHUNK_SIZE, maxHeight, data.spline.plotX, data.spline.plotY);
     else
         m_generator.GenerateHeightMap(m_nrChunkWidth*CHUNK_SIZE, m_nrChunkDepth*CHUNK_SIZE, maxHeight);
-    data.heightmap = stbi_load("../data/heightmap/terrain.png", &data.heightmapWidth, &data.heightmapDepth, &data.channel, 1);
+    data.heightmap.values = stbi_load("../data/heightmap/terrain.png", &data.heightmap.width, &data.heightmap.depth, &data.heightmap.channel, 1);
 
-    if (data.heightmapWidth != m_nrChunkWidth*CHUNK_SIZE || data.heightmapDepth != m_nrChunkDepth*CHUNK_SIZE)
+    if (data.heightmap.width != m_nrChunkWidth*CHUNK_SIZE || data.heightmap.depth != m_nrChunkDepth*CHUNK_SIZE)
         throw std::runtime_error("The dimensions of the heightmap do not match with the size of the terrain");
 }
 
 void Terrain::UpdateDataChunk(const ChunkLayer layer, DataCheeseChunk& data)
+{}
+
+void Terrain::UpdateDataChunk(const ChunkLayer layer, DataCaveChunk& data) // TODO
 {}
 
 void Terrain::Create()
@@ -165,7 +172,7 @@ void Terrain::Create()
                 if (k >= nrChunkBelowSurface) // // Current Chunk belongs to the surface
                     positionInLayer -= glm::ivec3(0, nrChunkBelowSurface, 0);
                 
-                m_chunks.emplace_back("../shader/map/chunk.vs", "../shader/map/chunk.fs", positionInTerrain,
+                m_chunks.emplace_back("../shader/terrain/chunk.vs", "../shader/terrain/chunk.fs", positionInTerrain,
                     positionInLayer, terrainSize, positionInTerrain*CHUNK_SIZE);
             }
         }

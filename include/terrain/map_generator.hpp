@@ -39,5 +39,5 @@ class MapGenerator
         float GetNoise3D(const float x, const float y, const float z) const;
         void GenerateHeightMap(const unsigned int nrBlockWidth, const unsigned int nrBlockDepth, const unsigned int maxBlockHeight) const;
         void GenerateHeightMapWithSpline(const unsigned int nrBlockWidth, const unsigned int nrBlockDepth, const unsigned int maxBlockHeight, 
-            const std::vector<float>& plotX, const std::vector<float>& plotY) const; // TODO : Rename plotX and plotY
+            const std::vector<float>& plotX, const std::vector<float>& plotY) const;
 };
