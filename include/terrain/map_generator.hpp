@@ -40,5 +40,6 @@ class MapGenerator
         void GenerateHeightMap(const unsigned int nrBlockWidth, const unsigned int nrBlockDepth, const unsigned int maxBlockHeight) const;
         void GenerateHeightMapWithSpline(const unsigned int nrBlockWidth, const unsigned int nrBlockDepth, const unsigned int maxBlockHeight, 
             const std::vector<float>& plotX, const std::vector<float>& plotY) const;
-        void GenerateCaveHeightMap(const unsigned int nrBlockWidth, const unsigned int nrBlockDepth, const unsigned int nrIteration, const unsigned int threshold) const;
+        void GenerateCaveHeightMap(const unsigned int nrBlockWidth, const unsigned int nrBlockDepth, const unsigned int maxBlockHeight, 
+            const unsigned int nrIteration, const unsigned int threshold, const std::vector<float>& plotX, const std::vector<float>& plotY) const;
 };

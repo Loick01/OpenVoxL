@@ -215,14 +215,18 @@ void Chunk::Build(const DataCheeseChunk& data)
     }
 }
 
-void Chunk::Build(const DataCaveChunk& data) // TODO
+void Chunk::Build(const DataCaveChunk& data)
 {
     m_voxels.clear();
+    const unsigned char* heightmap = data.heightmap.values;
 
     for (unsigned int k = 0 ; k < CHUNK_SIZE ; k++) { // Y
         for (unsigned int j = 0 ; j < CHUNK_SIZE ; j++) { // Z
             for (unsigned int i = 0 ; i < CHUNK_SIZE ; i++) { // X
-                AddVoxel(glm::vec3(i, k, j), 0);
+                const unsigned int hmIndex = m_originPosition.z*data.heightmap.width  + m_originPosition.x + j*data.heightmap.width + i; 
+                const unsigned int blockHeightPosition = m_layerPosition.y*CHUNK_SIZE + k; // Block height position in its ChunkLayer
+                if (k == 0 || blockHeightPosition != heightmap[hmIndex])
+                    AddVoxel(glm::vec3(i, k, j), 0);
             }
         }
     }

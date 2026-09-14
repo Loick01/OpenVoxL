@@ -156,7 +156,8 @@ void Terrain::UpdateDataChunk(const ChunkLayer layer, DataCaveChunk& data)
 {
     const unsigned int maxHeight = GetMaxHeightForLayer(layer);
 
-    m_generator.GenerateCaveHeightMap(m_nrChunkWidth*CHUNK_SIZE, m_nrChunkDepth*CHUNK_SIZE, data.nrIteration, data.threshold);
+    m_generator.GenerateCaveHeightMap(m_nrChunkWidth*CHUNK_SIZE, m_nrChunkDepth*CHUNK_SIZE, maxHeight, 
+        data.nrIteration, data.threshold, data.spline.plotX, data.spline.plotY);
 
     data.heightmap.values = stbi_load("../data/heightmap/cave.png", &data.heightmap.width, &data.heightmap.depth, &data.heightmap.channel, 1);
 

@@ -235,8 +235,11 @@ bool DebugWindow::OpenSettings(DataCaveChunk& data)
     if (ImGui::SliderInt("Threshold##Cave", &data.threshold, 0, 8))
         needUpdate = true;
 
-    // if (data.spline.use) // TODO 
-    //     needUpdate |= OpenSplinePlot(data.spline);
+    if (ImGui::Checkbox("Use spline", &data.spline.use))
+        needUpdate = true;
+    
+    if (data.spline.use)
+        needUpdate |= OpenSplinePlot(data.spline);
 
     return needUpdate;
 }
