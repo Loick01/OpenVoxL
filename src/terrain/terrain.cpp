@@ -77,58 +77,45 @@ DataChunk Terrain::CreateDataChunk(const ChunkLayer layer, const ChunkType type)
     DataChunk data;
     switch (type) {
         case ChunkType::Full : {
-            data = DataFullChunk{};
+            data = DataFullChunk();
             break; 
         }
         case ChunkType::Flat : {
-            data = DataFlatChunk{};
+            data = DataFlatChunk();
             break; 
         }
         case ChunkType::Wave : {
-            const unsigned int maxHeight = GetMaxHeightForLayer(layer);
-            data = DataWaveChunk{1.f, maxHeight};
+            data = DataWaveChunk();
             break;
         } 
         case ChunkType::Editor : {
-            data = DataEditorChunk{};
+            data = DataEditorChunk();
             break; 
         }
         case ChunkType::Heightmap : {
-            // TODO : Remove ?
-            const unsigned int maxHeight = GetMaxHeightForLayer(layer);
-            m_generator.GenerateHeightMap(m_nrChunkWidth*CHUNK_SIZE, m_nrChunkDepth*CHUNK_SIZE, maxHeight);
-            int width, depth, channel;
-            const unsigned char* heightmap = stbi_load("../data/heightmap/terrain.png", &width, &depth, &channel, 1);
-            if (width != m_nrChunkWidth*CHUNK_SIZE || depth != m_nrChunkDepth*CHUNK_SIZE)
-                throw std::runtime_error("The dimensions of the heightmap do not match with the size of the terrain");
-
-            data = DataHeightmapChunk{
-                HeightmapData{heightmap, width, depth, channel}, 
-                m_generator.GetNoiseParams(), 
-                SplineData{{0.f, 1.f}, {0.f, 1.f}, false}};
+            data = DataHeightmapChunk(m_generator.GetNoiseParams());
             break; 
         }
         case ChunkType::Cheese : {
-            data = DataCheeseChunk{&m_generator, m_generator.GetNoiseParams(), 0.f};
+            data = DataCheeseChunk(&m_generator, m_generator.GetNoiseParams());
             break;
         }
-        case ChunkType::Cave : {
-            // TODO : Remove ?
-            m_generator.GenerateCaveHeightMap(m_nrChunkWidth*CHUNK_SIZE, m_nrChunkDepth*CHUNK_SIZE, 5, 4);
-            int width, depth, channel;
-            const unsigned char* caveHeightmap = stbi_load("../data/heightmap/cave.png", &width, &depth, &channel, 1);
-            if (width != m_nrChunkWidth*CHUNK_SIZE || depth != m_nrChunkDepth*CHUNK_SIZE)
-                throw std::runtime_error("The dimensions of the cave heightmap do not match with the size of the terrain");
-            
-            data = DataCaveChunk{
-                HeightmapData{caveHeightmap, width, depth, channel},
-                SplineData{{0.f, 1.f}, {0.f, 1.f}, false}
-            };
+        case ChunkType::Cave : {            
+            data = DataCaveChunk();
             break;
         }
         default:
             throw std::runtime_error("Terrain::Create : This ChunkType value should not be used here");
     }
+    
+    std::visit( 
+        [this, &layer](auto& d)
+        {
+            UpdateDataChunk(layer, d);
+        },
+        data
+    );
+
     return data;
 }
 
@@ -165,8 +152,17 @@ void Terrain::UpdateDataChunk(const ChunkLayer layer, DataHeightmapChunk& data)
 void Terrain::UpdateDataChunk(const ChunkLayer layer, DataCheeseChunk& data)
 {}
 
-void Terrain::UpdateDataChunk(const ChunkLayer layer, DataCaveChunk& data) // TODO
-{}
+void Terrain::UpdateDataChunk(const ChunkLayer layer, DataCaveChunk& data) 
+{
+    const unsigned int maxHeight = GetMaxHeightForLayer(layer);
+
+    m_generator.GenerateCaveHeightMap(m_nrChunkWidth*CHUNK_SIZE, m_nrChunkDepth*CHUNK_SIZE, data.nrIteration, data.threshold);
+
+    data.heightmap.values = stbi_load("../data/heightmap/cave.png", &data.heightmap.width, &data.heightmap.depth, &data.heightmap.channel, 1);
+
+    if (data.heightmap.width != m_nrChunkWidth*CHUNK_SIZE || data.heightmap.depth != m_nrChunkDepth*CHUNK_SIZE)
+        throw std::runtime_error("The dimensions of the cave heightmap do not match with the size of the terrain");
+}
 
 void Terrain::Create()
 {

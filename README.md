@@ -39,17 +39,17 @@ make
       <br>
       <strong>Skybox, Camera and Face Culling</strong>
     </td>
-    <!--
     <td align="center">
-      <a href="https://www.youtube.com/watch?v=6zPQBOPspiM">
-        <img src="https://img.youtube.com/vi/6zPQBOPspiM/maxresdefault.jpg" height="150">
+      <a href="https://www.youtube.com/watch?v=mNM1NbJVsNA">
+        <img src="https://img.youtube.com/vi/mNM1NbJVsNA/maxresdefault.jpg" height="200">
       </a>
       <br>
-      <strong>Random NPC</strong>
+      <strong>Flat, Full, Wave and Cheese Chunks</strong>
     </td>
+    <!--
     <td align="center">
       <a href="https://www.youtube.com/watch?v=lglTWxUAEWs">
-        <img src="https://img.youtube.com/vi/lglTWxUAEWs/maxresdefault.jpg" height="150">
+        <img src="https://img.youtube.com/vi/lglTWxUAEWs/maxresdefault.jpg" height="200">
       </a>
       <br>
       <strong>Map Navigation</strong>

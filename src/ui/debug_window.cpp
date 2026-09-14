@@ -226,9 +226,19 @@ bool DebugWindow::OpenSettings(DataCheeseChunk& data)
     return needUpdate;
 }
 
-bool DebugWindow::OpenSettings(DataCaveChunk& data) // TODO
+bool DebugWindow::OpenSettings(DataCaveChunk& data)
 {
-    return false;
+    bool needUpdate = false;
+
+    if (ImGui::SliderInt("Iteration##Cave", &data.nrIteration, 0, 10))
+        needUpdate = true;
+    if (ImGui::SliderInt("Threshold##Cave", &data.threshold, 0, 8))
+        needUpdate = true;
+
+    // if (data.spline.use) // TODO 
+    //     needUpdate |= OpenSplinePlot(data.spline);
+
+    return needUpdate;
 }
 
 void DebugWindow::Draw()
