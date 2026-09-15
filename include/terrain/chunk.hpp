@@ -48,6 +48,8 @@ class Chunk // 32x32x32
         void AddFaceIndices(const unsigned int offset);
         void AddFace(const std::string& faceId, Face* face);
         void BuildFaces();
+
+        static unsigned int RuleBlockId(const unsigned int distanceToSurface); // TODO : Rename ? + Create a class RuleBlockId ?
     
     public:
         Chunk(const std::string& vertexPath, const std::string& fragmentPath, const glm::ivec3 terrainPosition, 

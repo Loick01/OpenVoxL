@@ -2,6 +2,12 @@
 
 #include "graphic/texture.hpp"
 
+namespace {
+    const unsigned int stoneId = 0;
+    const unsigned int grassId = 13;
+    const unsigned int dirtId = 32;
+}
+
 Chunk::Chunk(const std::string& vertexPath, const std::string& fragmentPath, const glm::ivec3 terrainPosition,
 const glm::ivec3 layerPosition, const glm::ivec3 terrainSize, const glm::vec3 originPosition):
     m_shader(vertexPath, fragmentPath), m_terrainPosition(terrainPosition), m_layerPosition(layerPosition),
@@ -32,6 +38,15 @@ const Chunk* Chunk::GetChunkNeighbor(const ChunkNeighbor which) const
     if (it == m_chunkNeighbors.end())
         return nullptr;
     return it->second;
+}
+
+unsigned int Chunk::RuleBlockId(const unsigned int distanceToSurface)
+{
+    if (distanceToSurface == 0)
+        return grassId;
+    else if (distanceToSurface < 5+rand()%4)
+        return dirtId;
+    return stoneId;
 }
 
 void Chunk::SetChunkNeighbor(const ChunkNeighbor which, const Chunk* neighbor)
@@ -140,7 +155,7 @@ void Chunk::Build(const DataFullChunk& data)
     for (unsigned int k = 0 ; k < CHUNK_SIZE ; k++) { // Y
         for (unsigned int j = 0 ; j < CHUNK_SIZE ; j++) { // Z
             for (unsigned int i = 0 ; i < CHUNK_SIZE ; i++) { // X
-                AddVoxel(glm::vec3(i, k, j), 0);
+                AddVoxel(glm::vec3(i, k, j), rand()%35);
             }
         }
     }
@@ -153,7 +168,7 @@ void Chunk::Build(const DataFlatChunk& data)
     if (m_terrainPosition.y == 0) {
         for (unsigned int j = 0 ; j < CHUNK_SIZE ; j++) { // Z
             for (unsigned int i = 0 ; i < CHUNK_SIZE ; i++) { // X
-                AddVoxel(glm::vec3(i, 0.f, j), 0);
+                AddVoxel(glm::vec3(i, 0.f, j), grassId);
             }
         }
     }
@@ -174,7 +189,7 @@ void Chunk::Build(const DataWaveChunk& data)
                 const unsigned int blockHeightPosition = m_layerPosition.y*CHUNK_SIZE + k; // Block height position in its ChunkLayer
 
                 if (blockHeightPosition <= maxHeight)
-                    AddVoxel(glm::vec3(i, k, j), 0);
+                    AddVoxel(glm::vec3(i, k, j), dirtId);
             }
         }
     }
@@ -191,7 +206,7 @@ void Chunk::Build(const DataHeightmapChunk& data)
                 const unsigned int hmIndex = m_originPosition.z*data.heightmap.width  + m_originPosition.x + j*data.heightmap.width + i; 
                 const unsigned int blockHeightPosition = m_layerPosition.y*CHUNK_SIZE + k; // Block height position in its ChunkLayer
                 if (blockHeightPosition <= heightmap[hmIndex])
-                    AddVoxel(glm::vec3(i, k, j), 13);
+                    AddVoxel(glm::vec3(i, k, j), RuleBlockId(heightmap[hmIndex]-blockHeightPosition));
             }
         }
     }
@@ -209,7 +224,7 @@ void Chunk::Build(const DataCheeseChunk& data)
                 const float freq = data.noiseParams.frequency;
                 const float density = data.generator->GetNoise3D(freq*(m_originPosition.x + i), freq*blockHeightPosition, freq*(m_originPosition.z + j));
                 if (density > data.threshold)
-                    AddVoxel(glm::vec3(i, k, j), 0);
+                    AddVoxel(glm::vec3(i, k, j), stoneId);
             }
         }
     }
@@ -226,7 +241,7 @@ void Chunk::Build(const DataCaveChunk& data)
                 const unsigned int hmIndex = m_originPosition.z*data.heightmap.width  + m_originPosition.x + j*data.heightmap.width + i; 
                 const unsigned int blockHeightPosition = m_layerPosition.y*CHUNK_SIZE + k; // Block height position in its ChunkLayer
                 if (k == 0 || blockHeightPosition != heightmap[hmIndex])
-                    AddVoxel(glm::vec3(i, k, j), 0);
+                    AddVoxel(glm::vec3(i, k, j), stoneId);
             }
         }
     }
@@ -235,7 +250,7 @@ void Chunk::Build(const DataCaveChunk& data)
 void Chunk::Build(const DataEditorChunk& data)
 {
     const glm::vec3 centerPosition = glm::vec3(CHUNK_SIZE/2);
-    AddVoxel(centerPosition, 0);
+    AddVoxel(centerPosition, stoneId);
 }
 
 void Chunk::VoxelComputeData()

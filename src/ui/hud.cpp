@@ -3,7 +3,7 @@
 #include "graphic/texture.hpp"
 
 Hud::Hud(const std::string& vertexPath, const std::string& fragmentPath, const unsigned int windowWidth, const unsigned int windowHeight):
-    m_windowWidth(windowWidth), m_windowHeight(windowHeight), m_shader(vertexPath, fragmentPath)
+    m_windowWidth(windowWidth), m_windowHeight(windowHeight), m_shader(vertexPath, fragmentPath), m_showHud(true)
 {
     // Must respect the sizes from the used texture
     m_hotbarWidth = 724.0f;
@@ -94,12 +94,21 @@ void Hud::Load()
 
 void Hud::Draw()
 {
+    if (!m_showHud)
+        return;
+    
     glDisable(GL_DEPTH_TEST);
     m_shader.Use();
     BindTexture2D(m_shader.GetLocation("hudTexture"), m_textureId, 0);
     glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLES, m_countIndex, GL_UNSIGNED_INT, (void*)0);
     glEnable(GL_DEPTH_TEST);
+}
+
+void Hud::KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys)
+{
+    if (keys[GLFW_KEY_Q])
+        m_showHud = !m_showHud;
 }
 
 void Hud::UpdateHealth(const float health)

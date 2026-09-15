@@ -3,6 +3,8 @@
 #include <vector>
 
 #include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 #include <glm/vec2.hpp>
 
 #include "graphic/shader.hpp"
@@ -37,16 +39,20 @@ class Hud{
         GLuint m_VAO;
         GLuint m_VBO;
         GLuint m_EBO;
-        unsigned int m_countIndex; 
+        unsigned int m_countIndex;
+
+        bool m_showHud;
         
         Quad CreateQuad(const glm::vec2 origin, const float width, const float height); // Parameter origin is the bottom left point
         
     public:
         Hud(const std::string& vertexPath, const std::string& fragmentPath, const unsigned int windowWidth, const unsigned int windowHeight);
         ~Hud();
-
+        
         void Load();
         void Draw();
+
+        void KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys);
 
         void UpdateHealth(const float health);
         void UpdateStamina(const float stamina);

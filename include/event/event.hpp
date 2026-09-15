@@ -2,9 +2,12 @@
 
 #include <array>
 
+#define GLFW_INCLUDE_NONE // ???
 #include <GLFW/glfw3.h>
 
 class Camera;
+class DebugWindow;
+class Hud;
 
 class EventController
 {
@@ -12,6 +15,8 @@ class EventController
         GLFWwindow* m_glfwWindow;
         
         Camera& m_camera;
+        DebugWindow& m_debug;
+        Hud& m_hud;
 
         std::array<bool, GLFW_KEY_LAST+1> m_keys;
 
@@ -24,7 +29,7 @@ class EventController
         void EventScrollCallback(double xoffset, double yoffset);
 
     public:
-        EventController(GLFWwindow* glfwWindow, Camera& camera);
+        EventController(GLFWwindow* glfwWindow, Camera& camera, DebugWindow& debug, Hud& hud);
         
         const std::array<bool,GLFW_KEY_LAST+1>& GetKeys() const;
         void PollEvents();

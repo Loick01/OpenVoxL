@@ -27,7 +27,7 @@ DebugWindow::DebugWindow(GLFWwindow* glfwWindow, Camera& camera, Terrain& terrai
     m_indexBelowChunkType((unsigned int)m_terrain.GetChunkType(ChunkLayer::Below)),
     m_indexNoiseTypeForHeightmap(5), m_indexInterpForHeightmap(0), m_indexFractalTypeForHeightmap(0), m_indexCellularDistanceFunctionForHeightmap(0), m_indexCellularReturnTypeForHeightmap(0), // TODO : Remove
     m_indexNoiseTypeForCheese(5), m_indexInterpForCheese(0), m_indexFractalTypeForCheese(0), m_indexCellularDistanceFunctionForCheese(0), m_indexCellularReturnTypeForCheese(0), // TODO : Remove
-    m_wireframeRendering(false)
+    m_wireframeRendering(false), m_showDebug(true)
 {
     InitImGui();
 }
@@ -244,8 +244,17 @@ bool DebugWindow::OpenSettings(DataCaveChunk& data)
     return needUpdate;
 }
 
+void DebugWindow::KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys)
+{
+    if (keys[GLFW_KEY_F3])
+        m_showDebug = !m_showDebug;
+}
+
 void DebugWindow::Draw()
 {
+    if (!m_showDebug)
+        return;
+    
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
 

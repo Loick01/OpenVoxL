@@ -1,5 +1,9 @@
 #pragma once
 
+
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
@@ -37,7 +41,8 @@ class DebugWindow
         unsigned int m_indexFractalTypeForCheese;
         unsigned int m_indexCellularDistanceFunctionForCheese;
         unsigned int m_indexCellularReturnTypeForCheese;
-
+        
+        bool m_showDebug;
         bool m_wireframeRendering;
 
         void InitImGui();
@@ -57,6 +62,7 @@ class DebugWindow
     public:
         DebugWindow(GLFWwindow* glfwWindow, Camera& camera, Terrain& terrain);
         ~DebugWindow();
-
+        
+        void KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys);
         void Draw();
 };
