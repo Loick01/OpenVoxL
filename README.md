@@ -26,6 +26,8 @@ make
 + **Spacebar/Left control :** Move the camera up/down
 + **Mouse :** Look around
 + **E :** Switch between MouseFree and KeyFree camera states
++ **Q :** Show/Hide the HUD
++ **F3 :** Show/Hide the Debug window
 + **Escape :** Close the window
 
 ### Demo videos

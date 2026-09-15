@@ -6,6 +6,7 @@
 #include <GLFW/glfw3.h>
 
 #include "core/camera.hpp"
+#include "graphic/texture.hpp"
 #include "terrain/terrain.hpp"
 
 namespace
@@ -27,9 +28,11 @@ DebugWindow::DebugWindow(GLFWwindow* glfwWindow, Camera& camera, Terrain& terrai
     m_indexBelowChunkType((unsigned int)m_terrain.GetChunkType(ChunkLayer::Below)),
     m_indexNoiseTypeForHeightmap(5), m_indexInterpForHeightmap(0), m_indexFractalTypeForHeightmap(0), m_indexCellularDistanceFunctionForHeightmap(0), m_indexCellularReturnTypeForHeightmap(0), // TODO : Remove
     m_indexNoiseTypeForCheese(5), m_indexInterpForCheese(0), m_indexFractalTypeForCheese(0), m_indexCellularDistanceFunctionForCheese(0), m_indexCellularReturnTypeForCheese(0), // TODO : Remove
-    m_wireframeRendering(false), m_showDebug(true)
+    m_wireframeRendering(false), m_showMainDebug(true), m_showHeightmapDebug(false)
 {
     InitImGui();
+    m_heightmapTextureId = LoadTexture2D("../data/heightmap/terrain.png");
+    // m_caveHeightmapTextureId = LoadTexture2D("../data/heightmap/cave.png");
 }
 
 DebugWindow::~DebugWindow()
@@ -247,19 +250,14 @@ bool DebugWindow::OpenSettings(DataCaveChunk& data)
 void DebugWindow::KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys)
 {
     if (keys[GLFW_KEY_F3])
-        m_showDebug = !m_showDebug;
+        m_showMainDebug = !m_showMainDebug;
+    if (keys[GLFW_KEY_F4])
+        m_showHeightmapDebug = !m_showHeightmapDebug;
 }
 
-void DebugWindow::Draw()
+void DebugWindow::ShowMainWindow()
 {
-    if (!m_showDebug)
-        return;
-    
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
-
-    ImGui::NewFrame();
-    ImGui::Begin("Debug Window");
+    ImGui::Begin("Main Debug", &m_showMainDebug);
 
     if (ImGui::BeginTabBar("Tabs")){
 
@@ -362,6 +360,12 @@ void DebugWindow::Draw()
                 m_terrain.Create();
                 m_terrain.Load();
                 m_camera.SetTargetTerrain(glm::vec3(m_terrain.GetSize()*CHUNK_SIZE)/2.f);
+                m_heightmapTextureId = LoadTexture2D("../data/heightmap/terrain.png");
+                // m_caveHeightmapTextureId = LoadTexture2D("../data/heightmap/cave.png");
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Show Heightmaps")) {
+                m_showHeightmapDebug = !m_showHeightmapDebug;
             }
             
             ImGui::EndTabItem();
@@ -371,7 +375,32 @@ void DebugWindow::Draw()
     }
     
     ImGui::End();
+}
 
+void DebugWindow::ShowHeightmapWindow()
+{
+    ImGui::Begin("Heightmap Debug", &m_showHeightmapDebug);
+
+    // const ImVec2 windowSize = ImGui::GetContentRegionAvail();
+    // const glm::ivec3 terrainBlockSize = m_terrain.GetSize()*CHUNK_SIZE;
+    // const unsigned int heightmapWidth = terrainBlockSize.x;
+    // const unsigned int heightmapDepth = terrainBlockSize.z;
+    
+    ImGui::Image((ImTextureID)(intptr_t)m_heightmapTextureId, ImVec2(512, 512)); // TODO : Not 512x512
+
+    ImGui::End();
+}
+
+void DebugWindow::Draw()
+{    
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+
+    ImGui::NewFrame();
+    if (m_showMainDebug)
+        ShowMainWindow();
+    if (m_showHeightmapDebug)
+        ShowHeightmapWindow();
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }

@@ -41,9 +41,14 @@ class DebugWindow
         unsigned int m_indexFractalTypeForCheese;
         unsigned int m_indexCellularDistanceFunctionForCheese;
         unsigned int m_indexCellularReturnTypeForCheese;
+
+        // TODO : Remove ? + Rename
+        GLuint m_heightmapTextureId;
+        GLuint m_caveHeightmapTextureId;
         
-        bool m_showDebug;
         bool m_wireframeRendering;
+        bool m_showMainDebug;
+        bool m_showHeightmapDebug;
 
         void InitImGui();
         
@@ -58,6 +63,9 @@ class DebugWindow
         bool OpenSettings(DataHeightmapChunk& data);
         bool OpenSettings(DataCheeseChunk& data);
         bool OpenSettings(DataCaveChunk& data);
+        
+        void ShowMainWindow();
+        void ShowHeightmapWindow();
 
     public:
         DebugWindow(GLFWwindow* glfwWindow, Camera& camera, Terrain& terrain);
