@@ -5,9 +5,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include <glm/vec2.hpp>
-
-#include "graphic/shader.hpp"
+#include "graphic/drawable.hpp"
 
 namespace UiElementIndex {
     // Must respect the order of creation of Quad in Hud constructor  
@@ -20,25 +18,18 @@ namespace UiElementIndex {
     const unsigned int StaminaLine = 6;
 }
 
-// Should not be here ?
 struct Quad{
-    std::vector<glm::vec2> vertices;
+    std::vector<glm::vec3> vertices; // z = 0
     std::vector<unsigned int> indices;
 };
 
-class Hud{
-    private:
+class Hud : public Drawable {
+    private:        
         std::vector<Quad> m_uiQuads;
         const unsigned int m_windowWidth;
         const unsigned int m_windowHeight;
         float m_hotbarWidth;
 
-        Shader m_shader;
-        GLuint m_textureId;
-        
-        GLuint m_VAO;
-        GLuint m_VBO;
-        GLuint m_EBO;
         unsigned int m_countIndex;
 
         bool m_showHud;
@@ -47,10 +38,10 @@ class Hud{
         
     public:
         Hud(const std::string& vertexPath, const std::string& fragmentPath, const unsigned int windowWidth, const unsigned int windowHeight);
-        ~Hud();
         
-        void Load();
-        void Draw();
+        void LoadTexture() override;
+        void Load() override;
+        void Draw() const override;
 
         void KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys);
 

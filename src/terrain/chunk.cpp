@@ -1,7 +1,5 @@
 #include "terrain/chunk.hpp"
 
-#include "graphic/texture.hpp"
-
 namespace {
     const unsigned int stoneId = 0;
     const unsigned int grassId = 13;
@@ -10,24 +8,18 @@ namespace {
 
 Chunk::Chunk(const std::string& vertexPath, const std::string& fragmentPath, const glm::ivec3 terrainPosition,
 const glm::ivec3 layerPosition, const glm::ivec3 terrainSize, const glm::vec3 originPosition):
-    m_shader(vertexPath, fragmentPath), m_terrainPosition(terrainPosition), m_layerPosition(layerPosition),
+    Drawable(vertexPath, fragmentPath), m_terrainPosition(terrainPosition), m_layerPosition(layerPosition),
     m_terrainSize(terrainSize), m_originPosition(originPosition)
 {
-    glGenVertexArrays(1, &m_VAO);
-    glGenBuffers(1, &m_VBO);
-    glGenBuffers(1, &m_EBO);
     glGenBuffers(1, &m_blockId_SSBO);
     glGenBuffers(1, &m_faceOrientation_SSBO);
     
-    m_textureId = LoadTexture2D("../asset/texture/block/atlas.png");
+    LoadTexture();
     m_gridVoxel.resize(CHUNK_SIZE*CHUNK_SIZE*CHUNK_SIZE);
 }
 
 Chunk::~Chunk()
 {
-    glDeleteVertexArrays(1, &m_VAO);
-    glDeleteBuffers(1, &m_VBO);
-    glDeleteBuffers(1, &m_EBO);
     glDeleteBuffers(1, &m_blockId_SSBO); 
     glDeleteBuffers(1, &m_faceOrientation_SSBO);
 }
@@ -292,6 +284,11 @@ void Chunk::VoxelBufferData()
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_faceOrientation_SSBO);
     glBufferData(GL_SHADER_STORAGE_BUFFER, m_faceOrientations.size()*sizeof(unsigned int), m_faceOrientations.data(), GL_DYNAMIC_DRAW);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, m_faceOrientation_SSBO);
+}
+
+void Chunk::LoadTexture()
+{
+    m_textureId = LoadTexture2D("../asset/texture/block/atlas.png");
 }
 
 void Chunk::Load() 

@@ -1,9 +1,7 @@
 #include "ui/hud.hpp"
 
-#include "graphic/texture.hpp"
-
 Hud::Hud(const std::string& vertexPath, const std::string& fragmentPath, const unsigned int windowWidth, const unsigned int windowHeight):
-    m_windowWidth(windowWidth), m_windowHeight(windowHeight), m_shader(vertexPath, fragmentPath), m_showHud(true)
+    Drawable(vertexPath, fragmentPath), m_windowWidth(windowWidth), m_windowHeight(windowHeight), m_showHud(true)
 {
     // Must respect the sizes from the used texture
     m_hotbarWidth = 724.0f;
@@ -23,33 +21,23 @@ Hud::Hud(const std::string& vertexPath, const std::string& fragmentPath, const u
     //     Quad q = CreateQuad(glm::vec2(m_windowWidth/2.-m_hotbarWidth/2.+80.*i+8., 18.), 68., 68.);
     //     m_uiQuads.push_back(q);
     // }
-
-    glGenVertexArrays(1, &m_VAO);
-    glGenBuffers(1, &m_VBO);
-    glGenBuffers(1, &m_EBO);
     
     Load();
-    m_textureId = LoadTexture2D("../asset/texture/ui/hud.png");
+    LoadTexture();
+
     m_shader.SetInt("windowWidth", m_windowWidth);
     m_shader.SetInt("windowHeight", m_windowHeight);
 }
 
-Hud::~Hud()
-{
-    glDeleteVertexArrays(1, &m_VAO);
-    glDeleteBuffers(1, &m_VBO);
-    glDeleteBuffers(1, &m_EBO);
-}
-
 Quad Hud::CreateQuad(const glm::vec2 origin, const float width, const float height)
 {
-    std::vector<glm::vec2> vertices;
+    std::vector<glm::vec3> vertices;
     std::vector<unsigned int> indices;
 
-    vertices.push_back(origin);
-    vertices.push_back(glm::vec2(origin[0]+width,origin[1]));
-    vertices.push_back(glm::vec2(origin[0],origin[1]+height));
-    vertices.push_back(glm::vec2(origin[0]+width,origin[1]+height));
+    vertices.push_back(glm::vec3(origin, 0.f));
+    vertices.push_back(glm::vec3(origin[0]+width, origin[1], 0.f));
+    vertices.push_back(glm::vec3(origin[0], origin[1]+height, 0.f));
+    vertices.push_back(glm::vec3(origin[0]+width, origin[1]+height, 0.f));
 
     indices.push_back(0);
     indices.push_back(1);
@@ -62,37 +50,39 @@ Quad Hud::CreateQuad(const glm::vec2 origin, const float width, const float heig
     return q;
 }
 
-void Hud::Load()
+void Hud::LoadTexture()
 {
-    std::vector<glm::vec2> vertices;
-    std::vector<unsigned int> indices;
-    
+    m_textureId = LoadTexture2D("../asset/texture/ui/hud.png");
+}
+
+void Hud::Load()
+{   
     unsigned int indexOffset = 0;
     m_countIndex = 0;
     
     for (unsigned int i = 0 ; i < m_uiQuads.size() ; i++){
         for (unsigned int k = 0 ; k < 4 ; k++){
-            vertices.push_back(m_uiQuads[i].vertices[k]);
+            m_vertices.push_back(m_uiQuads[i].vertices[k]);
         }
         for (unsigned int k = 0 ; k < 6 ; k++){
-            indices.push_back(indexOffset + m_uiQuads[i].indices[k]);
+            m_indices.push_back(indexOffset + m_uiQuads[i].indices[k]);
             m_countIndex++;
         }
         indexOffset += 4;
     }
 
     glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(glm::vec2), vertices.data(), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, m_vertices.size()*sizeof(glm::vec3), m_vertices.data(), GL_STATIC_DRAW);
     
     glBindVertexArray(m_VAO);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
     glEnableVertexAttribArray(0);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size()* sizeof(unsigned int), indices.data() , GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_indices.size()* sizeof(unsigned int), m_indices.data() , GL_STATIC_DRAW);
 }
 
-void Hud::Draw()
+void Hud::Draw() const
 {
     if (!m_showHud)
         return;
