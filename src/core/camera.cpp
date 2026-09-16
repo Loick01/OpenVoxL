@@ -4,11 +4,14 @@
 
 #include <glm/gtc/matrix_transform.hpp> // glm::lookAt
 
-Camera::Camera(GLFWwindow* glfwWindow, const float aspectRatio):
+#include "entity/hitbox.hpp"
+
+Camera::Camera(GLFWwindow* glfwWindow, Hitbox& hitbox, const float aspectRatio):
     m_state(CameraState::MouseFree), m_upVector(glm::vec3(0.f, 1.f, 0.f)),
     m_position(glm::vec3(0.f)), m_fov(75.f), m_nearPlane(0.1f), m_farPlane(500.f),
     m_aspectRatio(aspectRatio), m_yaw(-90.f), m_pitch(0.f),
-    m_sensitivity(0.05f), m_speed(50.f), m_glfwWindow(glfwWindow), m_targetTerrain(glm::vec3(0.f))
+    m_sensitivity(0.05f), m_speed(50.f), m_glfwWindow(glfwWindow), m_playerHitbox(hitbox),
+    m_targetTerrain(glm::vec3(0.f))
 {
     UpdateVectors();
 }
@@ -100,10 +103,29 @@ void Camera::KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys)
     }
 }
 
-void Camera::ProcessKeyEvent(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime)
+void Camera::CursorPosCallback(double xpos, double ypos)
 {
-    if (m_state == CameraState::Player)
+    if (m_state == CameraState::MouseFree || m_state == CameraState::Player) {
+        double deltaX = xpos - m_previousXPos;
+        double deltaY = m_previousYPos - ypos;
+
+        m_previousXPos = xpos;
+        m_previousYPos = ypos;
+        
+        m_yaw += deltaX * m_sensitivity;
+        m_pitch += deltaY * m_sensitivity;
+        m_pitch = glm::clamp(m_pitch, -89.0f, 89.0f);
+
+        UpdateVectors();
+    }
+}
+
+void Camera::EventUpdate(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime)
+{
+    if (m_state == CameraState::Player) {
+        m_position = m_playerHitbox.GetPosition();
         return;
+    }
     
     const float frameSpeed = m_speed * deltaTime;
 
@@ -121,22 +143,5 @@ void Camera::ProcessKeyEvent(const std::array<bool, GLFW_KEY_LAST+1>& keys, cons
         m_position -= frameSpeed * m_upVector;
             
     if (m_state == CameraState::Orbital)
-        UpdateVectorsToTarget(m_targetTerrain); 
-}
-
-void Camera::CursorPosCallback(double xpos, double ypos)
-{
-    if (m_state == CameraState::MouseFree || m_state == CameraState::Player) {
-        double deltaX = xpos - m_previousXPos;
-        double deltaY = m_previousYPos - ypos;
-
-        m_previousXPos = xpos;
-        m_previousYPos = ypos;
-        
-        m_yaw += deltaX * m_sensitivity;
-        m_pitch += deltaY * m_sensitivity;
-        m_pitch = glm::clamp(m_pitch, -89.0f, 89.0f);
-
-        UpdateVectors();
-    }
+        UpdateVectorsToTarget(m_targetTerrain);
 }

@@ -5,9 +5,10 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
+#include "core/updatable.hpp"
 #include "entity/hitbox.hpp"
 
-class Player
+class Player : public EventUpdatable
 {
     private:    
         Hitbox m_hitbox;
@@ -20,5 +21,7 @@ class Player
     public:
         Player(const glm::vec3 position, const float speed, const float sprint);
 
-        void ProcessKeyEvent(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime);
+        Hitbox& GetHitbox();
+        
+        void EventUpdate(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime) override;
 };

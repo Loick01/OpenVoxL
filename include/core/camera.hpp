@@ -1,14 +1,17 @@
 #pragma once
 
-#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
+
+#include "core/updatable.hpp"
+
+class Hitbox;
 
 enum class CameraState
 {
     KeyFree, MouseFree, Orbital, Player
 };
 
-class Camera
+class Camera : public EventUpdatable
 {
     private:
         const glm::vec3 m_upVector;
@@ -31,13 +34,14 @@ class Camera
         CameraState m_state;
 
         GLFWwindow* m_glfwWindow;
+        Hitbox& m_playerHitbox;
 
         void UpdateVectors();
         void UpdateVectorsToTarget(const glm::vec3 target);
         void CheckInputMode();
         
     public:
-        Camera(GLFWwindow* glfwWindow, const float aspectRatio);
+        Camera(GLFWwindow* glfwWindow, Hitbox& hitbox, const float aspectRatio);
 
         glm::mat4 GetViewMatrix() const;
         glm::mat4 GetProjectionMatrix() const;
@@ -52,6 +56,7 @@ class Camera
 
         void SetState(const CameraState state);
         void KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys);
-        void ProcessKeyEvent(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime);
         void CursorPosCallback(double xpos, double ypos);
+
+        void EventUpdate(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime) override;
 };

@@ -48,7 +48,6 @@ class DebugWindow
         
         bool m_wireframeRendering;
         bool m_showMainDebug;
-        bool m_showHeightmapDebug;
 
         void InitImGui();
         
@@ -65,7 +64,6 @@ class DebugWindow
         bool OpenSettings(DataCaveChunk& data);
         
         void ShowMainWindow();
-        void ShowHeightmapWindow();
 
     public:
         DebugWindow(GLFWwindow* glfwWindow, Camera& camera, Terrain& terrain);

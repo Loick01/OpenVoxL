@@ -4,8 +4,13 @@ Player::Player(const glm::vec3 position, const float speed, const float sprint):
     m_hitbox(position), m_health(100.f), m_stamina(100.f), m_speed(speed), m_sprint(sprint)
 {}
 
-void Player::ProcessKeyEvent(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime)
-{   
+Hitbox& Player::GetHitbox()
+{
+    return m_hitbox;
+}
+
+void Player::EventUpdate(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime)
+{
     const float frameSpeed = m_speed * deltaTime;
 
     // if (keys[GLFW_KEY_W])

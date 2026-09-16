@@ -9,4 +9,6 @@ class Hitbox
     
     public:
         Hitbox(const glm::vec3 position);
+
+        glm::vec3 GetPosition() const;
 };

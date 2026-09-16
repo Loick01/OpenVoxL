@@ -19,7 +19,8 @@ class Application
         Window m_window; // Window must be initialized before EventController
         EventController m_eventController;
         SoundController m_soundController;
-        
+
+        Player m_player;
         Camera m_camera;
         Hud m_hud;
         Skybox m_skybox;
@@ -28,7 +29,6 @@ class Application
 
         DebugWindow m_debug;
 
-        Player m_player;
         
     public:
         Application();

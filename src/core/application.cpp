@@ -1,7 +1,7 @@
 #include "core/application.hpp"
 
 Application::Application():
-    m_window("OpenVoxL"), m_camera(m_window.GetGlfwWindow(), (float)m_window.GetWidth()/(float)m_window.GetHeight()),
+    m_window("OpenVoxL"), m_camera(m_window.GetGlfwWindow(), m_player.GetHitbox(), (float)m_window.GetWidth()/(float)m_window.GetHeight()),
     m_eventController(m_window.GetGlfwWindow(), m_camera, m_debug, m_hud),
     m_skybox("../shader/skybox/skybox.vs", "../shader/skybox/skybox.fs"),
     m_terrain(3, 3, 3),
@@ -35,9 +35,11 @@ bool Application::Run()
     const glm::mat4 cameraViewMatrix = m_camera.GetViewMatrix();
     const glm::mat4 cameraProjectionMatrix = m_camera.GetProjectionMatrix();
     
-    m_camera.ProcessKeyEvent(m_eventController.GetKeys(), deltaTime);
-    m_player.ProcessKeyEvent(m_eventController.GetKeys(), deltaTime);
+    const std::array<bool, GLFW_KEY_LAST+1>& keys = m_eventController.GetKeys();
+    m_player.EventUpdate(keys, deltaTime);
+    m_camera.EventUpdate(keys, deltaTime);
     
+    // TODO : Use a std::vector<Drawable*> ? (terrain can not be in this)
     m_skybox.Draw(cameraProjectionMatrix, cameraViewMatrix);
     m_terrain.Draw(cameraProjectionMatrix, cameraViewMatrix);
     m_hud.Draw();
