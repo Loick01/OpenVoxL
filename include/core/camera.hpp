@@ -5,7 +5,7 @@
 
 enum class CameraState
 {
-    KeyFree, MouseFree, Orbital //, Player
+    KeyFree, MouseFree, Orbital, Player
 };
 
 class Camera

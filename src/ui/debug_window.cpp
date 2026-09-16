@@ -11,7 +11,7 @@
 
 namespace
 {
-    const char* cameraStates[] = {"KeyFree", "MouseFree", "Orbital"}; //, "Player"};
+    const char* cameraStates[] = {"KeyFree", "MouseFree", "Orbital", "Player"};
     const char* chunkTypes[] = {"Full", "Flat", "Wave", "Editor", "Heightmap", "Cheese", "Cave"};
 
     const char* noiseTypes[] = {"Value", "ValueFractal", "Perlin", "PerlinFractal", "Simplex", "SimplexFractal", "Cellular", "WhiteNoise", "Cubic", "CubicFractal"};

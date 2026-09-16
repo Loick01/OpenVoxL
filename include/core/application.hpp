@@ -2,6 +2,7 @@
 
 #include <glad/glad.h>
 
+#include "entity/player.hpp"
 #include "terrain/terrain.hpp"
 #include "core/camera.hpp"
 #include "core/time.hpp"
@@ -26,6 +27,8 @@ class Application
         Time m_time;
 
         DebugWindow m_debug;
+
+        Player m_player;
         
     public:
         Application();

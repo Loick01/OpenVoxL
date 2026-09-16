@@ -46,6 +46,7 @@ void Camera::CheckInputMode()
             glfwSetInputMode(m_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
             break;
         case CameraState::MouseFree :
+        case CameraState::Player :
             glfwSetInputMode(m_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             break;
         default:
@@ -101,6 +102,9 @@ void Camera::KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys)
 
 void Camera::ProcessKeyEvent(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime)
 {
+    if (m_state == CameraState::Player)
+        return;
+    
     const float frameSpeed = m_speed * deltaTime;
 
     if (keys[GLFW_KEY_W])
@@ -122,7 +126,7 @@ void Camera::ProcessKeyEvent(const std::array<bool, GLFW_KEY_LAST+1>& keys, cons
 
 void Camera::CursorPosCallback(double xpos, double ypos)
 {
-    if (m_state == CameraState::MouseFree) {
+    if (m_state == CameraState::MouseFree || m_state == CameraState::Player) {
         double deltaX = xpos - m_previousXPos;
         double deltaY = m_previousYPos - ypos;
 
