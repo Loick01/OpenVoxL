@@ -117,6 +117,8 @@ void Camera::CursorPosCallback(double xpos, double ypos)
         m_pitch = glm::clamp(m_pitch, -89.0f, 89.0f);
 
         UpdateVectors();
+        m_playerHitbox.SetFrontVector(m_frontVector);
+        m_playerHitbox.SetRightVector(m_rightVector);
     }
 }
 

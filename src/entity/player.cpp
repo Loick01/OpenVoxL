@@ -12,17 +12,15 @@ Hitbox& Player::GetHitbox()
 void Player::EventUpdate(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime)
 {
     const float frameSpeed = m_speed * deltaTime;
-
-    // if (keys[GLFW_KEY_W])
-    //     m_position += frameSpeed * m_frontVector;
-    // if (keys[GLFW_KEY_S])
-    //     m_position -= frameSpeed * m_frontVector;
-    // if (keys[GLFW_KEY_D])
-    //     m_position += frameSpeed * m_rightVector;
-    // if (keys[GLFW_KEY_A])
-    //     m_position -= frameSpeed * m_rightVector;
-    // if (keys[GLFW_KEY_SPACE])
-    //     m_position += frameSpeed * m_upVector;
-    // if (keys[GLFW_KEY_LEFT_CONTROL])
-    //     m_position -= frameSpeed * m_upVector;
+    
+    if (keys[GLFW_KEY_W])
+        m_hitbox.RequestMove(Direction::Front);
+    if (keys[GLFW_KEY_S])
+        m_hitbox.RequestMove(Direction::Back);
+    if (keys[GLFW_KEY_D])
+        m_hitbox.RequestMove(Direction::Right);
+    if (keys[GLFW_KEY_A])
+        m_hitbox.RequestMove(Direction::Left);
+    
+    m_hitbox.ApplyMove(frameSpeed);
 }
