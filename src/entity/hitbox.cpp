@@ -26,6 +26,11 @@ void Hitbox::SetRightVector(const glm::vec3 right)
     m_rightVector = right;
 }
 
+void Hitbox::SetPosition(const glm::vec3 p)
+{
+    m_position = p;
+}
+
 void Hitbox::RequestMove(const Direction dir)
 {
     switch (dir) {

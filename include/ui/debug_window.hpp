@@ -14,6 +14,7 @@
 #include "terrain/data_chunk.hpp"
 
 class Camera;
+class Hitbox;
 class Terrain;
 
 class DebugWindow
@@ -21,6 +22,7 @@ class DebugWindow
     private:    
         GLFWwindow* m_glfwWindow;
         Camera& m_camera;
+        Hitbox& m_playerHitbox;
         Terrain& m_terrain;
                 
         int m_width;
@@ -66,7 +68,7 @@ class DebugWindow
         void ShowMainWindow();
 
     public:
-        DebugWindow(GLFWwindow* glfwWindow, Camera& camera, Terrain& terrain);
+        DebugWindow(GLFWwindow* glfwWindow, Camera& camera, Hitbox& hitbox, Terrain& terrain);
         ~DebugWindow();
         
         void KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys);

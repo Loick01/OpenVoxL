@@ -36,27 +36,25 @@ make
   <tr>
     <td align="center">
       <a href="https://www.youtube.com/watch?v=aOq84dPkSeA">
-        <img src="https://img.youtube.com/vi/aOq84dPkSeA/maxresdefault.jpg" height="200">
+        <img src="https://img.youtube.com/vi/aOq84dPkSeA/maxresdefault.jpg" height="150">
       </a>
       <br>
       <strong>Skybox, Camera and Face Culling</strong>
     </td>
     <td align="center">
       <a href="https://www.youtube.com/watch?v=mNM1NbJVsNA">
-        <img src="https://img.youtube.com/vi/mNM1NbJVsNA/maxresdefault.jpg" height="200">
+        <img src="https://img.youtube.com/vi/mNM1NbJVsNA/maxresdefault.jpg" height="150">
       </a>
       <br>
       <strong>Flat, Full, Wave and Cheese Chunks</strong>
     </td>
-    <!--
     <td align="center">
-      <a href="https://www.youtube.com/watch?v=lglTWxUAEWs">
-        <img src="https://img.youtube.com/vi/lglTWxUAEWs/maxresdefault.jpg" height="200">
+      <a href="https://www.youtube.com/watch?v=uEHOm_V1WbA">
+        <img src="https://img.youtube.com/vi/uEHOm_V1WbA/maxresdefault.jpg" height="150">
       </a>
       <br>
-      <strong>Map Navigation</strong>
+      <strong>Terrain Heightmap Generation</strong>
     </td>
-    -->
   </tr>
 </table>
 

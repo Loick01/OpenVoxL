@@ -6,6 +6,7 @@
 #include <GLFW/glfw3.h>
 
 #include "core/camera.hpp"
+#include "entity/hitbox.hpp"
 #include "graphic/texture.hpp"
 #include "terrain/terrain.hpp"
 
@@ -21,8 +22,8 @@ namespace
     const char* cellularReturnTypes[] = {"CellValue", "NoiseLookup", "Distance", "Distance2", "Distance2Add", "Distance2Sub", "Distance2Mul", "Distance2Div"};
 }
 
-DebugWindow::DebugWindow(GLFWwindow* glfwWindow, Camera& camera, Terrain& terrain):
-    m_glfwWindow(glfwWindow), m_width(500), m_height(500), m_camera(camera), m_terrain(terrain),
+DebugWindow::DebugWindow(GLFWwindow* glfwWindow, Camera& camera, Hitbox& hitbox, Terrain& terrain):
+    m_glfwWindow(glfwWindow), m_width(500), m_height(500), m_camera(camera),m_playerHitbox(hitbox), m_terrain(terrain),
     m_indexCameraState((unsigned int)m_camera.GetState()), 
     m_indexSurfaceChunkType((unsigned int)m_terrain.GetChunkType(ChunkLayer::Surface)), 
     m_indexBelowChunkType((unsigned int)m_terrain.GetChunkType(ChunkLayer::Below)),
@@ -355,9 +356,14 @@ void DebugWindow::ShowMainWindow()
             }
             
             if (ImGui::Button("Load Terrain")) {
+                // TODO : Should not be here and use Notifier instead ?
+                glm::vec3 terrainCenter = glm::vec3(m_terrain.GetSize()*CHUNK_SIZE)/2.f;
                 m_terrain.Create();
                 m_terrain.Load();
-                m_camera.SetTargetTerrain(glm::vec3(m_terrain.GetSize()*CHUNK_SIZE)/2.f);
+                m_camera.SetTargetTerrain(terrainCenter);
+                terrainCenter.y *= 2.f; // TODO ?
+                m_playerHitbox.SetPosition(terrainCenter);
+                
                 m_heightmapTextureId = LoadTexture2D("../data/heightmap/terrain.png");
                 m_caveHeightmapTextureId = LoadTexture2D("../data/heightmap/cave.png");
             }
