@@ -34,26 +34,41 @@ make
 
 <table align="center">
   <tr>
-    <td align="center">
+    <td align="center" width="250">
       <a href="https://www.youtube.com/watch?v=aOq84dPkSeA">
-        <img src="https://img.youtube.com/vi/aOq84dPkSeA/maxresdefault.jpg" height="150">
+        <img
+          src="https://img.youtube.com/vi/aOq84dPkSeA/maxresdefault.jpg"
+          width="240"
+          height="135"
+          style="object-fit: cover;"
+        >
       </a>
       <br>
       <strong>Skybox, Camera and Face Culling</strong>
     </td>
-    <td align="center">
+    <td align="center" width="250">
       <a href="https://www.youtube.com/watch?v=mNM1NbJVsNA">
-        <img src="https://img.youtube.com/vi/mNM1NbJVsNA/maxresdefault.jpg" height="150">
+        <img
+          src="https://img.youtube.com/vi/mNM1NbJVsNA/maxresdefault.jpg"
+          width="240"
+          height="135"
+          style="object-fit: cover;"
+        >
       </a>
       <br>
       <strong>Flat, Full, Wave and Cheese Chunks</strong>
     </td>
-    <td align="center">
+    <td align="center" width="250">
       <a href="https://www.youtube.com/watch?v=uEHOm_V1WbA">
-        <img src="https://img.youtube.com/vi/uEHOm_V1WbA/maxresdefault.jpg" height="150">
+        <img
+          src="https://img.youtube.com/vi/uEHOm_V1WbA/maxresdefault.jpg"
+          width="240"
+          height="135"
+          style="object-fit: cover;"
+        >
       </a>
       <br>
-      <strong>Terrain Heightmap Generation</strong>
+      <strong>Terrain Heightmap Generation : Perlin, Simplex, Cellular</strong>
     </td>
   </tr>
 </table>
