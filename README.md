@@ -68,7 +68,7 @@ make
         >
       </a>
       <br>
-      <strong>Terrain Heightmap Generation : Perlin, Simplex, Cellular</strong>
+      <strong>Terrain Heightmap Generation</strong>
     </td>
   </tr>
 </table>
