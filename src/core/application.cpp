@@ -36,7 +36,18 @@ bool Application::Run()
     const glm::mat4 cameraProjectionMatrix = m_camera.GetProjectionMatrix();
     
     const std::array<bool, GLFW_KEY_LAST+1>& keys = m_eventController.GetKeys();
+    
     m_player.EventUpdate(keys, deltaTime);
+    // Hitbox& playerHitbox = m_player.GetHitbox();
+    // glm::vec3 currentMove = playerHitbox.GetCurrentMove();
+    // currentMove.y = 0.f;
+    // currentMove = glm::normalize(currentMove)*m_player.GetSpeed()*deltaTime;
+    
+    // if (currentMove != glm::vec3(0.f)) {
+    //     const AABB currentBox = playerHitbox.GetCurrentBox();
+    //     const AABB targetBox = currentBox + currentMove;
+    // }
+    
     m_camera.EventUpdate(keys, deltaTime);
     
     // TODO : Use a std::vector<Drawable*> ? (terrain can not be in this)

@@ -361,7 +361,7 @@ void DebugWindow::ShowMainWindow()
                 m_terrain.Create();
                 m_terrain.Load();
                 m_camera.SetTargetTerrain(terrainCenter);
-                terrainCenter.y *= 2.f; // TODO ?
+                terrainCenter.y *= 2.5f; // TODO ?
                 m_playerHitbox.SetPosition(terrainCenter);
                 
                 m_heightmapTextureId = LoadTexture2D("../data/heightmap/terrain.png");

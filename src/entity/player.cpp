@@ -1,7 +1,7 @@
 #include "entity/player.hpp"
 
 Player::Player(const glm::vec3 position, const float speed, const float sprint):
-    m_hitbox(position), m_health(100.f), m_stamina(100.f), m_speed(speed), m_sprint(sprint)
+    m_hitbox(position, 1.8f, 0.6f), m_health(100.f), m_stamina(100.f), m_speed(speed), m_sprint(sprint)
 {}
 
 Hitbox& Player::GetHitbox()
@@ -22,5 +22,5 @@ void Player::EventUpdate(const std::array<bool, GLFW_KEY_LAST+1>& keys, const fl
     if (keys[GLFW_KEY_A])
         m_hitbox.RequestMove(Direction::Left);
     
-    m_hitbox.ApplyMove(frameSpeed); // TODO : Should not be here ?
+    m_hitbox.ApplyMove(frameSpeed); // TODO : Should not be here
 }

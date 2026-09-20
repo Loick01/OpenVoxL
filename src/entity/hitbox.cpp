@@ -2,9 +2,16 @@
 
 #include <stdexcept>
 
-Hitbox::Hitbox(const glm::vec3 position):
-    m_position(position), m_currentMove(0.f)
-{}
+Hitbox::Hitbox(const glm::vec3 position, const float height, const float width):
+    m_position(position), m_height(height), m_width(width), m_currentMove(0.f)
+{
+    ComputeAABB();
+}
+
+AABB Hitbox::GetCurrentBox() const
+{
+    return m_currentBox;
+}
 
 glm::vec3 Hitbox::GetPosition() const
 {
@@ -14,6 +21,19 @@ glm::vec3 Hitbox::GetPosition() const
 glm::vec3 Hitbox::GetFrontVector() const
 {
     return m_frontVector;
+}
+
+glm::vec3 Hitbox::GetCurrentMove() const
+{
+    return m_currentMove;
+}
+
+void Hitbox::ComputeAABB()
+{
+    m_currentBox = {
+        glm::vec3(m_position.x-m_width/2.f, m_position.y, m_position.z-m_width/2.f),
+        glm::vec3(m_position.x+m_width/2.f, m_position.y+m_height, m_position.z+m_width/2.f)
+    };
 }
 
 void Hitbox::SetFrontVector(const glm::vec3 front)

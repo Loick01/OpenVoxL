@@ -7,19 +7,39 @@ enum class Direction // TODO : Should not be here
     Front, Back, Left, Right
 };
 
+struct AABB
+{
+    glm::vec3 min;
+    glm::vec3 max;
+
+    AABB operator+(const glm::vec3 v) const {
+        return {min+v, max+v};
+    }
+};
+
 class Hitbox
 {
     private:    
+        AABB m_currentBox;
+        AABB m_targetBox;
+        
         glm::vec3 m_position;  
         glm::vec3 m_frontVector;
         glm::vec3 m_rightVector;
         glm::vec3 m_currentMove;
+
+        float m_height;
+        float m_width;
     
     public:
-        Hitbox(const glm::vec3 position);
+        Hitbox(const glm::vec3 position, const float height, const float width);
 
+        AABB GetCurrentBox() const;
         glm::vec3 GetPosition() const;
         glm::vec3 GetFrontVector() const;
+        glm::vec3 GetCurrentMove() const;
+
+        void ComputeAABB();
 
         void SetFrontVector(const glm::vec3 front);
         void SetRightVector(const glm::vec3 right);
