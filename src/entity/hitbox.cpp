@@ -8,9 +8,9 @@ Hitbox::Hitbox(const glm::vec3 position, const float height, const float width):
     ComputeAABB();
 }
 
-AABB Hitbox::GetCurrentBox() const
+AABB Hitbox::GetBox() const
 {
-    return m_currentBox;
+    return m_box;
 }
 
 glm::vec3 Hitbox::GetPosition() const
@@ -30,7 +30,7 @@ glm::vec3 Hitbox::GetCurrentMove() const
 
 void Hitbox::ComputeAABB()
 {
-    m_currentBox = {
+    m_box = {
         glm::vec3(m_position.x-m_width/2.f, m_position.y, m_position.z-m_width/2.f),
         glm::vec3(m_position.x+m_width/2.f, m_position.y+m_height, m_position.z+m_width/2.f)
     };
@@ -49,6 +49,11 @@ void Hitbox::SetRightVector(const glm::vec3 right)
 void Hitbox::SetPosition(const glm::vec3 p)
 {
     m_position = p;
+}
+
+void Hitbox::SetCurrentMove(const glm::vec3 m)
+{
+    m_currentMove = m;
 }
 
 void Hitbox::RequestMove(const Direction dir)
@@ -71,11 +76,8 @@ void Hitbox::RequestMove(const Direction dir)
     }
 }
 
-void Hitbox::ApplyMove(const float frameSpeed)
+void Hitbox::ApplyMove()
 {
-    m_currentMove.y = 0.f;
-    if (m_currentMove != glm::vec3(0.f)) {
-        m_position += glm::normalize(m_currentMove)*frameSpeed;
-        m_currentMove = glm::vec3(0.f);
-    }
+    m_position += m_currentMove;
+    m_currentMove = glm::vec3(0.f);
 }

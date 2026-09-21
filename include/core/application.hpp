@@ -2,6 +2,7 @@
 
 #include <glad/glad.h>
 
+#include "entity/collision.hpp"
 #include "entity/player.hpp"
 #include "terrain/terrain.hpp"
 #include "core/camera.hpp"
@@ -21,6 +22,7 @@ class Application
         SoundController m_soundController;
 
         Player m_player;
+        CollisionResolver m_CollisionResolver;
         Camera m_camera;
         Hud m_hud;
         Skybox m_skybox;

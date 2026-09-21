@@ -9,9 +9,14 @@ Hitbox& Player::GetHitbox()
     return m_hitbox;
 }
 
+float Player::GetFrameSpeed() const
+{
+    return m_frameSpeed;
+}
+
 void Player::EventUpdate(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime)
 {
-    const float frameSpeed = m_speed * deltaTime;
+    m_frameSpeed = m_speed * deltaTime;
     
     if (keys[GLFW_KEY_W])
         m_hitbox.RequestMove(Direction::Front);
@@ -21,6 +26,4 @@ void Player::EventUpdate(const std::array<bool, GLFW_KEY_LAST+1>& keys, const fl
         m_hitbox.RequestMove(Direction::Right);
     if (keys[GLFW_KEY_A])
         m_hitbox.RequestMove(Direction::Left);
-    
-    m_hitbox.ApplyMove(frameSpeed); // TODO : Should not be here
 }

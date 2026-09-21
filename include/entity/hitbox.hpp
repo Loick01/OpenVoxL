@@ -20,8 +20,7 @@ struct AABB
 class Hitbox
 {
     private:    
-        AABB m_currentBox;
-        AABB m_targetBox;
+        AABB m_box;
         
         glm::vec3 m_position;  
         glm::vec3 m_frontVector;
@@ -34,7 +33,7 @@ class Hitbox
     public:
         Hitbox(const glm::vec3 position, const float height, const float width);
 
-        AABB GetCurrentBox() const;
+        AABB GetBox() const;
         glm::vec3 GetPosition() const;
         glm::vec3 GetFrontVector() const;
         glm::vec3 GetCurrentMove() const;
@@ -45,7 +44,8 @@ class Hitbox
         void SetRightVector(const glm::vec3 right);
 
         void SetPosition(const glm::vec3 p);
+        void SetCurrentMove(const glm::vec3 m);
 
         void RequestMove(const Direction dir);
-        void ApplyMove(const float frameSpeed); // frameSpeed = speed*deltaTime);
+        void ApplyMove();
 };
