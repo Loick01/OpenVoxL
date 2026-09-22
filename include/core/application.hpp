@@ -21,16 +21,16 @@ class Application
         EventController m_eventController;
         SoundController m_soundController;
 
-        Player m_player;
-        CollisionResolver m_CollisionResolver;
         Camera m_camera;
         Hud m_hud;
         Skybox m_skybox;
         Terrain m_terrain;
         Time m_time;
 
+        Player m_player;
+        CollisionResolver m_collisionResolver;
+        
         DebugWindow m_debug;
-
         
     public:
         Application();

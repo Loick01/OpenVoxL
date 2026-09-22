@@ -18,6 +18,7 @@ enum class ChunkLayer
 class Terrain
 {
     private:
+        // TODO : Should have m_worldSize = GetSize()*CHUNK_SIZE ? 
         unsigned int m_nrChunkWidth; // X
         unsigned int m_nrChunkDepth; // Z
         unsigned int m_nrChunkHeight; // Y
@@ -27,6 +28,8 @@ class Terrain
         std::map<ChunkLayer, std::pair<ChunkType, DataChunk>> m_dataChunks;
         unsigned int m_surfaceChunkHeight; // Number of Chunks used for the height of the surface. Thus Below layer will have m_nrChunkHeight-m_surfaceChunkHeight
 
+        const Chunk& GetChunkFromVoxel(const glm::ivec3& voxelPosition) const;
+        
         DataChunk CreateDataChunk(const ChunkLayer layer, const ChunkType type);
 
         void UpdateDataChunk(const ChunkLayer layer, DataFlatChunk& data);
@@ -44,6 +47,9 @@ class Terrain
         ChunkType GetChunkType(const ChunkLayer layer) const;
         const DataChunk& GetDataChunk(const ChunkLayer layer) const;
         unsigned int GetSurfaceChunkHeight() const;
+
+        bool IsSolidAt(const glm::ivec3& voxelPosition) const;
+
         void SetSize(const glm::ivec3 size);
         void SetChunkType(const ChunkLayer layer, const ChunkType type);
         void SetDataChunk(const ChunkLayer layer, const DataChunk data);

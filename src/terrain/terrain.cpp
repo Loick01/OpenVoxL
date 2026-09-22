@@ -50,6 +50,16 @@ unsigned int Terrain::GetChunkIndexInGrid(const glm::ivec3& chunkPosition) const
     return chunkPosition.y*m_nrChunkDepth*m_nrChunkWidth + chunkPosition.z*m_nrChunkWidth + chunkPosition.x;
 }
 
+bool Terrain::IsSolidAt(const glm::ivec3& voxelPosition) const
+{
+    if (voxelPosition.x < 0 || voxelPosition.y < 0 || voxelPosition.z < 0 ||
+        voxelPosition.x >= m_nrChunkWidth*CHUNK_SIZE || voxelPosition.y >= m_nrChunkHeight*CHUNK_SIZE || voxelPosition.z >= m_nrChunkDepth*CHUNK_SIZE)
+        return false;
+    
+    const Chunk& c = GetChunkFromVoxel(voxelPosition);
+    return !c.IsEmptyAt(voxelPosition%CHUNK_SIZE);
+}
+
 void Terrain::SetSize(const glm::ivec3 size)
 {
     m_nrChunkWidth = size.x;
@@ -71,6 +81,11 @@ void Terrain::SetSurfaceChunkHeight(const unsigned int surfaceChunkHeight)
 {
     m_surfaceChunkHeight = surfaceChunkHeight;
 }
+
+const Chunk& Terrain::GetChunkFromVoxel(const glm::ivec3& voxelPosition) const
+{
+    return m_chunks[voxelPosition.y/CHUNK_SIZE*m_nrChunkWidth*m_nrChunkDepth + voxelPosition.z/CHUNK_SIZE*m_nrChunkWidth + voxelPosition.x/CHUNK_SIZE];
+} 
 
 DataChunk Terrain::CreateDataChunk(const ChunkLayer layer, const ChunkType type)
 {

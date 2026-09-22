@@ -1,6 +1,11 @@
 #include "entity/collision.hpp"
 
 #include "entity/hitbox.hpp"
+#include "terrain/terrain.hpp"
+
+CollisionResolver::CollisionResolver(const Terrain& terrain):
+    m_terrain(terrain)
+{}
 
 void CollisionResolver::Resolve(Hitbox& hitbox, const float frameSpeed)
 {
@@ -17,9 +22,12 @@ void CollisionResolver::Resolve(Hitbox& hitbox, const float frameSpeed)
     const glm::ivec3 rangeMin = glm::ivec3(std::floor(targetBox.min.x), std::floor(targetBox.min.y), std::floor(targetBox.min.z));
     const glm::ivec3 rangeMax = glm::ivec3(std::floor(targetBox.max.x), std::floor(targetBox.max.y), std::floor(targetBox.max.z));
     for (int i = rangeMin.x ; i <= rangeMax.x ; i++) {
-        for (int j = rangeMin.y ; j <= rangeMax.y ; j++) {
-            for (int k = rangeMin.z ; k <= rangeMax.z ; k++) {
-                // TODO : Check if there is a collision
+        for (int k = rangeMin.y ; k <= rangeMax.y ; k++) {
+            for (int j = rangeMin.z ; j <= rangeMax.z ; j++) {
+                // if (m_terrain.IsSolidAt(glm::ivec3(i, k, j)))
+                //     std::cout << "Solid at " << i << ", " << k << ", " << j << "\n"; 
+                // else   
+                //     std::cout << "Empty at " << i << ", " << k << ", " << j << "\n"; 
             }
         }  
     }

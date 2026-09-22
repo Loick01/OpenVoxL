@@ -56,6 +56,7 @@ class Chunk : public Drawable
         
         glm::ivec3 GetTerrainPosition() const;
 
+        bool IsEmptyAt(const glm::ivec3& voxelPosition) const;
         bool IsEmptyAt(const unsigned voxelIndex) const;
 
         void Build(const DataFullChunk& data);

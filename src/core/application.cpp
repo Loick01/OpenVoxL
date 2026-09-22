@@ -7,7 +7,7 @@ Application::Application():
     m_terrain(3, 3, 3),
     m_hud("../shader/ui/hud.vs", "../shader/ui/hud.fs", m_window.GetWidth(), m_window.GetHeight()),
     m_debug(m_window.GetGlfwWindow(), m_camera, m_player.GetHitbox(), m_terrain),
-    m_player(glm::vec3(0.f), 6.f, 1.5f)
+    m_player(glm::vec3(0.f), 6.f, 1.5f), m_collisionResolver(m_terrain)
 {
     glViewport(0, 0, m_window.GetWidth(), m_window.GetHeight());
 
@@ -38,7 +38,7 @@ bool Application::Run()
     const std::array<bool, GLFW_KEY_LAST+1>& keys = m_eventController.GetKeys();
     
     m_player.EventUpdate(keys, deltaTime);
-    m_CollisionResolver.Resolve(m_player.GetHitbox(), m_player.GetFrameSpeed());
+    m_collisionResolver.Resolve(m_player.GetHitbox(), m_player.GetFrameSpeed());
     
     m_camera.EventUpdate(keys, deltaTime);
     

@@ -51,6 +51,11 @@ glm::ivec3 Chunk::GetTerrainPosition() const
     return m_terrainPosition;
 }
 
+bool Chunk::IsEmptyAt(const glm::ivec3& voxelPosition) const
+{
+    return IsEmptyAt(GetBlockIndexInGrid(voxelPosition));
+}
+
 bool Chunk::IsEmptyAt(const unsigned voxelIndex) const
 {
     return m_gridVoxel[voxelIndex] == nullptr;
