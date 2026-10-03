@@ -48,7 +48,7 @@ class Terrain
         const DataChunk& GetDataChunk(const ChunkLayer layer) const;
         unsigned int GetSurfaceChunkHeight() const;
 
-        bool IsSolidAt(const glm::ivec3& voxelPosition) const;
+        bool IsSolidAt(const glm::ivec3& voxelPosition) const; // TODO : Rename ?
 
         void SetSize(const glm::ivec3 size);
         void SetChunkType(const ChunkLayer layer, const ChunkType type);

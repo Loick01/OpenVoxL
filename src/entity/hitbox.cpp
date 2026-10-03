@@ -18,6 +18,11 @@ glm::vec3 Hitbox::GetPosition() const
     return m_position;
 }
 
+glm::vec3 Hitbox::GetHeadPosition() const
+{
+    return m_position + glm::vec3(0.f, m_height, 0.f); // TODO : Will not use m_height
+}
+
 glm::vec3 Hitbox::GetFrontVector() const
 {
     return m_frontVector;

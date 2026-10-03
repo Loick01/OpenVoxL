@@ -14,9 +14,10 @@ void CollisionResolver::Resolve(Hitbox& hitbox, const float frameSpeed)
     if (move == glm::vec3(0.f))
         return;
     
-    move.y = 0.f; // TODO : Remove
+    // move.y = 0.f; // TODO : Remove
     move = glm::normalize(move)*frameSpeed;
     
+    hitbox.ComputeAABB();
     const AABB targetBox = hitbox.GetBox() + move;
 
     const glm::ivec3 rangeMin = glm::ivec3(std::floor(targetBox.min.x), std::floor(targetBox.min.y), std::floor(targetBox.min.z));
@@ -24,10 +25,9 @@ void CollisionResolver::Resolve(Hitbox& hitbox, const float frameSpeed)
     for (int i = rangeMin.x ; i <= rangeMax.x ; i++) {
         for (int k = rangeMin.y ; k <= rangeMax.y ; k++) {
             for (int j = rangeMin.z ; j <= rangeMax.z ; j++) {
-                // if (m_terrain.IsSolidAt(glm::ivec3(i, k, j)))
-                //     std::cout << "Solid at " << i << ", " << k << ", " << j << "\n"; 
-                // else   
-                //     std::cout << "Empty at " << i << ", " << k << ", " << j << "\n"; 
+                if (m_terrain.IsSolidAt(glm::ivec3(i, k, j))) {
+                    return;
+                }
             }
         }  
     }

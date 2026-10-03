@@ -35,6 +35,7 @@ class Hitbox
 
         AABB GetBox() const;
         glm::vec3 GetPosition() const;
+        glm::vec3 GetHeadPosition() const;
         glm::vec3 GetFrontVector() const;
         glm::vec3 GetCurrentMove() const;
 

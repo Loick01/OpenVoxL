@@ -125,7 +125,7 @@ void Camera::CursorPosCallback(double xpos, double ypos)
 void Camera::EventUpdate(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime)
 {
     if (m_state == CameraState::Player) {
-        m_position = m_playerHitbox.GetPosition();
+        m_position = m_playerHitbox.GetHeadPosition();
         return;
     }
     
