@@ -2,6 +2,8 @@
 
 #include <glm/glm.hpp>
 
+#define EPSILON 0.001f
+
 struct AABB;
 class Hitbox;
 class Terrain;
@@ -15,8 +17,9 @@ class CollisionResolver // TODO : Rename ?
         CollisionResolver(const Terrain& terrain);
 
         // TODO : Rename
-        void AxisX(AABB& hitbox, glm::vec3& move);
-        void AxisZ(AABB& hitbox, glm::vec3& move);
+        void AxisX(const AABB& hitbox, glm::vec3& move);
+        void AxisY(const AABB& hitbox, glm::vec3& move);
+        void AxisZ(const AABB& hitbox, glm::vec3& move);
 
         void Resolve(Hitbox& hitbox, const float frameSpeed);
 };

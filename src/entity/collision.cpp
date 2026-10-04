@@ -7,7 +7,7 @@ CollisionResolver::CollisionResolver(const Terrain& terrain):
     m_terrain(terrain)
 {}
 
-void CollisionResolver::AxisX(AABB& box, glm::vec3& move)
+void CollisionResolver::AxisX(const AABB& box, glm::vec3& move)
 {
     if (move.x == 0.f) return;
 
@@ -23,9 +23,9 @@ void CollisionResolver::AxisX(AABB& box, glm::vec3& move)
                     continue;
 
                 if (move.x > 0.f)
-                    move.x = i - box.max.x;
+                    move.x = i - box.max.x - EPSILON;
                 else 
-                    move.x = i+1 - box.min.x;
+                    move.x = i+1 - box.min.x + EPSILON;
 
                 return;
             }
@@ -33,7 +33,33 @@ void CollisionResolver::AxisX(AABB& box, glm::vec3& move)
     }
 }
 
-void CollisionResolver::AxisZ(AABB& box, glm::vec3& move)
+void CollisionResolver::AxisY(const AABB& box, glm::vec3& move)
+{
+    if (move.y == 0.f) return;
+
+    float targetMinY = box.min.y + move.y;
+    float targetMaxY = box.max.y + move.y;
+
+    const glm::ivec3 rangeMin = glm::ivec3(std::floor(box.min.x), std::floor(targetMinY), std::floor(box.min.z));
+    const glm::ivec3 rangeMax = glm::ivec3(std::floor(box.max.x), std::floor(targetMaxY), std::floor(box.max.z));
+    for (int i = rangeMin.x ; i <= rangeMax.x ; i++) {
+        for (int k = rangeMin.y ; k <= rangeMax.y ; k++) {
+            for (int j = rangeMin.z ; j <= rangeMax.z ; j++) {
+                if (!m_terrain.IsSolidAt(glm::ivec3(i, k, j)))
+                    continue;
+
+                if (move.y > 0.f)
+                    move.y = k - box.max.y - EPSILON;
+                else 
+                    move.y = k+1 - box.min.y + EPSILON;
+
+                return;
+            }
+        }  
+    }
+}
+
+void CollisionResolver::AxisZ(const AABB& box, glm::vec3& move)
 {
     if (move.z == 0.f) return;
 
@@ -49,9 +75,9 @@ void CollisionResolver::AxisZ(AABB& box, glm::vec3& move)
                     continue;
 
                 if (move.z > 0.f)
-                    move.z = j - box.max.z;
+                    move.z = j - box.max.z - EPSILON;
                 else 
-                    move.z = j+1 - box.min.z;
+                    move.z = j+1 - box.min.z + EPSILON;
 
                 return;
             }
@@ -74,9 +100,12 @@ void CollisionResolver::Resolve(Hitbox& hitbox, const float frameSpeed)
     AxisX(box, move);
     box.min.x += move.x;
     box.max.x += move.x;
+    AxisY(box, move);
+    box.min.y += move.y;
+    box.max.y += move.y;
     AxisZ(box, move);
-    box.min.z += move.z;
-    box.max.z += move.z;
+    // box.min.z += move.z;
+    // box.max.z += move.z;
 
     hitbox.SetCurrentMove(move);
     hitbox.ApplyMove(); // TODO : Should not be here
