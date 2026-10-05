@@ -15,7 +15,7 @@ const glm::ivec3 layerPosition, const glm::ivec3 terrainSize, const glm::vec3 or
     glGenBuffers(1, &m_faceOrientation_SSBO);
     
     LoadTexture();
-    m_gridVoxel.resize(CHUNK_SIZE*CHUNK_SIZE*CHUNK_SIZE);
+    m_gridVoxel.resize(CHUNK_SIZE*CHUNK_SIZE*CHUNK_SIZE, -1);
 }
 
 Chunk::~Chunk()
@@ -58,7 +58,7 @@ bool Chunk::IsEmptyAt(const glm::ivec3& voxelPosition) const
 
 bool Chunk::IsEmptyAt(const unsigned voxelIndex) const
 {
-    return m_gridVoxel[voxelIndex] == nullptr;
+    return m_gridVoxel[voxelIndex] == -1;
 }
 
 unsigned int Chunk::GetBlockIndexInGrid(const glm::ivec3& blockPosition) const
@@ -66,10 +66,26 @@ unsigned int Chunk::GetBlockIndexInGrid(const glm::ivec3& blockPosition) const
     return blockPosition.y*CHUNK_SIZE*CHUNK_SIZE + blockPosition.z*CHUNK_SIZE + blockPosition.x;
 }
 
-void Chunk::AddVoxel(const glm::vec3 blockPosition, const unsigned int blockId)
+void Chunk::AddVoxel(const glm::ivec3 blockPosition, const unsigned int blockId)
 {
-    m_voxels.emplace_back(m_originPosition + blockPosition, blockId);
-    m_gridVoxel[GetBlockIndexInGrid(blockPosition)] = &m_voxels.back();
+    m_voxels.emplace_back(m_originPosition + glm::vec3(blockPosition), blockId);
+    m_gridVoxel[GetBlockIndexInGrid(blockPosition)] = m_voxels.size()-1;
+}
+
+void Chunk::RemoveVoxel(const glm::ivec3 blockPosition)
+{
+    const unsigned int index = m_gridVoxel[GetBlockIndexInGrid(blockPosition)];
+    if (index != -1) {
+        if (index != m_voxels.size()-1) {
+            m_voxels[index] = std::move(m_voxels[m_voxels.size()-1]);
+
+            const glm::ivec3 bp = m_voxels[index].GetOrigin() - m_originPosition;
+            m_gridVoxel[GetBlockIndexInGrid(bp)] = index;
+        }
+        
+        m_voxels.pop_back();
+        m_gridVoxel[GetBlockIndexInGrid(blockPosition)] = -1;
+    }
 }
 
 void Chunk::AddFaceIndices(const unsigned int offset)
@@ -152,7 +168,7 @@ void Chunk::Build(const DataFullChunk& data)
     for (unsigned int k = 0 ; k < CHUNK_SIZE ; k++) { // Y
         for (unsigned int j = 0 ; j < CHUNK_SIZE ; j++) { // Z
             for (unsigned int i = 0 ; i < CHUNK_SIZE ; i++) { // X
-                AddVoxel(glm::vec3(i, k, j), rand()%35);
+                AddVoxel(glm::ivec3(i, k, j), rand()%35);
             }
         }
     }
@@ -165,7 +181,7 @@ void Chunk::Build(const DataFlatChunk& data)
     if (m_terrainPosition.y == 0) {
         for (unsigned int j = 0 ; j < CHUNK_SIZE ; j++) { // Z
             for (unsigned int i = 0 ; i < CHUNK_SIZE ; i++) { // X
-                AddVoxel(glm::vec3(i, 0.f, j), grassId);
+                AddVoxel(glm::ivec3(i, 0, j), grassId);
             }
         }
     }
@@ -246,7 +262,7 @@ void Chunk::Build(const DataCaveChunk& data)
 
 void Chunk::Build(const DataEditorChunk& data)
 {
-    const glm::vec3 centerPosition = glm::vec3(CHUNK_SIZE/2);
+    const glm::ivec3 centerPosition = glm::ivec3(CHUNK_SIZE/2);
     AddVoxel(centerPosition, stoneId);
 }
 
@@ -299,6 +315,13 @@ void Chunk::LoadTexture()
 void Chunk::Load() 
 {  
     BuildFaces();
+    VoxelComputeData();
+    VoxelBufferData();
+}
+
+void Chunk::DeleteBlock(const glm::ivec3 blockPosition)
+{
+    RemoveVoxel(blockPosition);
     VoxelComputeData();
     VoxelBufferData();
 }

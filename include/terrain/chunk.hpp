@@ -25,7 +25,8 @@ class Chunk : public Drawable
         glm::ivec3 m_terrainSize;
         glm::vec3 m_originPosition; // Back-bottom-left position (m_originPosition = m_terrainPosition*CHUNKSIZE)
         std::vector<Voxel> m_voxels;
-        std::vector<Voxel*> m_gridVoxel;
+        std::vector<int> m_gridVoxel;
+        // std::vector<Voxel*> m_gridVoxel;
 
         std::vector<unsigned int> m_blockIds;
         std::vector<unsigned int> m_faceOrientations;
@@ -36,10 +37,13 @@ class Chunk : public Drawable
         GLuint m_faceOrientation_SSBO;
 
         unsigned int GetBlockIndexInGrid(const glm::ivec3& blockPosition) const;
-        void AddVoxel(const glm::vec3 blockPosition, const unsigned int blockId);
+        void AddVoxel(const glm::ivec3 blockPosition, const unsigned int blockId);
+        void RemoveVoxel(const glm::ivec3 blockPosition);
+        
         void AddFaceIndices(const unsigned int offset);
         void AddFace(const std::string& faceId, Face* face);
         void BuildFaces();
+
         void VoxelComputeData();
         void VoxelBufferData();
         
@@ -69,5 +73,8 @@ class Chunk : public Drawable
 
         void LoadTexture() override;
         void Load() override;
+
+        void DeleteBlock(const glm::ivec3 blockPosition);
+        
         void Draw(const glm::mat4& projection, const glm::mat4& view) const override;
 };
