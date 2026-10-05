@@ -95,12 +95,15 @@ void Camera::SetState(const CameraState state)
 
 void Camera::KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys)
 {
-    if (keys[GLFW_KEY_E]) {
+    if (keys[GLFW_KEY_E])
         if (m_state == CameraState::MouseFree)
             SetState(CameraState::KeyFree);
         else
             SetState(CameraState::MouseFree);
-    }
+    else if (keys[GLFW_KEY_O])
+        SetState(CameraState::Orbital);
+    else if (keys[GLFW_KEY_P])
+        SetState(CameraState::Player);
 }
 
 void Camera::CursorPosCallback(double xpos, double ypos)

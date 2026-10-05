@@ -18,7 +18,9 @@ Application::Application():
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
 
-    m_camera.SetTargetTerrain(glm::vec3(m_terrain.GetSize()*CHUNK_SIZE)/2.f);
+    const glm::vec3 terrainCenter = glm::vec3(m_terrain.GetSize()*CHUNK_SIZE)/2.f;
+    m_camera.SetTargetTerrain(terrainCenter);
+    m_player.GetHitbox().SetPosition(terrainCenter);
     // m_soundController.PlayRandonMusic();
 }
 
