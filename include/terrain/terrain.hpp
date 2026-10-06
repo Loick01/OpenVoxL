@@ -61,4 +61,6 @@ class Terrain
         void Create();
         void Load();
         void Draw(const glm::mat4& projection, const glm::mat4& view) const;
+
+        void RaycastVoxelGrid(const glm::vec3 startPos, const glm::vec3 endPos); // TODO : Rename + Return a RaycastHit struct (Voxel + Face (Normal ?))
 };

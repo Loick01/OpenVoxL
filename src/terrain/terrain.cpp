@@ -256,3 +256,76 @@ void Terrain::Draw(const glm::mat4& projection, const glm::mat4& view) const
     for (const Chunk& c : m_chunks)
         c.Draw(projection, view);
 }
+
+// http://www.cse.yorku.ca/~amana/research/grid.pdf
+void Terrain::RaycastVoxelGrid(const glm::vec3 startPos, const glm::vec3 endPos)
+{
+    const glm::ivec3 startVoxelPos = glm::ivec3(std::floor(startPos.x), std::floor(startPos.y), std::floor(startPos.z));
+    const glm::ivec3 endVoxelPos = glm::ivec3(std::floor(endPos.x), std::floor(endPos.y), std::floor(endPos.z));
+    glm::ivec3 currentVoxelPos = startVoxelPos;
+
+    const glm::vec3 ray = endPos - startPos;
+    const glm::vec3 rayAbs = glm::abs(ray);
+
+    const glm::ivec3 step{
+        ray.x >= 0.0f ? 1 : -1,
+        ray.y >= 0.0f ? 1 : -1,
+        ray.z >= 0.0f ? 1 : -1
+    };
+
+    float tMaxX = 
+        (rayAbs.x != 0.f) ? 
+            step.x > 0 ? 
+                (startVoxelPos.x+1 - startPos.x) / rayAbs.x
+            :
+                (startPos.x - startVoxelPos.x) / rayAbs.x 
+        :
+            std::numeric_limits<float>::infinity();
+        
+    float tMaxY = 
+        (rayAbs.y != 0.f) ? 
+            step.y > 0 ? 
+                (startVoxelPos.y+1 - startPos.y) / rayAbs.y
+            :
+                (startPos.y - startVoxelPos.y) / rayAbs.y 
+        :
+            std::numeric_limits<float>::infinity();
+    
+    float tMaxZ = 
+        (rayAbs.z != 0.f) ? 
+            step.z > 0 ? 
+                (startVoxelPos.z+1 - startPos.z) / rayAbs.z
+            :
+                (startPos.z - startVoxelPos.z) / rayAbs.z
+        :
+            std::numeric_limits<float>::infinity();
+
+    const glm::vec3 tDelta = glm::vec3(
+        (rayAbs.x != 0.f) ? 1.f / rayAbs.x : std::numeric_limits<float>::infinity(),
+        (rayAbs.y != 0.f) ? 1.f / rayAbs.y : std::numeric_limits<float>::infinity(),
+        (rayAbs.z != 0.f) ? 1.f / rayAbs.z : std::numeric_limits<float>::infinity()
+    );
+
+    if (IsSolidAt(currentVoxelPos))
+        return; // TODO : Return RaycastHit
+
+    while (currentVoxelPos != endVoxelPos) {
+        if (tMaxX < tMaxY && tMaxX < tMaxZ) {
+            tMaxX += tDelta.x;
+            currentVoxelPos.x += step.x;
+            // Face X/-X
+        } else if (tMaxY <  tMaxZ) {
+            tMaxY += tDelta.y;
+            currentVoxelPos.y += step.y;
+            // Face Y/-Y
+        } else {
+            tMaxZ += tDelta.z;
+            currentVoxelPos.z += step.z;
+            // Face Z/-Z   
+        }
+        
+        if (IsSolidAt(currentVoxelPos))
+            return; // TODO : Return RaycastHit
+    }
+    // TODO : Return empty RaycastHit
+}
