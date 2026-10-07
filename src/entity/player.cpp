@@ -1,7 +1,7 @@
 #include "entity/player.hpp"
 
-Player::Player(const glm::vec3 position, const float speed, const float sprint):
-    m_hitbox(position, 1.8f, 0.6f), m_health(100.f), m_stamina(100.f), m_speed(speed), m_sprint(sprint)
+Player::Player(const glm::vec3 position, const float speed, const float sprint, const float range):
+    m_hitbox(position, 1.8f, 0.6f), m_health(100.f), m_stamina(100.f), m_speed(speed), m_sprint(sprint), m_voxelRange(range)
 {}
 
 Hitbox& Player::GetHitbox()
@@ -14,7 +14,12 @@ float Player::GetFrameSpeed() const
     return m_frameSpeed;
 }
 
-void Player::EventUpdate(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime)
+float Player::GetVoxelRange() const
+{
+    return m_voxelRange;
+}
+
+void Player::EventKeyUpdate(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime)
 {
     m_frameSpeed = m_speed * deltaTime;
     

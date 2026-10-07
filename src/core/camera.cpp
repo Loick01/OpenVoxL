@@ -62,6 +62,11 @@ glm::vec3 Camera::GetPosition() const
     return m_position;
 }
 
+glm::vec3 Camera::GetFrontVector() const
+{
+    return m_frontVector;
+}
+
 float Camera::GetSpeed() const
 {
     return m_speed;
@@ -125,7 +130,7 @@ void Camera::CursorPosCallback(double xpos, double ypos)
     }
 }
 
-void Camera::EventUpdate(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime)
+void Camera::EventKeyUpdate(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime)
 {
     if (m_state == CameraState::Player) {
         m_position = m_playerHitbox.GetHeadPosition();

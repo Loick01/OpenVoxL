@@ -5,6 +5,7 @@
 #include "entity/collision.hpp"
 #include "entity/player.hpp"
 #include "terrain/terrain.hpp"
+#include "terrain/terrain_modifier.hpp"
 #include "core/camera.hpp"
 #include "core/time.hpp"
 #include "core/window.hpp"
@@ -25,6 +26,7 @@ class Application
         Hud m_hud;
         Skybox m_skybox;
         Terrain m_terrain;
+        TerrainModifier m_terrainModifier;
         Time m_time;
 
         Player m_player;

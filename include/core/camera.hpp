@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 
-#include "core/updatable.hpp"
+#include "event/key_updatable.hpp"
 
 class Hitbox;
 
@@ -11,7 +11,7 @@ enum class CameraState
     KeyFree, MouseFree, Orbital, Player
 };
 
-class Camera : public EventUpdatable
+class Camera : public EventKeyUpdatable
 {
     private:
         const glm::vec3 m_upVector;
@@ -47,6 +47,8 @@ class Camera : public EventUpdatable
         glm::mat4 GetProjectionMatrix() const;
 
         glm::vec3 GetPosition() const;
+        glm::vec3 GetFrontVector() const;
+        
         float GetSpeed() const;
         CameraState GetState() const;
 
@@ -58,5 +60,5 @@ class Camera : public EventUpdatable
         void KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys);
         void CursorPosCallback(double xpos, double ypos);
 
-        void EventUpdate(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime) override;
+        void EventKeyUpdate(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime) override;
 };

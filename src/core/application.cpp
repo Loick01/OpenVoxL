@@ -4,10 +4,10 @@ Application::Application():
     m_window("OpenVoxL"), m_camera(m_window.GetGlfwWindow(), m_player.GetHitbox(), (float)m_window.GetWidth()/(float)m_window.GetHeight()),
     m_eventController(m_window.GetGlfwWindow(), m_camera, m_debug, m_hud),
     m_skybox("../shader/skybox/skybox.vs", "../shader/skybox/skybox.fs"),
-    m_terrain(3, 3, 3),
+    m_terrain(3, 3, 3), m_terrainModifier(m_camera, m_terrain),
     m_hud("../shader/ui/hud.vs", "../shader/ui/hud.fs", m_window.GetWidth(), m_window.GetHeight()),
     m_debug(m_window.GetGlfwWindow(), m_camera, m_player.GetHitbox(), m_terrain),
-    m_player(glm::vec3(0.f), 12.f, 1.5f), m_collisionResolver(m_terrain)
+    m_player(glm::vec3(0.f), 12.f, 1.5f, 3.f), m_collisionResolver(m_terrain)
 {
     glViewport(0, 0, m_window.GetWidth(), m_window.GetHeight());
 
@@ -39,10 +39,10 @@ bool Application::Run()
     
     const std::array<bool, GLFW_KEY_LAST+1>& keys = m_eventController.GetKeys();
     
-    m_player.EventUpdate(keys, deltaTime);
+    m_player.EventKeyUpdate(keys, deltaTime);
     m_collisionResolver.Resolve(m_player.GetHitbox(), m_player.GetFrameSpeed());
-    
-    m_camera.EventUpdate(keys, deltaTime);
+    m_terrainModifier.EventKeyUpdate(keys, deltaTime);
+    m_camera.EventKeyUpdate(keys, deltaTime);
     
     // TODO : Use a std::vector<Drawable*> ? (terrain can not be in this)
     m_skybox.Draw(cameraProjectionMatrix, cameraViewMatrix);

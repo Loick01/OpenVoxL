@@ -31,7 +31,7 @@ class Terrain
         const Chunk& GetChunkFromVoxel(const glm::ivec3& voxelPosition) const;
         
         DataChunk CreateDataChunk(const ChunkLayer layer, const ChunkType type);
-
+        
         void UpdateDataChunk(const ChunkLayer layer, DataFlatChunk& data);
         void UpdateDataChunk(const ChunkLayer layer, DataFullChunk& data);
         void UpdateDataChunk(const ChunkLayer layer, DataWaveChunk& data);
@@ -61,6 +61,4 @@ class Terrain
         void Create();
         void Load();
         void Draw(const glm::mat4& projection, const glm::mat4& view) const;
-
-        void RaycastVoxelGrid(const glm::vec3 startPos, const glm::vec3 endPos); // TODO : Rename + Return a RaycastHit struct (Voxel + Face (Normal ?))
 };
