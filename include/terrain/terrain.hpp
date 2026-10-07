@@ -27,8 +27,6 @@ class Terrain
         std::vector<Chunk> m_chunks; 
         std::map<ChunkLayer, std::pair<ChunkType, DataChunk>> m_dataChunks;
         unsigned int m_surfaceChunkHeight; // Number of Chunks used for the height of the surface. Thus Below layer will have m_nrChunkHeight-m_surfaceChunkHeight
-
-        const Chunk& GetChunkFromVoxel(const glm::ivec3& voxelPosition) const;
         
         DataChunk CreateDataChunk(const ChunkLayer layer, const ChunkType type);
         
@@ -42,6 +40,9 @@ class Terrain
     
     public:
         Terrain(const unsigned int width, const unsigned int depth, const unsigned int height);
+
+        const Chunk& GetChunkFromVoxel(const glm::ivec3& voxelPosition) const;
+        Chunk& GetChunkFromVoxel(const glm::ivec3& voxelPosition);
 
         glm::ivec3 GetSize() const;
         ChunkType GetChunkType(const ChunkLayer layer) const;

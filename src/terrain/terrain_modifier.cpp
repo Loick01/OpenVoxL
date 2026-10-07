@@ -88,6 +88,8 @@ void TerrainModifier::EventKeyUpdate(const std::array<bool, GLFW_KEY_LAST+1>& ke
         const std::optional<RaycastHit> rayHitOpt = RaycastVoxelGrid(m_camera.GetPosition(), m_camera.GetPosition()+m_camera.GetFrontVector()*3.f);
         if (rayHitOpt) {
             const RaycastHit rayHit = rayHitOpt.value();
+            Chunk& c = m_terrain.GetChunkFromVoxel(rayHit.voxelPos);
+            c.DeleteBlock(rayHit.voxelPos%CHUNK_SIZE);
         }
     }
 }

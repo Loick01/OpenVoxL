@@ -87,6 +87,11 @@ const Chunk& Terrain::GetChunkFromVoxel(const glm::ivec3& voxelPosition) const
     return m_chunks[voxelPosition.y/CHUNK_SIZE*m_nrChunkWidth*m_nrChunkDepth + voxelPosition.z/CHUNK_SIZE*m_nrChunkWidth + voxelPosition.x/CHUNK_SIZE];
 } 
 
+Chunk& Terrain::GetChunkFromVoxel(const glm::ivec3& voxelPosition)
+{
+    return m_chunks[voxelPosition.y/CHUNK_SIZE*m_nrChunkWidth*m_nrChunkDepth + voxelPosition.z/CHUNK_SIZE*m_nrChunkWidth + voxelPosition.x/CHUNK_SIZE];
+} 
+
 DataChunk Terrain::CreateDataChunk(const ChunkLayer layer, const ChunkType type)
 {
     DataChunk data;

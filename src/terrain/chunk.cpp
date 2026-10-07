@@ -322,8 +322,8 @@ void Chunk::Load()
 void Chunk::DeleteBlock(const glm::ivec3 blockPosition)
 {
     RemoveVoxel(blockPosition);
-    VoxelComputeData();
-    VoxelBufferData();
+    Load();
+    // TODO : Call Load() on neighbors Chunk
 }
 
 void Chunk::Draw(const glm::mat4& projection, const glm::mat4& view) const
