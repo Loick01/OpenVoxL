@@ -82,14 +82,22 @@ std::optional<RaycastHit> TerrainModifier::RaycastVoxelGrid(const glm::vec3 star
     return std::nullopt;
 }
 
-void TerrainModifier::EventKeyUpdate(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime)
+void TerrainModifier::EventMouseButtonUpdate(const std::array<bool, GLFW_MOUSE_BUTTON_LAST+1>& mouseButtons, const float deltaTime)
 {
-    if (keys[GLFW_KEY_F]) {
-        const std::optional<RaycastHit> rayHitOpt = RaycastVoxelGrid(m_camera.GetPosition(), m_camera.GetPosition()+m_camera.GetFrontVector()*3.f);
+    if (mouseButtons[GLFW_MOUSE_BUTTON_LEFT]) {
+        const std::optional<RaycastHit> rayHitOpt = RaycastVoxelGrid(m_camera.GetPosition(), m_camera.GetPosition()+m_camera.GetFrontVector()*3.f); // TODO : Voxel range distance
         if (rayHitOpt) {
-            const RaycastHit rayHit = rayHitOpt.value();
+            const RaycastHit& rayHit = rayHitOpt.value();
             Chunk& c = m_terrain.GetChunkFromVoxel(rayHit.voxelPos);
             c.DeleteBlock(rayHit.voxelPos%CHUNK_SIZE);
         }
+    } else if (mouseButtons[GLFW_MOUSE_BUTTON_RIGHT]) {
+        // const std::optional<RaycastHit> rayHitOpt = RaycastVoxelGrid(m_camera.GetPosition(), m_camera.GetPosition()+m_camera.GetFrontVector()*3.f); // TODO : Voxel range distance
+        // if (rayHitOpt) {
+        //     const RaycastHit rayHit = rayHitOpt.value();
+        //     const glm::ivec3 targetVoxelPos = rayHit.voxelPos + rayHit.normal;
+        //     Chunk& c = m_terrain.GetChunkFromVoxel(targetVoxelPos);
+        //     c.CreateBlock(targetVoxelPos%CHUNK_SIZE, 0); // TODO : blockId
+        // }
     }
 }

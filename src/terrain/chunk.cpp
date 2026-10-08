@@ -319,6 +319,14 @@ void Chunk::Load()
     VoxelBufferData();
 }
 
+
+void Chunk::CreateBlock(const glm::ivec3 blockPosition, const unsigned int blockId)
+{
+    AddVoxel(blockPosition, blockId);
+    Load();
+    // TODO : Call Load() on neighbors Chunk
+}
+
 void Chunk::DeleteBlock(const glm::ivec3 blockPosition)
 {
     RemoveVoxel(blockPosition);

@@ -17,7 +17,7 @@ struct RaycastHit
     glm::ivec3 normal; // Targeted face normal
 };
 
-class TerrainModifier : public EventKeyUpdatable
+class TerrainModifier // : public EventKeyUpdatable
 {
     private:
         const Camera& m_camera;
@@ -28,5 +28,5 @@ class TerrainModifier : public EventKeyUpdatable
     public: 
         TerrainModifier(const Camera& camera, Terrain& terrain);
 
-        void EventKeyUpdate(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime) override;
+        void EventMouseButtonUpdate(const std::array<bool, GLFW_MOUSE_BUTTON_LAST+1>& mouseButtons, const float deltaTime);
 };

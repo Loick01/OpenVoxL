@@ -5,7 +5,8 @@
 #include "ui/hud.hpp"
 
 EventController::EventController(GLFWwindow* glfwWindow, Camera& camera, DebugWindow& debug, Hud& hud):
-    m_glfwWindow(glfwWindow), m_camera(camera), m_debug(debug), m_hud(hud), m_keys{}, m_handBlockIndex(0), m_hotbarSize(9)
+    m_glfwWindow(glfwWindow), m_camera(camera), m_debug(debug), m_hud(hud), 
+    m_keys{}, m_mouseButtons{}, m_handBlockIndex(0), m_hotbarSize(9)
 {
     glfwSetInputMode(m_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // Hide the mouse cursor. Will not be here
 
@@ -41,6 +42,11 @@ const std::array<bool,GLFW_KEY_LAST+1>& EventController::GetKeys() const
     return m_keys;
 }
 
+const std::array<bool,GLFW_MOUSE_BUTTON_LAST+1>& EventController::GetMouseButtons() const
+{
+    return m_mouseButtons;
+}
+
 void EventController::PollEvents()
 {
     glfwPollEvents();
@@ -73,10 +79,19 @@ void EventController::EventCursorPosCallback(double xpos, double ypos)
 }
 
 void EventController::EventMouseButtonCallback(int button, int action, int mods)
-{}
+{
+    if (button < 0 || button > GLFW_MOUSE_BUTTON_LAST)
+        return;
+
+    if (action == GLFW_PRESS)
+        m_mouseButtons[button] = true;
+    else if (action == GLFW_RELEASE)
+        m_mouseButtons[button] = false;
+}
 
 void EventController::EventScrollCallback(double xoffset, double yoffset)
 {
+    // TODO : Will not be here
     m_handBlockIndex = (m_handBlockIndex + (yoffset > 0 ? -1 : 1) + m_hotbarSize) % m_hotbarSize;
     // m_hudShader.SetInt("selectorLocation", m_handBlockIndex);
 }

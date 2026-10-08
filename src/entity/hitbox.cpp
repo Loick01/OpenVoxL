@@ -2,8 +2,8 @@
 
 #include <stdexcept>
 
-Hitbox::Hitbox(const glm::vec3 position, const float height, const float width):
-    m_position(position), m_height(height), m_width(width), m_currentMove(0.f)
+Hitbox::Hitbox(const glm::vec3 position, const float height, const float eyeHeight, const float width):
+    m_position(position), m_height(height), m_eyeHeight(eyeHeight), m_width(width), m_currentMove(0.f)
 {
     ComputeAABB();
 }
@@ -18,9 +18,9 @@ glm::vec3 Hitbox::GetPosition() const
     return m_position;
 }
 
-glm::vec3 Hitbox::GetHeadPosition() const
+glm::vec3 Hitbox::GetEyePosition() const
 {
-    return m_position + glm::vec3(0.f, m_height, 0.f); // TODO : Will not use m_height
+    return m_position + glm::vec3(0.f, m_eyeHeight, 0.f);
 }
 
 glm::vec3 Hitbox::GetFrontVector() const

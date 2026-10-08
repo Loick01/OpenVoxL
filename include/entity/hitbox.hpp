@@ -28,14 +28,15 @@ class Hitbox
         glm::vec3 m_currentMove;
 
         float m_height;
+        float m_eyeHeight;
         float m_width;
     
     public:
-        Hitbox(const glm::vec3 position, const float height, const float width);
+        Hitbox(const glm::vec3 position, const float height, const float eyeHeight, const float width);
 
         AABB GetBox() const;
         glm::vec3 GetPosition() const;
-        glm::vec3 GetHeadPosition() const;
+        glm::vec3 GetEyePosition() const;
         glm::vec3 GetFrontVector() const;
         glm::vec3 GetCurrentMove() const;
 

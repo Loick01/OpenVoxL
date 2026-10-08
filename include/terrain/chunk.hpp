@@ -74,6 +74,7 @@ class Chunk : public Drawable
         void LoadTexture() override;
         void Load() override;
 
+        void CreateBlock(const glm::ivec3 blockPosition, const unsigned int blockId);
         void DeleteBlock(const glm::ivec3 blockPosition);
         
         void Draw(const glm::mat4& projection, const glm::mat4& view) const override;

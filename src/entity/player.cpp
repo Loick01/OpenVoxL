@@ -1,7 +1,7 @@
 #include "entity/player.hpp"
 
 Player::Player(const glm::vec3 position, const float speed, const float sprint, const float range):
-    m_hitbox(position, 1.8f, 0.6f), m_health(100.f), m_stamina(100.f), m_speed(speed), m_sprint(sprint), m_voxelRange(range)
+    m_hitbox(position, 1.8f, 1.62f, 0.6f), m_health(100.f), m_stamina(100.f), m_speed(speed), m_sprint(sprint), m_voxelRange(range)
 {}
 
 Hitbox& Player::GetHitbox()
