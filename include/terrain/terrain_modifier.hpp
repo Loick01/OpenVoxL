@@ -6,7 +6,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
-#include "event/key_updatable.hpp"
+#include "event/mouse_updatable.hpp"
 
 class Camera;
 class Terrain;
@@ -17,7 +17,7 @@ struct RaycastHit
     glm::ivec3 normal; // Targeted face normal
 };
 
-class TerrainModifier // : public EventKeyUpdatable
+class TerrainModifier : public EventMouseUpdatable
 {
     private:
         const Camera& m_camera;
@@ -28,5 +28,5 @@ class TerrainModifier // : public EventKeyUpdatable
     public: 
         TerrainModifier(const Camera& camera, Terrain& terrain);
 
-        void EventMouseButtonUpdate(const std::array<bool, GLFW_MOUSE_BUTTON_LAST+1>& mouseButtons, const float deltaTime);
+        void EventMouseButtonUpdate(const std::array<bool, GLFW_MOUSE_BUTTON_LAST+1>& mouseButtons, const float deltaTime) override;
 };

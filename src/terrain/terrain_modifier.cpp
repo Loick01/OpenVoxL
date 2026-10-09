@@ -102,7 +102,8 @@ void TerrainModifier::EventMouseButtonUpdate(const std::array<bool, GLFW_MOUSE_B
                 return;
             
             Chunk& c = m_terrain.GetChunkFromVoxel(targetVoxelPos);
-            c.CreateBlock(targetVoxelPos%CHUNK_SIZE, 0); // TODO : blockId
+            if (c.IsEmptyAt(targetVoxelPos%CHUNK_SIZE))
+                c.CreateBlock(targetVoxelPos%CHUNK_SIZE, 0); // TODO : blockId
         }
     }
 }
