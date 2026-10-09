@@ -85,19 +85,24 @@ std::optional<RaycastHit> TerrainModifier::RaycastVoxelGrid(const glm::vec3 star
 void TerrainModifier::EventMouseButtonUpdate(const std::array<bool, GLFW_MOUSE_BUTTON_LAST+1>& mouseButtons, const float deltaTime)
 {
     if (mouseButtons[GLFW_MOUSE_BUTTON_LEFT]) {
-        const std::optional<RaycastHit> rayHitOpt = RaycastVoxelGrid(m_camera.GetPosition(), m_camera.GetPosition()+m_camera.GetFrontVector()*3.f); // TODO : Voxel range distance
+        const std::optional<RaycastHit> rayHitOpt = RaycastVoxelGrid(m_camera.GetPosition(), m_camera.GetPosition()+m_camera.GetFrontVector()*4.5f); // TODO : Voxel range distance
         if (rayHitOpt) {
             const RaycastHit& rayHit = rayHitOpt.value();
+            // rayHit.voxelPos is in Terrain (IsSolidAt is used in RaycastVoxelGrid())
             Chunk& c = m_terrain.GetChunkFromVoxel(rayHit.voxelPos);
             c.DeleteBlock(rayHit.voxelPos%CHUNK_SIZE);
         }
     } else if (mouseButtons[GLFW_MOUSE_BUTTON_RIGHT]) {
-        // const std::optional<RaycastHit> rayHitOpt = RaycastVoxelGrid(m_camera.GetPosition(), m_camera.GetPosition()+m_camera.GetFrontVector()*3.f); // TODO : Voxel range distance
-        // if (rayHitOpt) {
-        //     const RaycastHit rayHit = rayHitOpt.value();
-        //     const glm::ivec3 targetVoxelPos = rayHit.voxelPos + rayHit.normal;
-        //     Chunk& c = m_terrain.GetChunkFromVoxel(targetVoxelPos);
-        //     c.CreateBlock(targetVoxelPos%CHUNK_SIZE, 0); // TODO : blockId
-        // }
+        const std::optional<RaycastHit> rayHitOpt = RaycastVoxelGrid(m_camera.GetPosition(), m_camera.GetPosition()+m_camera.GetFrontVector()*4.5f); // TODO : Voxel range distance
+        if (rayHitOpt) {
+            const RaycastHit rayHit = rayHitOpt.value();
+            const glm::ivec3 targetVoxelPos = rayHit.voxelPos + rayHit.normal;
+            
+            if (m_terrain.IsOutOfTerrain(targetVoxelPos))
+                return;
+            
+            Chunk& c = m_terrain.GetChunkFromVoxel(targetVoxelPos);
+            c.CreateBlock(targetVoxelPos%CHUNK_SIZE, 0); // TODO : blockId
+        }
     }
 }

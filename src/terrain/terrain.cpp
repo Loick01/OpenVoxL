@@ -50,10 +50,15 @@ unsigned int Terrain::GetChunkIndexInGrid(const glm::ivec3& chunkPosition) const
     return chunkPosition.y*m_nrChunkDepth*m_nrChunkWidth + chunkPosition.z*m_nrChunkWidth + chunkPosition.x;
 }
 
+bool Terrain::IsOutOfTerrain(const glm::ivec3& voxelPosition) const
+{
+    return voxelPosition.x < 0 || voxelPosition.y < 0 || voxelPosition.z < 0 ||
+        voxelPosition.x >= m_nrChunkWidth*CHUNK_SIZE || voxelPosition.y >= m_nrChunkHeight*CHUNK_SIZE || voxelPosition.z >= m_nrChunkDepth*CHUNK_SIZE;
+}
+
 bool Terrain::IsSolidAt(const glm::ivec3& voxelPosition) const
 {
-    if (voxelPosition.x < 0 || voxelPosition.y < 0 || voxelPosition.z < 0 ||
-        voxelPosition.x >= m_nrChunkWidth*CHUNK_SIZE || voxelPosition.y >= m_nrChunkHeight*CHUNK_SIZE || voxelPosition.z >= m_nrChunkDepth*CHUNK_SIZE)
+    if (IsOutOfTerrain(voxelPosition))
         return false;
     
     const Chunk& c = GetChunkFromVoxel(voxelPosition);
