@@ -3,7 +3,8 @@
 #include <stdexcept>
 
 Hitbox::Hitbox(const glm::vec3 position, const float height, const float eyeHeight, const float width):
-    m_position(position), m_height(height), m_eyeHeight(eyeHeight), m_width(width), m_currentMove(0.f)
+    m_position(position), m_height(height), m_eyeHeight(eyeHeight), m_width(width), 
+    m_currentMove(0.f), m_verticalVelocity(0.f)
 {
     ComputeAABB();
 }
@@ -33,6 +34,11 @@ glm::vec3 Hitbox::GetCurrentMove() const
     return m_currentMove;
 }
 
+float Hitbox::GetVerticalVelocity() const
+{
+    return m_verticalVelocity;
+}
+
 void Hitbox::ComputeAABB()
 {
     m_box = {
@@ -59,6 +65,11 @@ void Hitbox::SetPosition(const glm::vec3 p)
 void Hitbox::SetCurrentMove(const glm::vec3 m)
 {
     m_currentMove = m;
+}
+
+void Hitbox::SetVerticalVelocity(const float verticalVelocity)
+{
+    m_verticalVelocity = verticalVelocity;
 }
 
 void Hitbox::RequestMove(const Direction dir)

@@ -23,7 +23,7 @@ class TerrainModifier : public EventMouseUpdatable
         const Camera& m_camera;
         Terrain& m_terrain;
 
-        std::optional<RaycastHit> RaycastVoxelGrid(const glm::vec3 startPos, const glm::vec3 endPos) const; // TODO : Rename ?
+        std::optional<RaycastHit> RaycastVoxelGrid(const glm::vec3 startPos, const glm::vec3 endPos) const;
         
     public: 
         TerrainModifier(const Camera& camera, Terrain& terrain);

@@ -41,7 +41,7 @@ bool Application::Run()
     const std::array<bool, GLFW_MOUSE_BUTTON_LAST+1>& mouseButtons = m_eventController.GetMouseButtons();
     
     m_player.EventKeyUpdate(keys, deltaTime);
-    m_collisionResolver.Resolve(m_player.GetHitbox(), m_player.GetFrameSpeed());
+    m_collisionResolver.Resolve(m_player.GetHitbox(), m_player.GetFrameSpeed(), deltaTime);
     m_terrainModifier.EventMouseButtonUpdate(mouseButtons, deltaTime);
     m_camera.EventKeyUpdate(keys, deltaTime);
     

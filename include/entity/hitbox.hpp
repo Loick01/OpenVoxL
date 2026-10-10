@@ -30,6 +30,8 @@ class Hitbox
         float m_height;
         float m_eyeHeight;
         float m_width;
+
+        float m_verticalVelocity;
     
     public:
         Hitbox(const glm::vec3 position, const float height, const float eyeHeight, const float width);
@@ -40,6 +42,8 @@ class Hitbox
         glm::vec3 GetFrontVector() const;
         glm::vec3 GetCurrentMove() const;
 
+        float GetVerticalVelocity() const;
+
         void ComputeAABB();
 
         void SetFrontVector(const glm::vec3 front);
@@ -47,6 +51,7 @@ class Hitbox
 
         void SetPosition(const glm::vec3 p);
         void SetCurrentMove(const glm::vec3 m);
+        void SetVerticalVelocity(const float verticalVelocity);
 
         void RequestMove(const Direction dir);
         void ApplyMove();

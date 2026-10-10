@@ -33,7 +33,7 @@ void CollisionResolver::AxisX(const AABB& box, glm::vec3& move)
     }
 }
 
-void CollisionResolver::AxisY(const AABB& box, glm::vec3& move)
+void CollisionResolver::AxisY(const AABB& box, Hitbox& hitbox, glm::vec3& move)
 {
     if (move.y == 0.f) return;
 
@@ -52,6 +52,8 @@ void CollisionResolver::AxisY(const AABB& box, glm::vec3& move)
                     move.y = k - box.max.y - EPSILON;
                 else 
                     move.y = k+1 - box.min.y + EPSILON;
+
+                hitbox.SetVerticalVelocity(0.f); // TODO : Should not be here + AxisX/Y/Z() should return move.x/y/z ?
 
                 return;
             }
@@ -85,14 +87,19 @@ void CollisionResolver::AxisZ(const AABB& box, glm::vec3& move)
     }
 }
 
-void CollisionResolver::Resolve(Hitbox& hitbox, const float frameSpeed)
+void CollisionResolver::Resolve(Hitbox& hitbox, const float frameSpeed, const double deltaTime)
 {
     glm::vec3 move = hitbox.GetCurrentMove();
+    move.y = 0.f;
     
-    if (move == glm::vec3(0.f))
-        return;
-    
-    move = glm::normalize(move)*frameSpeed;
+    if (glm::length(move) > 0.f)
+        move = glm::normalize(move)*frameSpeed;
+
+    float verticalVelocity = hitbox.GetVerticalVelocity();
+    verticalVelocity += GRAVITY * deltaTime;
+    hitbox.SetVerticalVelocity(verticalVelocity);
+
+    move.y = verticalVelocity * deltaTime;
     
     hitbox.ComputeAABB();
     AABB box = hitbox.GetBox();
@@ -100,13 +107,11 @@ void CollisionResolver::Resolve(Hitbox& hitbox, const float frameSpeed)
     AxisX(box, move);
     box.min.x += move.x;
     box.max.x += move.x;
-    AxisY(box, move);
-    box.min.y += move.y;
-    box.max.y += move.y;
     AxisZ(box, move);
-    // box.min.z += move.z;
-    // box.max.z += move.z;
+    box.min.z += move.z;
+    box.max.z += move.z;
+    AxisY(box, hitbox, move);
 
     hitbox.SetCurrentMove(move);
-    hitbox.ApplyMove(); // TODO : Should not be here
+    hitbox.ApplyMove();
 }
