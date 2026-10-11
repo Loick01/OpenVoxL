@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 
-#define GRAVITY -24.f
+#define GRAVITY -30.f
 #define EPSILON 0.001f
 
 struct AABB;
@@ -18,9 +18,9 @@ class CollisionResolver // TODO : Rename ?
         CollisionResolver(const Terrain& terrain);
 
         // TODO : Rename
-        void AxisX(const AABB& box, glm::vec3& move);
-        void AxisY(const AABB& box, Hitbox& hitbox, glm::vec3& move); // TODO : Hitbox should not be here ?
-        void AxisZ(const AABB& box, glm::vec3& move);
+        bool AxisX(const AABB& box, glm::vec3& move);
+        bool AxisY(const AABB& box, glm::vec3& move);
+        bool AxisZ(const AABB& box, glm::vec3& move);
 
         void Resolve(Hitbox& hitbox, const float frameSpeed, const double deltaTime);
 };

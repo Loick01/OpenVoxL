@@ -7,6 +7,11 @@ enum class Direction // TODO : Should not be here
     Front, Back, Left, Right
 };
 
+enum class MovementState
+{
+    Air, Ground //, Water
+};
+
 struct AABB
 {
     glm::vec3 min;
@@ -21,6 +26,8 @@ class Hitbox
 {
     private:    
         AABB m_box;
+
+        MovementState m_movementState;
         
         glm::vec3 m_position;  
         glm::vec3 m_frontVector;
@@ -42,6 +49,8 @@ class Hitbox
         glm::vec3 GetFrontVector() const;
         glm::vec3 GetCurrentMove() const;
 
+        MovementState GetMovementState() const;
+
         float GetVerticalVelocity() const;
 
         void ComputeAABB();
@@ -52,6 +61,7 @@ class Hitbox
         void SetPosition(const glm::vec3 p);
         void SetCurrentMove(const glm::vec3 m);
         void SetVerticalVelocity(const float verticalVelocity);
+        void SetMovementState(const MovementState state);
 
         void RequestMove(const Direction dir);
         void ApplyMove();

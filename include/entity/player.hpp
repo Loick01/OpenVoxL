@@ -19,9 +19,10 @@ class Player : public EventKeyUpdatable
         float m_frameSpeed; // TODO : Should be in Hitbox ?
         float m_sprint;
         float m_voxelRange;
+        float m_jumpStrength;
         
     public:
-        Player(const glm::vec3 position, const float speed, const float sprint, const float range);
+        Player(const glm::vec3 position, const float speed, const float sprint, const float range, const float jumpStrength);
 
         Hitbox& GetHitbox();
         float GetFrameSpeed() const;

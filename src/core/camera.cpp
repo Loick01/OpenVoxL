@@ -107,8 +107,10 @@ void Camera::KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys)
             SetState(CameraState::MouseFree);
     else if (keys[GLFW_KEY_O])
         SetState(CameraState::Orbital);
-    else if (keys[GLFW_KEY_P])
+    else if (keys[GLFW_KEY_P]) {
+        m_playerHitbox.SetPosition(m_position);
         SetState(CameraState::Player);
+    }
 }
 
 void Camera::CursorPosCallback(double xpos, double ypos)

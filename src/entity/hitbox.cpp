@@ -4,7 +4,7 @@
 
 Hitbox::Hitbox(const glm::vec3 position, const float height, const float eyeHeight, const float width):
     m_position(position), m_height(height), m_eyeHeight(eyeHeight), m_width(width), 
-    m_currentMove(0.f), m_verticalVelocity(0.f)
+    m_currentMove(0.f), m_verticalVelocity(0.f), m_movementState(MovementState::Air)
 {
     ComputeAABB();
 }
@@ -34,6 +34,11 @@ glm::vec3 Hitbox::GetCurrentMove() const
     return m_currentMove;
 }
 
+MovementState Hitbox::GetMovementState() const
+{
+    return m_movementState;
+}
+
 float Hitbox::GetVerticalVelocity() const
 {
     return m_verticalVelocity;
@@ -59,6 +64,7 @@ void Hitbox::SetRightVector(const glm::vec3 right)
 
 void Hitbox::SetPosition(const glm::vec3 p)
 {
+    m_verticalVelocity = 0.f; // TODO : Should not be here ?
     m_position = p;
 }
 
@@ -70,6 +76,11 @@ void Hitbox::SetCurrentMove(const glm::vec3 m)
 void Hitbox::SetVerticalVelocity(const float verticalVelocity)
 {
     m_verticalVelocity = verticalVelocity;
+}
+
+void Hitbox::SetMovementState(const MovementState state)
+{
+    m_movementState = state;
 }
 
 void Hitbox::RequestMove(const Direction dir)

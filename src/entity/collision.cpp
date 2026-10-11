@@ -7,9 +7,9 @@ CollisionResolver::CollisionResolver(const Terrain& terrain):
     m_terrain(terrain)
 {}
 
-void CollisionResolver::AxisX(const AABB& box, glm::vec3& move)
+bool CollisionResolver::AxisX(const AABB& box, glm::vec3& move)
 {
-    if (move.x == 0.f) return;
+    if (move.x == 0.f) return false;
 
     float targetMinX = box.min.x + move.x;
     float targetMaxX = box.max.x + move.x;
@@ -27,15 +27,17 @@ void CollisionResolver::AxisX(const AABB& box, glm::vec3& move)
                 else 
                     move.x = i+1 - box.min.x + EPSILON;
 
-                return;
+                return true;
             }
         }  
     }
+
+    return false;
 }
 
-void CollisionResolver::AxisY(const AABB& box, Hitbox& hitbox, glm::vec3& move)
+bool CollisionResolver::AxisY(const AABB& box, glm::vec3& move)
 {
-    if (move.y == 0.f) return;
+    if (move.y == 0.f) return false;
 
     float targetMinY = box.min.y + move.y;
     float targetMaxY = box.max.y + move.y;
@@ -53,17 +55,17 @@ void CollisionResolver::AxisY(const AABB& box, Hitbox& hitbox, glm::vec3& move)
                 else 
                     move.y = k+1 - box.min.y + EPSILON;
 
-                hitbox.SetVerticalVelocity(0.f); // TODO : Should not be here + AxisX/Y/Z() should return move.x/y/z ?
-
-                return;
+                return true;
             }
         }  
     }
+
+    return false;
 }
 
-void CollisionResolver::AxisZ(const AABB& box, glm::vec3& move)
+bool CollisionResolver::AxisZ(const AABB& box, glm::vec3& move)
 {
-    if (move.z == 0.f) return;
+    if (move.z == 0.f) return false;
 
     float targetMinZ = box.min.z + move.z;
     float targetMaxZ = box.max.z + move.z;
@@ -81,10 +83,12 @@ void CollisionResolver::AxisZ(const AABB& box, glm::vec3& move)
                 else 
                     move.z = j+1 - box.min.z + EPSILON;
 
-                return;
+                return true;
             }
         }  
     }
+
+    return false;
 }
 
 void CollisionResolver::Resolve(Hitbox& hitbox, const float frameSpeed, const double deltaTime)
@@ -110,7 +114,13 @@ void CollisionResolver::Resolve(Hitbox& hitbox, const float frameSpeed, const do
     AxisZ(box, move);
     box.min.z += move.z;
     box.max.z += move.z;
-    AxisY(box, hitbox, move);
+    if (AxisY(box, move)) {
+        hitbox.SetVerticalVelocity(0.f);
+        if (move.y > 0.f) 
+            hitbox.SetMovementState(MovementState::Ground);
+    } else {
+        hitbox.SetMovementState(MovementState::Air);
+    }
 
     hitbox.SetCurrentMove(move);
     hitbox.ApplyMove();
