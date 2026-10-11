@@ -3,9 +3,19 @@
 #include "entity/hitbox.hpp"
 #include "terrain/terrain.hpp"
 
-CollisionResolver::CollisionResolver(const Terrain& terrain):
-    m_terrain(terrain)
+CollisionResolver::CollisionResolver(const Terrain& terrain, const float gravity):
+    m_terrain(terrain), m_gravity(gravity)
 {}
+
+float CollisionResolver::GetGravity() const
+{
+    return m_gravity;
+}
+
+void CollisionResolver::SetGravity(const float gravity)
+{
+    m_gravity = gravity;
+}
 
 bool CollisionResolver::AxisX(const AABB& box, glm::vec3& move)
 {
@@ -100,7 +110,7 @@ void CollisionResolver::Resolve(Hitbox& hitbox, const float frameSpeed, const do
         move = glm::normalize(move)*frameSpeed;
 
     float verticalVelocity = hitbox.GetVerticalVelocity();
-    verticalVelocity += GRAVITY * deltaTime;
+    verticalVelocity += m_gravity * deltaTime;
     hitbox.SetVerticalVelocity(verticalVelocity);
 
     move.y = verticalVelocity * deltaTime;

@@ -15,9 +15,29 @@ float Player::GetFrameSpeed() const
     return m_frameSpeed;
 }
 
+float Player::GetSpeed() const
+{
+    return m_speed;
+}
+
+float Player::GetJumpStrength() const
+{
+    return m_jumpStrength;
+}
+
 float Player::GetVoxelRange() const
 {
     return m_voxelRange;
+}
+
+void Player::SetSpeed(const float speed)
+{
+    m_speed = speed;
+}
+
+void Player::SetJumpStrength(const float jumpStrength)
+{
+    m_jumpStrength = jumpStrength;
 }
 
 void Player::EventKeyUpdate(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime)

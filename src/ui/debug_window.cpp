@@ -6,7 +6,8 @@
 #include <GLFW/glfw3.h>
 
 #include "core/camera.hpp"
-#include "entity/hitbox.hpp"
+#include "entity/collision.hpp"
+#include "entity/player.hpp"
 #include "graphic/texture.hpp"
 #include "terrain/terrain.hpp"
 
@@ -22,8 +23,9 @@ namespace
     const char* cellularReturnTypes[] = {"CellValue", "NoiseLookup", "Distance", "Distance2", "Distance2Add", "Distance2Sub", "Distance2Mul", "Distance2Div"};
 }
 
-DebugWindow::DebugWindow(GLFWwindow* glfwWindow, Camera& camera, Hitbox& hitbox, Terrain& terrain):
-    m_glfwWindow(glfwWindow), m_width(500), m_height(500), m_camera(camera),m_playerHitbox(hitbox), m_terrain(terrain),
+DebugWindow::DebugWindow(GLFWwindow* glfwWindow, Camera& camera, CollisionResolver& collisionResolver, Player& player, Terrain& terrain):
+    m_glfwWindow(glfwWindow), m_width(500), m_height(500), m_camera(camera), m_collisionResolver(collisionResolver), 
+    m_player(player), m_hitbox(m_player.GetHitbox()), m_terrain(terrain),
     m_indexCameraState((unsigned int)m_camera.GetState()), 
     m_indexSurfaceChunkType((unsigned int)m_terrain.GetChunkType(ChunkLayer::Surface)), 
     m_indexBelowChunkType((unsigned int)m_terrain.GetChunkType(ChunkLayer::Below)),
@@ -297,6 +299,26 @@ void DebugWindow::ShowMainWindow()
             ImGui::EndTabItem();
         }
 
+        if (ImGui::BeginTabItem("Player")){
+            const glm::vec3 playerPosition = m_hitbox.GetPosition();
+            float walkSpeed = m_player.GetSpeed();
+            float jumpStrength = m_player.GetJumpStrength();
+            float gravity = m_collisionResolver.GetGravity();
+
+            ImGui::Text("Player Position: %.1f/%.1f/%.1f", playerPosition.x, playerPosition.y, playerPosition.z);
+            
+            if (ImGui::SliderFloat("Player walk speed", &walkSpeed, 1.f, 50.f))
+                m_player.SetSpeed(walkSpeed);
+
+            if (ImGui::SliderFloat("Player jump strength", &jumpStrength, 0.5f, 100.f))
+                m_player.SetJumpStrength(jumpStrength);
+
+            if (ImGui::SliderFloat("Gravity", &gravity, 0.f, -100.f))
+                m_collisionResolver.SetGravity(gravity);
+
+            ImGui::EndTabItem();
+        }
+
         if (ImGui::BeginTabItem("Terrain")){
             glm::ivec3 terrainSize = m_terrain.GetSize();
             int surfaceChunkHeight = m_terrain.GetSurfaceChunkHeight();
@@ -362,7 +384,7 @@ void DebugWindow::ShowMainWindow()
                 m_terrain.Load();
                 m_camera.SetTargetTerrain(terrainCenter);
                 terrainCenter.y *= 2.5f; // TODO ?
-                m_playerHitbox.SetPosition(terrainCenter);
+                m_hitbox.SetPosition(terrainCenter);
                 
                 m_heightmapTextureId = LoadTexture2D("../data/heightmap/terrain.png");
                 m_caveHeightmapTextureId = LoadTexture2D("../data/heightmap/cave.png");

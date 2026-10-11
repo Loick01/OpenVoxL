@@ -27,7 +27,12 @@ class Player : public EventKeyUpdatable
         Hitbox& GetHitbox();
         float GetFrameSpeed() const;
 
+        float GetSpeed() const;
         float GetVoxelRange() const;
+        float GetJumpStrength() const;
 
+        void SetSpeed(const float speed);
+        void SetJumpStrength(const float jumpStrength);
+        
         void EventKeyUpdate(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime) override;
 };

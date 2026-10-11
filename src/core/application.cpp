@@ -6,8 +6,8 @@ Application::Application():
     m_skybox("../shader/skybox/skybox.vs", "../shader/skybox/skybox.fs"),
     m_terrain(3, 3, 3), m_terrainModifier(m_camera, m_terrain),
     m_hud("../shader/ui/hud.vs", "../shader/ui/hud.fs", m_window.GetWidth(), m_window.GetHeight()),
-    m_debug(m_window.GetGlfwWindow(), m_camera, m_player.GetHitbox(), m_terrain),
-    m_player(glm::vec3(0.f), 6.5f, 1.5f, 4.5f, 9.f), m_collisionResolver(m_terrain)
+    m_debug(m_window.GetGlfwWindow(), m_camera, m_collisionResolver, m_player, m_terrain),
+    m_player(glm::vec3(0.f), 6.5f, 1.5f, 4.5f, 9.f), m_collisionResolver(m_terrain, -30.f)
 {
     glViewport(0, 0, m_window.GetWidth(), m_window.GetHeight());
 
