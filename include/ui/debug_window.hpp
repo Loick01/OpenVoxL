@@ -18,6 +18,7 @@ class CollisionResolver;
 class Hitbox;
 class Player;
 class Terrain;
+class TerrainModifier;
 
 class DebugWindow
 {
@@ -28,6 +29,7 @@ class DebugWindow
         Player& m_player;
         Hitbox& m_hitbox;
         Terrain& m_terrain;
+        TerrainModifier& m_terrainModifier;
                 
         int m_width;
         int m_height;
@@ -72,7 +74,8 @@ class DebugWindow
         void ShowMainWindow();
 
     public:
-        DebugWindow(GLFWwindow* glfwWindow, Camera& camera, CollisionResolver& collisionResolver, Player& player, Terrain& terrain);
+        DebugWindow(GLFWwindow* glfwWindow, Camera& camera, CollisionResolver& collisionResolver, Player& player, 
+            Terrain& terrain, TerrainModifier& terrainModifier);
         ~DebugWindow();
         
         void KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys);

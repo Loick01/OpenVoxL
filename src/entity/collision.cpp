@@ -126,7 +126,7 @@ void CollisionResolver::Resolve(Hitbox& hitbox, const float frameSpeed, const do
     box.max.z += move.z;
     if (AxisY(box, move)) {
         hitbox.SetVerticalVelocity(0.f);
-        if (move.y > 0.f) 
+        if (move.y > 0.f) // TODO : There is something wrong with this line, Player can't jump when position.y < 15
             hitbox.SetMovementState(MovementState::Ground);
     } else {
         hitbox.SetMovementState(MovementState::Air);

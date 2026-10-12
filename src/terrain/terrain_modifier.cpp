@@ -3,8 +3,8 @@
 #include "core/camera.hpp"
 #include "terrain/terrain.hpp"
 
-TerrainModifier::TerrainModifier(const Camera& camera, Terrain& terrain):
-    m_camera(camera), m_terrain(terrain)
+TerrainModifier::TerrainModifier(const Camera& camera, Terrain& terrain, const float delay):
+    m_camera(camera), m_terrain(terrain), m_updateDelay(delay)
 {}
 
 // http://www.cse.yorku.ca/~amana/research/grid.pdf
@@ -82,8 +82,22 @@ std::optional<RaycastHit> TerrainModifier::RaycastVoxelGrid(const glm::vec3 star
     return std::nullopt;
 }
 
+TimeDelay& TerrainModifier::GetUpdateDelay()
+{
+    return m_updateDelay;
+}
+
+void TerrainModifier::SetUpdateDelay(const float delay)
+{
+    m_updateDelay.delay = delay;
+}
+
 void TerrainModifier::EventMouseButtonUpdate(const std::array<bool, GLFW_MOUSE_BUTTON_LAST+1>& mouseButtons, const float deltaTime)
 {
+    m_updateDelay.count += deltaTime;
+    if (!m_updateDelay.IsFinished())
+        return;
+    
     if (mouseButtons[GLFW_MOUSE_BUTTON_LEFT]) {
         const std::optional<RaycastHit> rayHitOpt = RaycastVoxelGrid(m_camera.GetPosition(), m_camera.GetPosition()+m_camera.GetFrontVector()*4.5f); // TODO : Voxel range distance
         if (rayHitOpt) {
@@ -91,6 +105,7 @@ void TerrainModifier::EventMouseButtonUpdate(const std::array<bool, GLFW_MOUSE_B
             // rayHit.voxelPos is in Terrain (IsSolidAt is used in RaycastVoxelGrid())
             Chunk& c = m_terrain.GetChunkFromVoxel(rayHit.voxelPos);
             c.DeleteBlock(rayHit.voxelPos%CHUNK_SIZE);
+            m_updateDelay.Reset();
         }
     } else if (mouseButtons[GLFW_MOUSE_BUTTON_RIGHT]) {
         const std::optional<RaycastHit> rayHitOpt = RaycastVoxelGrid(m_camera.GetPosition(), m_camera.GetPosition()+m_camera.GetFrontVector()*4.5f); // TODO : Voxel range distance
@@ -102,8 +117,10 @@ void TerrainModifier::EventMouseButtonUpdate(const std::array<bool, GLFW_MOUSE_B
                 return;
             
             Chunk& c = m_terrain.GetChunkFromVoxel(targetVoxelPos);
-            if (c.IsEmptyAt(targetVoxelPos%CHUNK_SIZE))
+            if (c.IsEmptyAt(targetVoxelPos%CHUNK_SIZE)){
                 c.CreateBlock(targetVoxelPos%CHUNK_SIZE, 0); // TODO : blockId
+                m_updateDelay.Reset();
+            }
         }
     }
 }

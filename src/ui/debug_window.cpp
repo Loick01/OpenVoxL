@@ -10,6 +10,7 @@
 #include "entity/player.hpp"
 #include "graphic/texture.hpp"
 #include "terrain/terrain.hpp"
+#include "terrain/terrain_modifier.hpp"
 
 namespace
 {
@@ -23,9 +24,10 @@ namespace
     const char* cellularReturnTypes[] = {"CellValue", "NoiseLookup", "Distance", "Distance2", "Distance2Add", "Distance2Sub", "Distance2Mul", "Distance2Div"};
 }
 
-DebugWindow::DebugWindow(GLFWwindow* glfwWindow, Camera& camera, CollisionResolver& collisionResolver, Player& player, Terrain& terrain):
+DebugWindow::DebugWindow(GLFWwindow* glfwWindow, Camera& camera, CollisionResolver& collisionResolver, Player& player, 
+Terrain& terrain, TerrainModifier& terrainModifier):
     m_glfwWindow(glfwWindow), m_width(500), m_height(500), m_camera(camera), m_collisionResolver(collisionResolver), 
-    m_player(player), m_hitbox(m_player.GetHitbox()), m_terrain(terrain),
+    m_player(player), m_hitbox(m_player.GetHitbox()), m_terrain(terrain), m_terrainModifier(terrainModifier),
     m_indexCameraState((unsigned int)m_camera.GetState()), 
     m_indexSurfaceChunkType((unsigned int)m_terrain.GetChunkType(ChunkLayer::Surface)), 
     m_indexBelowChunkType((unsigned int)m_terrain.GetChunkType(ChunkLayer::Below)),
@@ -304,6 +306,7 @@ void DebugWindow::ShowMainWindow()
             float walkSpeed = m_player.GetSpeed();
             float jumpStrength = m_player.GetJumpStrength();
             float gravity = m_collisionResolver.GetGravity();
+            float updateDelay = m_terrainModifier.GetUpdateDelay().delay;
 
             ImGui::Text("Player Position: %.1f/%.1f/%.1f", playerPosition.x, playerPosition.y, playerPosition.z);
             
@@ -315,6 +318,9 @@ void DebugWindow::ShowMainWindow()
 
             if (ImGui::SliderFloat("Gravity", &gravity, 0.f, -100.f))
                 m_collisionResolver.SetGravity(gravity);
+
+            if (ImGui::SliderFloat("Update delay", &updateDelay, 0.f, 10.f))
+                m_terrainModifier.SetUpdateDelay(updateDelay);
 
             ImGui::EndTabItem();
         }
