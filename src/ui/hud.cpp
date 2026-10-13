@@ -1,53 +1,28 @@
 #include "ui/hud.hpp"
 
 Hud::Hud(const std::string& vertexPath, const std::string& fragmentPath, const unsigned int windowWidth, const unsigned int windowHeight):
-    Drawable(vertexPath, fragmentPath), m_windowWidth(windowWidth), m_windowHeight(windowHeight), m_showHud(true)
+    Drawable(vertexPath, fragmentPath), m_show(true), m_hotbar(vertexPath, fragmentPath, windowWidth, 724.f)
 {
-    // Must respect the sizes from the used texture
+    // Must respect the sizes from the texture
     m_hotbarWidth = 724.0f;
     float hotbarHeight = 84.0f;
     float selectorSize = 92.0f;
     float cursorSize = 36.0f;
-
-    m_uiQuads.push_back(CreateQuad(glm::vec2(m_windowWidth/2.-m_hotbarWidth/2. ,10.), m_hotbarWidth, hotbarHeight));
-    m_uiQuads.push_back(CreateQuad(glm::vec2(m_windowWidth/2.-m_hotbarWidth/2.-4., 6.), selectorSize, selectorSize)); // By default, selector is on the first element in the hotbar
-    m_uiQuads.push_back(CreateQuad(glm::vec2(m_windowWidth/2.-cursorSize/2.0, m_windowHeight/2.-cursorSize/2.), cursorSize, cursorSize));
-    m_uiQuads.push_back(CreateQuad(glm::vec2(m_windowWidth/2.-m_hotbarWidth/2., 20.+hotbarHeight), m_hotbarWidth/2-10., 16.));
-    m_uiQuads.push_back(CreateQuad(glm::vec2(m_windowWidth/2.0+10., 20.+hotbarHeight), m_hotbarWidth/2-10., 16.));
-    m_uiQuads.push_back(CreateQuad(glm::vec2(m_windowWidth/2.-m_hotbarWidth/2.+4., 20.+hotbarHeight), m_hotbarWidth/2-16., 14.));
-    m_uiQuads.push_back(CreateQuad(glm::vec2(m_windowWidth/2.+12., 20.+hotbarHeight), m_hotbarWidth/2-16., 14.));
-
-    // for (unsigned int i = 0 ; i < 9 ; i++){
-    //     Quad q = CreateQuad(glm::vec2(m_windowWidth/2.-m_hotbarWidth/2.+80.*i+8., 18.), 68., 68.);
-    //     m_uiQuads.push_back(q);
-    // }
+    
+    m_uiQuads.emplace_back(glm::vec2(windowWidth/2.-m_hotbarWidth/2. ,10.), m_hotbarWidth, hotbarHeight);
+    m_uiQuads.emplace_back(glm::vec2(windowWidth/2.-m_hotbarWidth/2.-4., 6.), selectorSize, selectorSize); // By default, selector is on the first element in the hotbar
+    m_uiQuads.emplace_back(glm::vec2(windowWidth/2.-cursorSize/2.0, windowHeight/2.-cursorSize/2.), cursorSize, cursorSize);
+    m_uiQuads.emplace_back(glm::vec2(windowWidth/2.-m_hotbarWidth/2., 20.+hotbarHeight), m_hotbarWidth/2-10., 16.);
+    m_uiQuads.emplace_back(glm::vec2(windowWidth/2.0+10., 20.+hotbarHeight), m_hotbarWidth/2-10., 16.);
+    m_uiQuads.emplace_back(glm::vec2(windowWidth/2.-m_hotbarWidth/2.+4., 20.+hotbarHeight), m_hotbarWidth/2-16., 14.);
+    m_uiQuads.emplace_back(glm::vec2(windowWidth/2.+12., 20.+hotbarHeight), m_hotbarWidth/2-16., 14.);
     
     Load();
     LoadTexture();
 
-    m_shader.SetInt("windowWidth", m_windowWidth);
-    m_shader.SetInt("windowHeight", m_windowHeight);
-}
-
-Quad Hud::CreateQuad(const glm::vec2 origin, const float width, const float height)
-{
-    std::vector<glm::vec3> vertices;
-    std::vector<unsigned int> indices;
-
-    vertices.push_back(glm::vec3(origin, 0.f));
-    vertices.push_back(glm::vec3(origin[0]+width, origin[1], 0.f));
-    vertices.push_back(glm::vec3(origin[0], origin[1]+height, 0.f));
-    vertices.push_back(glm::vec3(origin[0]+width, origin[1]+height, 0.f));
-
-    indices.push_back(0);
-    indices.push_back(1);
-    indices.push_back(2);
-    indices.push_back(2);
-    indices.push_back(1);
-    indices.push_back(3);
-
-    Quad q{vertices, indices};
-    return q;
+    m_shader.Use();
+    m_shader.SetInt("windowWidth", windowWidth);
+    m_shader.SetInt("windowHeight", windowHeight);
 }
 
 void Hud::LoadTexture()
@@ -84,7 +59,7 @@ void Hud::Load()
 
 void Hud::Draw() const
 {
-    if (!m_showHud)
+    if (!m_show)
         return;
     
     glDisable(GL_DEPTH_TEST);
@@ -93,12 +68,14 @@ void Hud::Draw() const
     glBindVertexArray(m_VAO);
     glDrawElements(GL_TRIANGLES, m_countIndex, GL_UNSIGNED_INT, (void*)0);
     glEnable(GL_DEPTH_TEST);
+
+    m_hotbar.Draw();
 }
 
 void Hud::KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys)
 {
     if (keys[GLFW_KEY_Q])
-        m_showHud = !m_showHud;
+        m_show = !m_show;
 }
 
 void Hud::UpdateHealth(const float health)
