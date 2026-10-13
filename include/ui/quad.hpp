@@ -4,14 +4,14 @@
 
 struct Quad
 {
-    std::vector<glm::vec3> vertices; // z = 0
+    std::vector<glm::vec2> vertices;
     std::vector<unsigned int> indices;
 
     Quad(const glm::vec2 origin, const float width, const float height) { // Origin is the bottom left point
-        vertices.push_back(glm::vec3(origin, 0.f));
-        vertices.push_back(glm::vec3(origin[0]+width, origin[1], 0.f));
-        vertices.push_back(glm::vec3(origin[0], origin[1]+height, 0.f));
-        vertices.push_back(glm::vec3(origin[0]+width, origin[1]+height, 0.f));
+        vertices.push_back(origin);
+        vertices.push_back(glm::vec2(origin[0]+width, origin[1]));
+        vertices.push_back(glm::vec2(origin[0], origin[1]+height));
+        vertices.push_back(glm::vec2(origin[0]+width, origin[1]+height));
 
         indices.push_back(0);
         indices.push_back(1);

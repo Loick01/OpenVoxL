@@ -2,11 +2,9 @@
 
 #include "graphic/drawable.hpp"
 
-class Skybox : public Drawable {
+class Skybox : public Drawable3D {
     public:
         Skybox(const std::string& vertexPath, const std::string& fragmentPath);
-
-        void LoadTexture() override;
         
         void Load() override;
         void Draw(const glm::mat4& projection, const glm::mat4& view) const override;

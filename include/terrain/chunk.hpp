@@ -17,7 +17,7 @@ enum class ChunkNeighbor
     Bottom, Top, Back, Front, Left, Right
 };
 
-class Chunk : public Drawable
+class Chunk : public Drawable3D
 { 
     private:
         glm::ivec3 m_terrainPosition; // Position Column/Row/Depth 
@@ -71,7 +71,6 @@ class Chunk : public Drawable
         void Build(const DataCheeseChunk& data);
         void Build(const DataCaveChunk& data);
 
-        void LoadTexture() override;
         void Load() override;
 
         void CreateBlock(const glm::ivec3 blockPosition, const unsigned int blockId);

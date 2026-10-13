@@ -1,24 +1,17 @@
 #include "graphic/skybox.hpp"
 
 Skybox::Skybox(const std::string& vertexPath, const std::string& fragmentPath):
-    Drawable(vertexPath, fragmentPath)
+    Drawable3D(vertexPath, fragmentPath)
 {
     Load();
-    LoadTexture();
-}
-
-void Skybox::LoadTexture()
-{
-    m_textureId = LoadCubemapTexture(
-        {
+    LoadCmTexture({
         "../asset/texture/skybox/px.png",
         "../asset/texture/skybox/nx.png",
         "../asset/texture/skybox/py.png",
         "../asset/texture/skybox/ny.png",
         "../asset/texture/skybox/pz.png",
         "../asset/texture/skybox/nz.png"
-        }
-    );
+        });
 }
 
 void Skybox::Load() 

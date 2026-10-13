@@ -45,7 +45,7 @@ bool Application::Run()
     m_terrainModifier.EventMouseButtonUpdate(mouseButtons, deltaTime);
     m_camera.EventKeyUpdate(keys, deltaTime);
     
-    // TODO : Use a std::vector<Drawable*> ? (terrain can not be in this)
+    // TODO : Use a std::vector<Drawable3D*> ? (terrain can not be in this)
     m_skybox.Draw(cameraProjectionMatrix, cameraViewMatrix);
     m_terrain.Draw(cameraProjectionMatrix, cameraViewMatrix);
     m_hud.Draw();

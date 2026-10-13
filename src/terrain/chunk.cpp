@@ -8,13 +8,13 @@ namespace {
 
 Chunk::Chunk(const std::string& vertexPath, const std::string& fragmentPath, const glm::ivec3 terrainPosition,
 const glm::ivec3 layerPosition, const glm::ivec3 terrainSize, const glm::vec3 originPosition):
-    Drawable(vertexPath, fragmentPath), m_terrainPosition(terrainPosition), m_layerPosition(layerPosition),
+    Drawable3D(vertexPath, fragmentPath), m_terrainPosition(terrainPosition), m_layerPosition(layerPosition),
     m_terrainSize(terrainSize), m_originPosition(originPosition)
 {
     glGenBuffers(1, &m_blockId_SSBO);
     glGenBuffers(1, &m_faceOrientation_SSBO);
     
-    LoadTexture();
+    LoadTexture("../asset/texture/block/atlas.png");
     m_gridVoxel.resize(CHUNK_SIZE*CHUNK_SIZE*CHUNK_SIZE, -1);
 }
 
@@ -305,11 +305,6 @@ void Chunk::VoxelBufferData()
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_faceOrientation_SSBO);
     glBufferData(GL_SHADER_STORAGE_BUFFER, m_faceOrientations.size()*sizeof(unsigned int), m_faceOrientations.data(), GL_DYNAMIC_DRAW);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, m_faceOrientation_SSBO);
-}
-
-void Chunk::LoadTexture()
-{
-    m_textureId = LoadTexture2D("../asset/texture/block/atlas.png");
 }
 
 void Chunk::Load() 
