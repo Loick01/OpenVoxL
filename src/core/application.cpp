@@ -6,6 +6,7 @@ Application::Application():
     m_skybox("../shader/skybox/skybox.vs", "../shader/skybox/skybox.fs"),
     m_terrain(3, 3, 3), m_terrainModifier(m_camera, m_terrain, 0.2f),
     m_hud("../shader/ui/hud.vs", "../shader/ui/hud.fs", m_window.GetWidth(), m_window.GetHeight()),
+    m_hotbar("../shader/ui/hotbar.vs", "../shader/ui/hotbar.fs", m_window.GetWidth(), m_window.GetHeight()),
     m_debug(m_window.GetGlfwWindow(), m_camera, m_collisionResolver, m_player, m_terrain, m_terrainModifier),
     m_player(glm::vec3(0.f), 6.5f, 1.5f, 4.5f, 9.f), m_collisionResolver(m_terrain, -30.f)
 {
@@ -45,10 +46,12 @@ bool Application::Run()
     m_terrainModifier.EventMouseButtonUpdate(mouseButtons, deltaTime);
     m_camera.EventKeyUpdate(keys, deltaTime);
     
-    // TODO : Use a std::vector<Drawable3D*> ? (terrain can not be in this)
     m_skybox.Draw(cameraProjectionMatrix, cameraViewMatrix);
     m_terrain.Draw(cameraProjectionMatrix, cameraViewMatrix);
+    
     m_hud.Draw();
+    m_hotbar.Draw();
+    
     m_debug.Draw();
     
     return m_window.EndFrame();

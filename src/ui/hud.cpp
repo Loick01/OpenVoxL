@@ -1,21 +1,27 @@
 #include "ui/hud.hpp"
 
+#include "ui/config.hpp"
+
 Hud::Hud(const std::string& vertexPath, const std::string& fragmentPath, const unsigned int windowWidth, const unsigned int windowHeight):
     Drawable2D(vertexPath, fragmentPath)
-{
-    // Must respect the sizes from the texture
-    m_hotbarWidth = 724.0f;
-    float hotbarHeight = 84.0f;
-    float selectorSize = 92.0f;
-    float cursorSize = 36.0f;
-    
-    m_uiQuads.emplace_back(glm::vec2(windowWidth/2.-m_hotbarWidth/2. ,10.), m_hotbarWidth, hotbarHeight);
-    m_uiQuads.emplace_back(glm::vec2(windowWidth/2.-m_hotbarWidth/2.-4., 6.), selectorSize, selectorSize); // By default, selector is on the first element in the hotbar
-    m_uiQuads.emplace_back(glm::vec2(windowWidth/2.-cursorSize/2.0, windowHeight/2.-cursorSize/2.), cursorSize, cursorSize);
-    m_uiQuads.emplace_back(glm::vec2(windowWidth/2.-m_hotbarWidth/2., 20.+hotbarHeight), m_hotbarWidth/2-10., 16.);
-    m_uiQuads.emplace_back(glm::vec2(windowWidth/2.0+10., 20.+hotbarHeight), m_hotbarWidth/2-10., 16.);
-    m_uiQuads.emplace_back(glm::vec2(windowWidth/2.-m_hotbarWidth/2.+4., 20.+hotbarHeight), m_hotbarWidth/2-16., 14.);
-    m_uiQuads.emplace_back(glm::vec2(windowWidth/2.+12., 20.+hotbarHeight), m_hotbarWidth/2-16., 14.);
+{   
+    const unsigned int windowCenterX = windowWidth/2;
+    const unsigned int windowCenterY = windowHeight/2;
+    const unsigned int hotbarPositionX = windowCenterX - HotbarConfig::width/2;
+    m_uiQuads.emplace_back(glm::vec2(hotbarPositionX, HotbarConfig::yPosition),
+        HotbarConfig::width, HotbarConfig::height); // Hotbar
+    m_uiQuads.emplace_back(glm::vec2(hotbarPositionX - HudConfig::selectorOffset, HotbarConfig::yPosition - HudConfig::selectorOffset),
+        HudConfig::selectorSize, HudConfig::selectorSize); // Selector
+    m_uiQuads.emplace_back(glm::vec2(windowCenterX - HudConfig::cursorSize/2, windowCenterY - HudConfig::cursorSize/2),
+        HudConfig::cursorSize, HudConfig::cursorSize); // Cursor
+    m_uiQuads.emplace_back(glm::vec2(hotbarPositionX, HudConfig::barsPositionY + HotbarConfig::height),
+        HotbarConfig::width/2 - HudConfig::barsOffsetX, HudConfig::barsHeight); // Health bar
+    m_uiQuads.emplace_back(glm::vec2(windowCenterX + HudConfig::barsOffsetX, HudConfig::barsPositionY + HotbarConfig::height),
+        HotbarConfig::width/2 - HudConfig::barsOffsetX, HudConfig::barsHeight); // Stamina bar
+    m_uiQuads.emplace_back(glm::vec2(hotbarPositionX + HudConfig::lineOffsetX, HudConfig::barsHeight + HotbarConfig::height), 
+        HotbarConfig::width/2 - HudConfig::barsOffsetX - HudConfig::lineOffsetX*2, HudConfig::lineHeight); // Health line
+    m_uiQuads.emplace_back(glm::vec2(windowCenterX + HudConfig::barsOffsetX + HudConfig::lineOffsetX, HudConfig::barsHeight + HotbarConfig::height), 
+        HotbarConfig::width/2 - HudConfig::barsOffsetX - HudConfig::lineOffsetX*2, HudConfig::lineHeight); // Stamina line
     
     Load(m_uiQuads);
     LoadTexture("../asset/texture/ui/hud.png");

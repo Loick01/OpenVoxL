@@ -13,6 +13,7 @@
 #include "graphic/skybox.hpp"
 #include "sound/sound.hpp"
 #include "ui/debug_window.hpp"
+#include "ui/hotbar.hpp"
 #include "ui/hud.hpp"
 
 class Application
@@ -24,6 +25,7 @@ class Application
 
         Camera m_camera;
         Hud m_hud;
+        Hotbar m_hotbar;
         Skybox m_skybox;
         Terrain m_terrain;
         TerrainModifier m_terrainModifier;

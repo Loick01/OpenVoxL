@@ -13,5 +13,5 @@ class Hotbar : public Drawable2D
         std::vector<Quad> m_hotbarQuads;
 
     public:
-        Hotbar(const std::string& vertexPath, const std::string& fragmentPath, const unsigned int windowWidth, const unsigned int hotbarWidth);
+        Hotbar(const std::string& vertexPath, const std::string& fragmentPath, const unsigned int windowWidth, const unsigned int windowHeight);
 };

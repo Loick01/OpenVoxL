@@ -11,8 +11,6 @@ class Hud : public Drawable2D
 {
     private:
         std::vector<Quad> m_uiQuads;
-
-        float m_hotbarWidth;
         
     public:
         Hud(const std::string& vertexPath, const std::string& fragmentPath, const unsigned int windowWidth, const unsigned int windowHeight);
