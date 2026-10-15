@@ -2,11 +2,12 @@
 
 #include "core/camera.hpp"
 #include "ui/debug_window.hpp"
+#include "ui/hotbar.hpp"
 #include "ui/hud.hpp"
 
-EventController::EventController(GLFWwindow* glfwWindow, Camera& camera, DebugWindow& debug, Hud& hud):
-    m_glfwWindow(glfwWindow), m_camera(camera), m_debug(debug), m_hud(hud), 
-    m_keys{}, m_mouseButtons{}, m_handBlockIndex(0), m_hotbarSize(9)
+EventController::EventController(GLFWwindow* glfwWindow, Camera& camera, DebugWindow& debug, Hud& hud, Hotbar& hotbar):
+    m_glfwWindow(glfwWindow), m_camera(camera), m_debug(debug), m_hud(hud), m_hotbar(hotbar),
+    m_keys{}, m_mouseButtons{}, m_handBlockIndex(0)
 {
     glfwSetInputMode(m_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // Hide the mouse cursor. Will not be here
 
@@ -91,7 +92,5 @@ void EventController::EventMouseButtonCallback(int button, int action, int mods)
 
 void EventController::EventScrollCallback(double xoffset, double yoffset)
 {
-    // TODO : Will not be here
-    m_handBlockIndex = (m_handBlockIndex + (yoffset > 0 ? -1 : 1) + m_hotbarSize) % m_hotbarSize;
-    // m_hudShader.SetInt("selectorLocation", m_handBlockIndex);
+    m_hotbar.ScrollCallback(xoffset, yoffset);
 }

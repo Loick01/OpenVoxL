@@ -7,6 +7,7 @@
 
 class Camera;
 class DebugWindow;
+class Hotbar;
 class Hud;
 
 class EventController
@@ -17,11 +18,11 @@ class EventController
         Camera& m_camera;
         DebugWindow& m_debug;
         Hud& m_hud;
+        Hotbar& m_hotbar;
 
         std::array<bool, GLFW_KEY_LAST+1> m_keys;
         std::array<bool, GLFW_MOUSE_BUTTON_LAST+1> m_mouseButtons;
 
-        const unsigned int m_hotbarSize;
         unsigned int m_handBlockIndex; // [0, m_hotbarSize]
 
         void EventKeyCallback(int key, int scancode, int action, int mods);
@@ -30,7 +31,7 @@ class EventController
         void EventScrollCallback(double xoffset, double yoffset);
 
     public:
-        EventController(GLFWwindow* glfwWindow, Camera& camera, DebugWindow& debug, Hud& hud);
+        EventController(GLFWwindow* glfwWindow, Camera& camera, DebugWindow& debug, Hud& hud, Hotbar& hotbar);
         
         const std::array<bool,GLFW_KEY_LAST+1>& GetKeys() const;
         const std::array<bool,GLFW_MOUSE_BUTTON_LAST+1>& GetMouseButtons() const;

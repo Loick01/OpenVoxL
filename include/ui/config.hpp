@@ -2,6 +2,7 @@
 
 namespace HotbarConfig
 {
+    const unsigned int size = 9;
     const float width = 724.f;
     const float height = 84.f;
     const float yPosition = 10.f;

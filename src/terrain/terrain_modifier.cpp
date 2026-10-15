@@ -2,9 +2,10 @@
 
 #include "core/camera.hpp"
 #include "terrain/terrain.hpp"
+#include "ui/hotbar.hpp"
 
-TerrainModifier::TerrainModifier(const Camera& camera, Terrain& terrain, const float delay):
-    m_camera(camera), m_terrain(terrain), m_updateDelay(delay)
+TerrainModifier::TerrainModifier(const Camera& camera, const Hotbar& hotbar, Terrain& terrain, const float delay):
+    m_camera(camera), m_terrain(terrain), m_hotbar(hotbar), m_updateDelay(delay)
 {}
 
 // http://www.cse.yorku.ca/~amana/research/grid.pdf
@@ -118,7 +119,7 @@ void TerrainModifier::EventMouseButtonUpdate(const std::array<bool, GLFW_MOUSE_B
             
             Chunk& c = m_terrain.GetChunkFromVoxel(targetVoxelPos);
             if (c.IsEmptyAt(targetVoxelPos%CHUNK_SIZE)){
-                c.CreateBlock(targetVoxelPos%CHUNK_SIZE, 0); // TODO : blockId
+                c.CreateBlock(targetVoxelPos%CHUNK_SIZE, m_hotbar.GetSelectedBlockId());
                 m_updateDelay.Reset();
             }
         }
