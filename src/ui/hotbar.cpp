@@ -8,15 +8,47 @@ Hotbar::Hotbar(const std::string& vertexPath, const std::string& fragmentPath, c
     const unsigned int windowCenterX = windowWidth/2;
     const unsigned int hotbarPositionX = windowCenterX - HotbarConfig::width/2;
 
-    for (unsigned int i = 0 ; i < 9 ; i++)
+    for (unsigned int i = 0 ; i < 9 ; i++) {
         m_hotbarQuads.emplace_back(glm::vec2(hotbarPositionX + 80 * i + HotbarConfig::itemOffset, HotbarConfig::yPosition + HotbarConfig::itemOffset),
             HotbarConfig::itemSize, HotbarConfig::itemSize);
-    
+        
+        m_blockIds[i] = i; // TODO : Remove ?
+    }
+
     Load(m_hotbarQuads);
+    LoadTexture("../asset/texture/block/atlas.png");
 
     m_shader.Use();
     m_shader.SetInt("windowWidth", windowWidth);
     m_shader.SetInt("windowHeight", windowHeight);
+
+    glGenBuffers(1, &m_blockId_SSBO);
+
+    UpdateBlockIds();
+}
+
+Hotbar::~Hotbar()
+{
+    glDeleteBuffers(1, &m_blockId_SSBO);
+}
+
+void Hotbar::UpdateBlockIds()
+{
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_blockId_SSBO);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, m_blockIds.size()*sizeof(unsigned int), m_blockIds.data(), GL_DYNAMIC_DRAW);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_blockId_SSBO);
+}
+
+void Hotbar::Draw() const
+{
+    if (!m_show)
+        return;
     
-    // TODO : BlockId in hotbar
+    glDisable(GL_DEPTH_TEST);
+    m_shader.Use();
+    BindTexture2D(m_shader.GetLocation("text"), m_textureId, 0); // TODO : "text" should be a parameter ?
+    glBindVertexArray(m_VAO);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_blockId_SSBO);
+    glDrawElements(GL_TRIANGLES, m_countIndex, GL_UNSIGNED_INT, (void*)0);
+    glEnable(GL_DEPTH_TEST);
 }
