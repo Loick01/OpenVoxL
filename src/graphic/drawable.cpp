@@ -54,6 +54,9 @@ void Drawable2D::LoadTexture(const std::string& texturePath)
 
 void Drawable2D::Load(const std::vector<Quad>& quads)
 {
+    m_vertices.clear();
+    m_indices.clear();
+    
     unsigned int indexOffset = 0;
     m_countIndex = 0;
     

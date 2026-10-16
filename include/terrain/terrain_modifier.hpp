@@ -10,6 +10,7 @@
 
 class Camera;
 class Hotbar;
+class Hud;
 class Terrain;
 
 struct RaycastHit
@@ -42,6 +43,7 @@ class TerrainModifier : public EventMouseUpdatable
     private:
         const Camera& m_camera;
         const Hotbar& m_hotbar;
+        const Hud& m_hud; // TODO : Remove ?
         Terrain& m_terrain;
 
         std::optional<RaycastHit> RaycastVoxelGrid(const glm::vec3 startPos, const glm::vec3 endPos) const;
@@ -49,7 +51,7 @@ class TerrainModifier : public EventMouseUpdatable
         TimeDelay m_updateDelay;
 
     public: 
-        TerrainModifier(const Camera& camera, const Hotbar& hotbar, Terrain& terrain, const float delay);
+        TerrainModifier(const Camera& camera, const Hotbar& hotbar, const Hud& hud, Terrain& terrain, const float delay);
 
         TimeDelay& GetUpdateDelay();
         void SetUpdateDelay(const float delay); // TODO : Should be in TimeDelay struct ?

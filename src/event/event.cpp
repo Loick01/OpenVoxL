@@ -92,5 +92,5 @@ void EventController::EventMouseButtonCallback(int button, int action, int mods)
 
 void EventController::EventScrollCallback(double xoffset, double yoffset)
 {
-    m_hotbar.ScrollCallback(xoffset, yoffset);
+    m_hud.ScrollCallback(xoffset, yoffset);
 }

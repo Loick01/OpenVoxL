@@ -24,12 +24,12 @@ vec2 hudTexCoords[20] = vec2[20](
     vec2(0.984375,0.260869),
     vec2(0.949218,0.065217),
     vec2(0.984375,0.065217),
-    // Health
+    // Health Bar
     vec2(0.097656,0.630434),
     vec2(0.803711,0.630434),
     vec2(0.097656,0.543478),
     vec2(0.803711,0.543478),
-    // Stamina
+    // Stamina Bar
     vec2(0.097656,0.630434),
     vec2(0.803711,0.630434),
     vec2(0.097656,0.543478),
@@ -38,7 +38,6 @@ vec2 hudTexCoords[20] = vec2[20](
 
 void main() {
     vec2 screenCoordinates = aPos;
-    // screenCoordinates[0] += handBlockIndex * 80.0;
     vec2 normalizedPosition = vec2(screenCoordinates[0]/windowWidth, screenCoordinates[1]/windowHeight);
     gl_Position = vec4(normalizedPosition*2.0-1.0, 0.0, 1.0);
     TexCoords = hudTexCoords[gl_VertexID];

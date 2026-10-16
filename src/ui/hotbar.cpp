@@ -3,7 +3,7 @@
 #include "ui/config.hpp"
 
 Hotbar::Hotbar(const std::string& vertexPath, const std::string& fragmentPath, const unsigned int windowWidth, const unsigned int windowHeight):
-    Drawable2D(vertexPath, fragmentPath), m_selectorPosition(0)
+    Drawable2D(vertexPath, fragmentPath)
 {
     const unsigned int windowCenterX = windowWidth/2;
     const unsigned int hotbarPositionX = windowCenterX - HotbarConfig::width/2;
@@ -39,30 +39,9 @@ void Hotbar::UpdateBlockIds()
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_blockId_SSBO);
 }
 
-unsigned int Hotbar::GetSelectedBlockId() const
+unsigned int Hotbar::GetSelectedBlockId(const unsigned int index) const
 {
-    return m_blockIds[m_selectorPosition];
-}
-
-void Hotbar::SelectorNext()
-{
-    m_selectorPosition = (m_selectorPosition+1)%HotbarConfig::size;
-}
-
-void Hotbar::SelectorPrevious()
-{
-    m_selectorPosition = (m_selectorPosition+HotbarConfig::size-1)%HotbarConfig::size;
-}
-
-void Hotbar::ScrollCallback(const double xoffset, const double yoffset)
-{
-
-    if (yoffset > 0)
-        SelectorNext();
-    else if (yoffset < 0)
-        SelectorPrevious();
-
-    // m_hudShader.SetInt("selectorLocation", m_handBlockIndex); // TODO : Update selector Quad in Hud 
+    return m_blockIds[index];
 }
 
 void Hotbar::Draw() const
