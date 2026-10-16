@@ -25,11 +25,34 @@ Hotbar::Hotbar(const std::string& vertexPath, const std::string& fragmentPath, c
     glGenBuffers(1, &m_blockId_SSBO);
 
     UpdateBlockIds();
+    Next();
+    Next();
 }
 
 Hotbar::~Hotbar()
 {
     glDeleteBuffers(1, &m_blockId_SSBO);
+}
+
+unsigned int Hotbar::GetSelectedBlockId(const unsigned int index) const
+{
+    return m_blockIds[index];
+}
+
+void Hotbar::Next()
+{
+    if (m_blockIds.back() == BLOCK_ID_MAX) return;
+    for (unsigned int& e : m_blockIds)
+        e++;
+    UpdateBlockIds();
+}
+
+void Hotbar::Previous()
+{
+    if (m_blockIds.front() == 0) return;
+    for (unsigned int& e : m_blockIds)
+        e--;
+    UpdateBlockIds();
 }
 
 void Hotbar::UpdateBlockIds()
@@ -39,9 +62,12 @@ void Hotbar::UpdateBlockIds()
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_blockId_SSBO);
 }
 
-unsigned int Hotbar::GetSelectedBlockId(const unsigned int index) const
+void Hotbar::KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys)
 {
-    return m_blockIds[index];
+    if (keys[GLFW_KEY_KP_ADD])
+        Next();
+    else if (keys[GLFW_KEY_KP_SUBTRACT])
+        Previous();
 }
 
 void Hotbar::Draw() const

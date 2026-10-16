@@ -8,6 +8,8 @@
 
 #include "graphic/drawable.hpp"
 
+#define BLOCK_ID_MAX 35
+
 class Hotbar : public Drawable2D
 {
     private:
@@ -23,6 +25,9 @@ class Hotbar : public Drawable2D
         ~Hotbar();
 
         unsigned int GetSelectedBlockId(const unsigned int index) const;
+        void Next();
+        void Previous();
 
+        void KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys);
         void Draw() const override;
 };

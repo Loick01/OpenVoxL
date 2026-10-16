@@ -168,7 +168,7 @@ void Chunk::Build(const DataFullChunk& data)
     for (unsigned int k = 0 ; k < CHUNK_SIZE ; k++) { // Y
         for (unsigned int j = 0 ; j < CHUNK_SIZE ; j++) { // Z
             for (unsigned int i = 0 ; i < CHUNK_SIZE ; i++) { // X
-                AddVoxel(glm::ivec3(i, k, j), rand()%35);
+                AddVoxel(glm::ivec3(i, k, j), rand()%BLOCK_ID_MAX+1);
             }
         }
     }

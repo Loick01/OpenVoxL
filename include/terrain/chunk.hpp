@@ -11,6 +11,7 @@
 #include "terrain/voxel.hpp"
 
 #define CHUNK_SIZE 32
+#define BLOCK_ID_MAX 35
 
 enum class ChunkNeighbor
 {
