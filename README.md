@@ -1,5 +1,7 @@
 # OpenVoxL (WIP)
 
+<img src="openvoxl.png" width="100%" style="margin-bottom: 25px;">
+
 **This repository is an improved version of one of my previous projects developed during my computer science studies, when I was first learning 3D programming with OpenGL. This updated version aims to provide cleaner and more maintainable code, as well as additional features.**
 
 ### How to compile
@@ -23,9 +25,15 @@ make
 ### Controls
 
 + **W/A/S/D :** Move the camera forward/backward/left/right
-+ **Spacebar/Left control :** Move the camera up/down
++ **Spacebar/Left Ctrl :** Move the camera up/down
 + **Mouse :** Look around
-+ **E :** Switch between MouseFree and KeyFree camera states
++ **Left Click :** Break a block
++ **Right Click :** Place a block
++ **Mouse Wheel :** Move the selection in the hotbar
++ **+/- :** Navigate through the available blocks in the hotbar
++ **E :** Switch between MouseFree and KeyFree camera
++ **O :** Switch to Orbital camera
++ **P :** Switch to Player
 + **Q :** Show/Hide the HUD
 + **F3 :** Show/Hide the Debug window
 + **Escape :** Close the window
@@ -69,6 +77,20 @@ make
       </a>
       <br>
       <strong>Terrain Heightmap Generation</strong>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="250">
+      <a href="https://www.youtube.com/watch?v=R8XOiZG2jFE">
+        <img
+          src="https://img.youtube.com/vi/R8XOiZG2jFE/maxresdefault.jpg"
+          width="240"
+          height="135"
+          style="object-fit: cover;"
+        >
+      </a>
+      <br>
+      <strong>Terrain Generation with Splines</strong>
     </td>
   </tr>
 </table>

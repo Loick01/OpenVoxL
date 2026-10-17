@@ -25,8 +25,6 @@ Hotbar::Hotbar(const std::string& vertexPath, const std::string& fragmentPath, c
     glGenBuffers(1, &m_blockId_SSBO);
 
     UpdateBlockIds();
-    Next();
-    Next();
 }
 
 Hotbar::~Hotbar()
@@ -64,6 +62,8 @@ void Hotbar::UpdateBlockIds()
 
 void Hotbar::KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys)
 {
+    if (keys[GLFW_KEY_Q])
+        m_show = !m_show;
     if (keys[GLFW_KEY_KP_ADD])
         Next();
     else if (keys[GLFW_KEY_KP_SUBTRACT])
