@@ -19,9 +19,7 @@ class Terrain
 {
     private:
         // TODO : Should have m_worldSize = GetSize()*CHUNK_SIZE ? 
-        unsigned int m_nrChunkWidth; // X
-        unsigned int m_nrChunkDepth; // Z
-        unsigned int m_nrChunkHeight; // Y
+        glm::ivec3 m_sizeChunk;
         
         MapGenerator m_generator;    
         std::vector<Chunk> m_chunks; 
@@ -39,12 +37,12 @@ class Terrain
         void UpdateDataChunk(const ChunkLayer layer, DataCaveChunk& data);
     
     public:
-        Terrain(const unsigned int width, const unsigned int depth, const unsigned int height);
+        Terrain(const glm::ivec3 sizeChunk);
 
         const Chunk& GetChunkFromVoxel(const glm::ivec3& voxelPosition) const;
         Chunk& GetChunkFromVoxel(const glm::ivec3& voxelPosition);
 
-        glm::ivec3 GetSize() const;
+        glm::ivec3 GetSizeChunk() const;
         ChunkType GetChunkType(const ChunkLayer layer) const;
         const DataChunk& GetDataChunk(const ChunkLayer layer) const;
         unsigned int GetSurfaceChunkHeight() const;
@@ -52,7 +50,7 @@ class Terrain
         bool IsOutOfTerrain(const glm::ivec3& voxelPosition) const;
         bool IsSolidAt(const glm::ivec3& voxelPosition) const; // TODO : Rename ?
 
-        void SetSize(const glm::ivec3 size);
+        void SetSizeChunk(const glm::ivec3 sizeChunk); // TODO : Should be private ? Do not use without a call to Load()
         void SetChunkType(const ChunkLayer layer, const ChunkType type);
         void SetDataChunk(const ChunkLayer layer, const DataChunk data);
         void SetSurfaceChunkHeight(const unsigned int surfaceChunkHeight);

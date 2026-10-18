@@ -4,7 +4,7 @@ Application::Application():
     m_window("OpenVoxL"), m_camera(m_window.GetGlfwWindow(), m_player.GetHitbox(), (float)m_window.GetWidth()/(float)m_window.GetHeight()),
     m_eventController(m_window.GetGlfwWindow(), m_camera, m_debug, m_hud, m_hotbar),
     m_skybox("../shader/skybox/skybox.vs", "../shader/skybox/skybox.fs"),
-    m_terrain(3, 3, 3), m_terrainModifier(m_camera, m_hotbar, m_hud, m_terrain, 0.2f),
+    m_terrain(glm::ivec3(3)), m_terrainModifier(m_camera, m_hotbar, m_hud, m_terrain, 0.2f),
     m_hud("../shader/ui/hud.vs", "../shader/ui/hud.fs", m_window.GetWidth(), m_window.GetHeight()),
     m_hotbar("../shader/ui/hotbar.vs", "../shader/ui/hotbar.fs", m_window.GetWidth(), m_window.GetHeight()),
     m_debug(m_window.GetGlfwWindow(), m_camera, m_collisionResolver, m_player, m_terrain, m_terrainModifier),
@@ -19,7 +19,7 @@ Application::Application():
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
 
-    const glm::vec3 terrainCenter = glm::vec3(m_terrain.GetSize()*CHUNK_SIZE)/2.f;
+    const glm::vec3 terrainCenter = glm::vec3(m_terrain.GetSizeChunk()*CHUNK_SIZE)/2.f;
     m_camera.SetTargetTerrain(terrainCenter);
     m_player.GetHitbox().SetPosition(terrainCenter);
     // m_soundController.PlayRandonMusic();

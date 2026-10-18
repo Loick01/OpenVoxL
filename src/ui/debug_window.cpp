@@ -28,7 +28,7 @@ DebugWindow::DebugWindow(GLFWwindow* glfwWindow, Camera& camera, CollisionResolv
 Terrain& terrain, TerrainModifier& terrainModifier):
     m_glfwWindow(glfwWindow), m_width(500), m_height(500), m_camera(camera), m_collisionResolver(collisionResolver), 
     m_player(player), m_hitbox(m_player.GetHitbox()), m_terrain(terrain), m_terrainModifier(terrainModifier),
-    m_indexCameraState((unsigned int)m_camera.GetState()), 
+    m_indexCameraState((unsigned int)m_camera.GetState()), m_nextSizeChunk(glm::ivec3(1)),
     m_indexSurfaceChunkType((unsigned int)m_terrain.GetChunkType(ChunkLayer::Surface)), 
     m_indexBelowChunkType((unsigned int)m_terrain.GetChunkType(ChunkLayer::Below)),
     m_indexNoiseTypeForHeightmap(5), m_indexInterpForHeightmap(0), m_indexFractalTypeForHeightmap(0), m_indexCellularDistanceFunctionForHeightmap(0), m_indexCellularReturnTypeForHeightmap(0), // TODO : Remove
@@ -326,16 +326,13 @@ void DebugWindow::ShowMainWindow()
         }
 
         if (ImGui::BeginTabItem("Terrain")){
-            glm::ivec3 terrainSize = m_terrain.GetSize();
             int surfaceChunkHeight = m_terrain.GetSurfaceChunkHeight();
 
-            if (ImGui::SliderInt("Terrain Chunk Width", &terrainSize.x, 1, 10))
-                m_terrain.SetSize(terrainSize);
-            if (ImGui::SliderInt("Terrain Chunk Height", &terrainSize.y, 1, 10))
-                m_terrain.SetSize(terrainSize);
-            if (ImGui::SliderInt("Terrain Chunk Depth", &terrainSize.z, 1, 10))
-                m_terrain.SetSize(terrainSize);
-            if (ImGui::SliderInt("Surface Chunk Height", &surfaceChunkHeight, 0, terrainSize.y))
+            ImGui::SliderInt("Terrain Chunk Width", &m_nextSizeChunk.x, 1, 10);
+            ImGui::SliderInt("Terrain Chunk Height", &m_nextSizeChunk.y, 1, 10);
+            ImGui::SliderInt("Terrain Chunk Depth", &m_nextSizeChunk.z, 1, 10);
+
+            if (ImGui::SliderInt("Surface Chunk Height", &surfaceChunkHeight, 0, m_nextSizeChunk.y))
                 m_terrain.SetSurfaceChunkHeight(surfaceChunkHeight);
             
             // TODO : Merge Surface with Below
@@ -385,7 +382,8 @@ void DebugWindow::ShowMainWindow()
             
             if (ImGui::Button("Load Terrain")) {
                 // TODO : Should not be here and use Notifier instead ?
-                glm::vec3 terrainCenter = glm::vec3(m_terrain.GetSize()*CHUNK_SIZE)/2.f;
+                glm::vec3 terrainCenter = glm::vec3(m_nextSizeChunk*CHUNK_SIZE)/2.f;
+                m_terrain.SetSizeChunk(m_nextSizeChunk); // TODO ?
                 m_terrain.Create();
                 m_terrain.Load();
                 m_camera.SetTargetTerrain(terrainCenter);
@@ -400,7 +398,7 @@ void DebugWindow::ShowMainWindow()
 
         if (ImGui::BeginTabItem("Heightmap")){
             // const ImVec2 windowSize = ImGui::GetContentRegionAvail();
-            // const glm::ivec3 terrainBlockSize = m_terrain.GetSize()*CHUNK_SIZE;
+            // const glm::ivec3 terrainBlockSize = m_terrain.GetSizeChunk()*CHUNK_SIZE;
             // const unsigned int heightmapWidth = terrainBlockSize.x;
             // const unsigned int heightmapDepth = terrainBlockSize.z;
             

@@ -2,8 +2,8 @@
 
 #include "graphic/stb_image.h" // stbi_load
 
-Terrain::Terrain(const unsigned int width, const unsigned int depth, const unsigned int height):
-    m_nrChunkWidth(width), m_nrChunkDepth(depth), m_nrChunkHeight(height), m_surfaceChunkHeight(height),
+Terrain::Terrain(const glm::ivec3 sizeChunk):
+    m_sizeChunk(sizeChunk), m_surfaceChunkHeight(m_sizeChunk.y),
     m_generator(FREQUENCY, OCTAVES, SEED, FastNoise::SimplexFractal)
 {
     SetChunkType(ChunkLayer::Surface, ChunkType::Heightmap);
@@ -13,9 +13,9 @@ Terrain::Terrain(const unsigned int width, const unsigned int depth, const unsig
     Load();
 }
 
-glm::ivec3 Terrain::GetSize() const
+glm::ivec3 Terrain::GetSizeChunk() const
 {
-    return glm::ivec3(m_nrChunkWidth, m_nrChunkHeight, m_nrChunkDepth);
+    return m_sizeChunk;
 }
 
 ChunkType Terrain::GetChunkType(const ChunkLayer layer) const
@@ -39,7 +39,7 @@ unsigned int Terrain::GetMaxHeightForLayer(const ChunkLayer layer) const
         case ChunkLayer::Surface : 
             return m_surfaceChunkHeight*CHUNK_SIZE;
         case ChunkLayer::Below : 
-            return (m_nrChunkHeight-m_surfaceChunkHeight)*CHUNK_SIZE;
+            return (m_sizeChunk.y-m_surfaceChunkHeight)*CHUNK_SIZE;
         default :   
             throw std::runtime_error("Terrain::GetMaxHeightForLayer : This ChunkLayer value should not be used here");
     }
@@ -47,13 +47,13 @@ unsigned int Terrain::GetMaxHeightForLayer(const ChunkLayer layer) const
 
 unsigned int Terrain::GetChunkIndexInGrid(const glm::ivec3& chunkPosition) const
 {
-    return chunkPosition.y*m_nrChunkDepth*m_nrChunkWidth + chunkPosition.z*m_nrChunkWidth + chunkPosition.x;
+    return chunkPosition.y*m_sizeChunk.z*m_sizeChunk.x + chunkPosition.z*m_sizeChunk.x + chunkPosition.x;
 }
 
 bool Terrain::IsOutOfTerrain(const glm::ivec3& voxelPosition) const
 {
     return voxelPosition.x < 0 || voxelPosition.y < 0 || voxelPosition.z < 0 ||
-        voxelPosition.x >= m_nrChunkWidth*CHUNK_SIZE || voxelPosition.y >= m_nrChunkHeight*CHUNK_SIZE || voxelPosition.z >= m_nrChunkDepth*CHUNK_SIZE;
+        voxelPosition.x >= m_sizeChunk.x*CHUNK_SIZE || voxelPosition.y >= m_sizeChunk.y*CHUNK_SIZE || voxelPosition.z >= m_sizeChunk.z*CHUNK_SIZE;
 }
 
 bool Terrain::IsSolidAt(const glm::ivec3& voxelPosition) const
@@ -65,11 +65,9 @@ bool Terrain::IsSolidAt(const glm::ivec3& voxelPosition) const
     return !c.IsEmptyAt(voxelPosition%CHUNK_SIZE);
 }
 
-void Terrain::SetSize(const glm::ivec3 size)
+void Terrain::SetSizeChunk(const glm::ivec3 sizeChunk)
 {
-    m_nrChunkWidth = size.x;
-    m_nrChunkHeight = size.y;
-    m_nrChunkDepth = size.z;
+    m_sizeChunk = sizeChunk;
 }
 
 void Terrain::SetChunkType(const ChunkLayer layer, const ChunkType type)
@@ -89,12 +87,12 @@ void Terrain::SetSurfaceChunkHeight(const unsigned int surfaceChunkHeight)
 
 const Chunk& Terrain::GetChunkFromVoxel(const glm::ivec3& voxelPosition) const
 {
-    return m_chunks[voxelPosition.y/CHUNK_SIZE*m_nrChunkWidth*m_nrChunkDepth + voxelPosition.z/CHUNK_SIZE*m_nrChunkWidth + voxelPosition.x/CHUNK_SIZE];
+    return m_chunks[voxelPosition.y/CHUNK_SIZE*m_sizeChunk.x*m_sizeChunk.z + voxelPosition.z/CHUNK_SIZE*m_sizeChunk.x + voxelPosition.x/CHUNK_SIZE];
 } 
 
 Chunk& Terrain::GetChunkFromVoxel(const glm::ivec3& voxelPosition)
 {
-    return m_chunks[voxelPosition.y/CHUNK_SIZE*m_nrChunkWidth*m_nrChunkDepth + voxelPosition.z/CHUNK_SIZE*m_nrChunkWidth + voxelPosition.x/CHUNK_SIZE];
+    return m_chunks[voxelPosition.y/CHUNK_SIZE*m_sizeChunk.x*m_sizeChunk.z + voxelPosition.z/CHUNK_SIZE*m_sizeChunk.x + voxelPosition.x/CHUNK_SIZE];
 } 
 
 DataChunk Terrain::CreateDataChunk(const ChunkLayer layer, const ChunkType type)
@@ -165,12 +163,12 @@ void Terrain::UpdateDataChunk(const ChunkLayer layer, DataHeightmapChunk& data)
     m_generator.SetNoiseParams(data.noiseParams);
 
     if (data.spline.use)
-        m_generator.GenerateHeightMapWithSpline(m_nrChunkWidth*CHUNK_SIZE, m_nrChunkDepth*CHUNK_SIZE, maxHeight, data.spline.plotX, data.spline.plotY);
+        m_generator.GenerateHeightMapWithSpline(m_sizeChunk.x*CHUNK_SIZE, m_sizeChunk.z*CHUNK_SIZE, maxHeight, data.spline.plotX, data.spline.plotY);
     else
-        m_generator.GenerateHeightMap(m_nrChunkWidth*CHUNK_SIZE, m_nrChunkDepth*CHUNK_SIZE, maxHeight);
+        m_generator.GenerateHeightMap(m_sizeChunk.x*CHUNK_SIZE, m_sizeChunk.z*CHUNK_SIZE, maxHeight);
     data.heightmap.values = stbi_load("../data/heightmap/terrain.png", &data.heightmap.width, &data.heightmap.depth, &data.heightmap.channel, 1);
 
-    if (data.heightmap.width != m_nrChunkWidth*CHUNK_SIZE || data.heightmap.depth != m_nrChunkDepth*CHUNK_SIZE)
+    if (data.heightmap.width != m_sizeChunk.x*CHUNK_SIZE || data.heightmap.depth != m_sizeChunk.z*CHUNK_SIZE)
         throw std::runtime_error("The dimensions of the heightmap do not match with the size of the terrain");
 }
 
@@ -181,25 +179,25 @@ void Terrain::UpdateDataChunk(const ChunkLayer layer, DataCaveChunk& data)
 {
     const unsigned int maxHeight = GetMaxHeightForLayer(layer);
 
-    m_generator.GenerateCaveHeightMap(m_nrChunkWidth*CHUNK_SIZE, m_nrChunkDepth*CHUNK_SIZE, maxHeight, 
+    m_generator.GenerateCaveHeightMap(m_sizeChunk.x*CHUNK_SIZE, m_sizeChunk.z*CHUNK_SIZE, maxHeight, 
         data.nrIteration, data.threshold, data.spline.plotX, data.spline.plotY);
 
     data.heightmap.values = stbi_load("../data/heightmap/cave.png", &data.heightmap.width, &data.heightmap.depth, &data.heightmap.channel, 1);
 
-    if (data.heightmap.width != m_nrChunkWidth*CHUNK_SIZE || data.heightmap.depth != m_nrChunkDepth*CHUNK_SIZE)
+    if (data.heightmap.width != m_sizeChunk.x*CHUNK_SIZE || data.heightmap.depth != m_sizeChunk.z*CHUNK_SIZE)
         throw std::runtime_error("The dimensions of the cave heightmap do not match with the size of the terrain");
 }
 
 void Terrain::Create()
 {
     m_chunks.clear();
-    m_chunks.reserve(m_nrChunkWidth*m_nrChunkDepth*m_nrChunkHeight);
-    const glm::ivec3 terrainSize = glm::ivec3(m_nrChunkWidth, m_nrChunkHeight, m_nrChunkDepth);
-    const unsigned int nrChunkBelowSurface = m_nrChunkHeight-m_surfaceChunkHeight;
+    m_chunks.reserve(m_sizeChunk.x*m_sizeChunk.z*m_sizeChunk.y);
+    const glm::ivec3 terrainSize = glm::ivec3(m_sizeChunk.x, m_sizeChunk.y, m_sizeChunk.z);
+    const unsigned int nrChunkBelowSurface = m_sizeChunk.y-m_surfaceChunkHeight;
     
-    for (unsigned int k = 0 ; k < m_nrChunkHeight ; k++) { // Y
-        for (unsigned int j = 0 ; j < m_nrChunkDepth ; j++) { // Z
-            for (unsigned int i = 0 ; i < m_nrChunkWidth ; i++) { // X
+    for (unsigned int k = 0 ; k < m_sizeChunk.y ; k++) { // Y
+        for (unsigned int j = 0 ; j < m_sizeChunk.z ; j++) { // Z
+            for (unsigned int i = 0 ; i < m_sizeChunk.x ; i++) { // X
                 const glm::ivec3 positionInTerrain = glm::ivec3(i, k, j);
 
                 // It works because I only use two ChunkLayer
@@ -217,16 +215,16 @@ void Terrain::Create()
         const glm::ivec3 positionInTerrain = c.GetTerrainPosition();
         const unsigned int chunkIndexInGrid = GetChunkIndexInGrid(positionInTerrain);
         if (positionInTerrain.y > 0)
-            c.SetChunkNeighbor(ChunkNeighbor::Bottom, &m_chunks[chunkIndexInGrid-m_nrChunkDepth*m_nrChunkWidth]);
-        if (positionInTerrain.y < m_nrChunkHeight-1)
-            c.SetChunkNeighbor(ChunkNeighbor::Top, &m_chunks[chunkIndexInGrid+m_nrChunkDepth*m_nrChunkWidth]);
+            c.SetChunkNeighbor(ChunkNeighbor::Bottom, &m_chunks[chunkIndexInGrid-m_sizeChunk.z*m_sizeChunk.x]);
+        if (positionInTerrain.y < m_sizeChunk.y-1)
+            c.SetChunkNeighbor(ChunkNeighbor::Top, &m_chunks[chunkIndexInGrid+m_sizeChunk.z*m_sizeChunk.x]);
         if (positionInTerrain.z > 0)
-            c.SetChunkNeighbor(ChunkNeighbor::Back, &m_chunks[chunkIndexInGrid-m_nrChunkWidth]);
-        if (positionInTerrain.z < m_nrChunkDepth-1)
-            c.SetChunkNeighbor(ChunkNeighbor::Front, &m_chunks[chunkIndexInGrid+m_nrChunkWidth]);
+            c.SetChunkNeighbor(ChunkNeighbor::Back, &m_chunks[chunkIndexInGrid-m_sizeChunk.x]);
+        if (positionInTerrain.z < m_sizeChunk.z-1)
+            c.SetChunkNeighbor(ChunkNeighbor::Front, &m_chunks[chunkIndexInGrid+m_sizeChunk.x]);
         if (positionInTerrain.x > 0)
             c.SetChunkNeighbor(ChunkNeighbor::Left, &m_chunks[chunkIndexInGrid-1]);
-        if (positionInTerrain.x < m_nrChunkWidth-1)
+        if (positionInTerrain.x < m_sizeChunk.x-1)
             c.SetChunkNeighbor(ChunkNeighbor::Right, &m_chunks[chunkIndexInGrid+1]);
     }
 
@@ -248,7 +246,7 @@ void Terrain::Create()
             {
                 c.Build(data);
             },
-            c.GetTerrainPosition().y >= m_nrChunkHeight-m_surfaceChunkHeight ? // It works because I only use two ChunkLayer
+            c.GetTerrainPosition().y >= m_sizeChunk.y-m_surfaceChunkHeight ? // It works because I only use two ChunkLayer
                 m_dataChunks[ChunkLayer::Surface].second :
                 m_dataChunks[ChunkLayer::Below].second
         );

@@ -3,6 +3,7 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
 
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
@@ -30,7 +31,9 @@ class DebugWindow
         Hitbox& m_hitbox;
         Terrain& m_terrain;
         TerrainModifier& m_terrainModifier;
-                
+            
+        glm::ivec3 m_nextSizeChunk; // Next Terrain::m_sizeChunk
+         
         int m_width;
         int m_height;
         unsigned int m_indexCameraState;
