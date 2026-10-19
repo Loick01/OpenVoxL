@@ -32,7 +32,7 @@ class Chunk : public Drawable3D
         std::vector<unsigned int> m_blockIds;
         std::vector<unsigned int> m_faceOrientations;
         std::map<std::string, Face*> m_chunkFaces;
-        std::map<ChunkNeighbor, const Chunk*> m_chunkNeighbors;
+        std::map<ChunkNeighbor, Chunk*> m_chunkNeighbors;
 
         GLuint m_blockId_SSBO;
         GLuint m_faceOrientation_SSBO;
@@ -56,8 +56,8 @@ class Chunk : public Drawable3D
         // Chunk(glm::vec3 position, bool referenceChunk); // Used in editor mode only
         ~Chunk();
         
-        const Chunk* GetChunkNeighbor(const ChunkNeighbor which) const;
-        void SetChunkNeighbor(const ChunkNeighbor which, const Chunk* neighbor);
+        Chunk* GetChunkNeighbor(const ChunkNeighbor which);
+        void SetChunkNeighbor(const ChunkNeighbor which, Chunk* neighbor);
         
         glm::ivec3 GetTerrainPosition() const;
 
