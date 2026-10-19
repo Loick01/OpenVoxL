@@ -47,6 +47,9 @@ class Chunk : public Drawable3D
 
         void VoxelComputeData();
         void VoxelBufferData();
+
+        void LoadNeighborChunk(const glm::ivec3 blockPosition, const ChunkNeighbor previous, const ChunkNeighbor next, 
+            const int blockIndex, const unsigned int projectedIndex, const unsigned int axis); // TODO : axis parameter should use Axis enum ?
         
         static unsigned int RuleBlockId(const unsigned int distanceToSurface); // TODO : Rename ? + Create a class RuleBlockId ?
     

@@ -161,6 +161,21 @@ void Chunk::BuildFaces()
     }
 }
 
+void Chunk::LoadNeighborChunk(const glm::ivec3 blockPosition, const ChunkNeighbor previous, const ChunkNeighbor next, 
+    const int blockIndex, const unsigned int projectedIndex, const unsigned int axis)
+{
+    if (blockPosition[axis] == 0 && m_terrainPosition[axis] != 0) {
+        Chunk* previousNeighbor = GetChunkNeighbor(previous);
+        if (previousNeighbor->IsEmptyAt(blockIndex + projectedIndex) == false)
+            previousNeighbor->Load();
+    }
+    if (blockPosition[axis] == CHUNK_SIZE-1 && m_terrainPosition[axis] != m_terrainSize[axis]-1) {
+        Chunk* nextNeighbor = GetChunkNeighbor(next);
+        if (nextNeighbor->IsEmptyAt(blockIndex - projectedIndex) == false)
+            nextNeighbor->Load();
+    }
+}
+
 void Chunk::Build(const DataFullChunk& data)
 {
     m_voxels.clear();
@@ -319,7 +334,9 @@ void Chunk::CreateBlock(const glm::ivec3 blockPosition, const unsigned int block
 {
     AddVoxel(blockPosition, blockId);
     Load();
-    // TODO : Call Load() on neighbors Chunk
+    
+    // TODO : Call Load() on neighbors Chunk ?
+    // I would just have to use LoadNeighborChunk(), but the condition IsEmptyAt() should return true when the neighboring chunk must be loaded  
 }
 
 void Chunk::DeleteBlock(const glm::ivec3 blockPosition)
@@ -327,46 +344,11 @@ void Chunk::DeleteBlock(const glm::ivec3 blockPosition)
     RemoveVoxel(blockPosition);
     Load();
 
-    const int blockIndexInGrid = GetBlockIndexInGrid(blockPosition); // Do not use unsigned int
-    
-    if (blockPosition.x == 0 && m_terrainPosition.x != 0) {
-        Chunk* leftChunk = GetChunkNeighbor(ChunkNeighbor::Left);
-        if (leftChunk->IsEmptyAt(blockIndexInGrid+CHUNK_SIZE-1) == false) {
-            leftChunk->Load();
-        }
-    }
-    if (blockPosition.x == CHUNK_SIZE-1 && m_terrainPosition.x != m_terrainSize.x-1) {
-        Chunk* rightChunk = GetChunkNeighbor(ChunkNeighbor::Right);
-        if (rightChunk->IsEmptyAt(blockIndexInGrid-CHUNK_SIZE+1) == false) {
-            rightChunk->Load();
-        }
-    }
+    const int blockIndex = GetBlockIndexInGrid(blockPosition); // Do not use unsigned int
 
-    if (blockPosition.y == 0 && m_terrainPosition.y != 0) {
-        Chunk* bottomChunk = GetChunkNeighbor(ChunkNeighbor::Bottom);
-        if (bottomChunk->IsEmptyAt(blockIndexInGrid+CHUNK_SIZE*CHUNK_SIZE*(CHUNK_SIZE-1)) == false) {
-            bottomChunk->Load();
-        }
-    }
-    if (blockPosition.y == CHUNK_SIZE-1 && m_terrainPosition.y != m_terrainSize.y-1) {
-        Chunk* topChunk = GetChunkNeighbor(ChunkNeighbor::Top);
-        if (topChunk->IsEmptyAt(blockIndexInGrid-CHUNK_SIZE*CHUNK_SIZE*(CHUNK_SIZE-1)) == false) {
-            topChunk->Load();
-        }
-    }
-
-    if (blockPosition.z == 0 && m_terrainPosition.z != 0) {
-        Chunk* backChunk = GetChunkNeighbor(ChunkNeighbor::Back);
-        if (backChunk->IsEmptyAt(blockIndexInGrid+CHUNK_SIZE*(CHUNK_SIZE-1)) == false) {
-            backChunk->Load();
-        }
-    }
-    if (blockPosition.z == CHUNK_SIZE-1 && m_terrainPosition.z != m_terrainSize.z-1) {
-        Chunk* frontChunk = GetChunkNeighbor(ChunkNeighbor::Front);
-        if (frontChunk->IsEmptyAt(blockIndexInGrid-CHUNK_SIZE*(CHUNK_SIZE-1)) == false) {
-            frontChunk->Load();
-        }
-    }
+    LoadNeighborChunk(blockPosition, ChunkNeighbor::Left, ChunkNeighbor::Right, blockIndex, CHUNK_SIZE-1, 0);
+    LoadNeighborChunk(blockPosition, ChunkNeighbor::Bottom, ChunkNeighbor::Top, blockIndex, CHUNK_SIZE*CHUNK_SIZE*(CHUNK_SIZE-1), 1);
+    LoadNeighborChunk(blockPosition, ChunkNeighbor::Back, ChunkNeighbor::Front, blockIndex, CHUNK_SIZE*(CHUNK_SIZE-1), 2);
 }
 
 void Chunk::Draw(const glm::mat4& projection, const glm::mat4& view) const
