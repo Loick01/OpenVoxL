@@ -33,7 +33,7 @@ Terrain& terrain, TerrainModifier& terrainModifier):
     m_indexBelowChunkType((unsigned int)m_terrain.GetChunkType(ChunkLayer::Below)),
     m_indexNoiseTypeForHeightmap(5), m_indexInterpForHeightmap(0), m_indexFractalTypeForHeightmap(0), m_indexCellularDistanceFunctionForHeightmap(0), m_indexCellularReturnTypeForHeightmap(0), // TODO : Remove
     m_indexNoiseTypeForCheese(5), m_indexInterpForCheese(0), m_indexFractalTypeForCheese(0), m_indexCellularDistanceFunctionForCheese(0), m_indexCellularReturnTypeForCheese(0), // TODO : Remove
-    m_wireframeRendering(false), m_showMainDebug(true)
+    m_wireframeRendering(false), m_showMainDebug(true), m_editorMode(false)
 {
     InitImGui();
     m_heightmapTextureId = LoadTexture2D("../data/heightmap/terrain.png");
@@ -252,6 +252,18 @@ bool DebugWindow::OpenSettings(DataCaveChunk& data)
     return needUpdate;
 }
 
+void DebugWindow::ReloadTerrain()
+{
+    // TODO : Should not be here and use Notifier instead ?
+    glm::vec3 terrainCenter = glm::vec3(m_nextSizeChunk*CHUNK_SIZE)/2.f;
+    m_terrain.SetSizeChunk(m_nextSizeChunk); // TODO ?
+    m_terrain.Create();
+    m_terrain.Load();
+    m_camera.SetTargetTerrain(terrainCenter);
+    terrainCenter.y *= 2.5f; // TODO ?
+    m_hitbox.SetPosition(terrainCenter);
+}
+
 void DebugWindow::KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys)
 {
     if (keys[GLFW_KEY_F3])
@@ -273,6 +285,14 @@ void DebugWindow::ShowMainWindow()
                     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
                 else
                     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            
+            if (ImGui::Checkbox("Editor mode", &m_editorMode)) {
+                m_nextSizeChunk = glm::ivec3(1);
+                m_terrain.SetSurfaceChunkHeight(1);
+                m_terrain.SetChunkType(ChunkLayer::Surface, ChunkType::Editor);
+
+                ReloadTerrain();
+            }
                 
             ImGui::EndTabItem();
         }
@@ -325,17 +345,34 @@ void DebugWindow::ShowMainWindow()
             ImGui::EndTabItem();
         }
 
-        if (ImGui::BeginTabItem("Terrain")){
+        if (m_editorMode && ImGui::BeginTabItem("Editor")){
+            
+            static char name[128] = "";
+            ImGui::InputText("Structure Name", name, sizeof(name));
+
+            if (ImGui::Button("Save Structure")) {
+                // m_terrain.SaveEditorChunkInFile(name);
+            }
+            
+            ImGui::EndTabItem();
+        }
+
+        if (!m_editorMode && ImGui::BeginTabItem("Terrain")){
             int surfaceChunkHeight = m_terrain.GetSurfaceChunkHeight();
 
             ImGui::SliderInt("Terrain Chunk Width", &m_nextSizeChunk.x, 1, 10);
-            ImGui::SliderInt("Terrain Chunk Height", &m_nextSizeChunk.y, 1, 10);
+            
+            if (ImGui::SliderInt("Terrain Chunk Height", &m_nextSizeChunk.y, 1, 10)) {
+                if (surfaceChunkHeight > m_nextSizeChunk.y)
+                    m_terrain.SetSurfaceChunkHeight(m_nextSizeChunk.y);
+            }
+
             ImGui::SliderInt("Terrain Chunk Depth", &m_nextSizeChunk.z, 1, 10);
 
             if (ImGui::SliderInt("Surface Chunk Height", &surfaceChunkHeight, 0, m_nextSizeChunk.y))
                 m_terrain.SetSurfaceChunkHeight(surfaceChunkHeight);
             
-            // TODO : Merge Surface with Below
+            // TODO : Merge "Surface" with "Below"
             if (ImGui::CollapsingHeader("Surface")) {
                 if (ImGui::BeginCombo("Surface Chunk Type", chunkTypes[m_indexSurfaceChunkType])){ 
                     for (unsigned int i = 0; i < IM_ARRAYSIZE(chunkTypes); i++){
@@ -381,18 +418,12 @@ void DebugWindow::ShowMainWindow()
             }
             
             if (ImGui::Button("Load Terrain")) {
-                // TODO : Should not be here and use Notifier instead ?
-                glm::vec3 terrainCenter = glm::vec3(m_nextSizeChunk*CHUNK_SIZE)/2.f;
-                m_terrain.SetSizeChunk(m_nextSizeChunk); // TODO ?
-                m_terrain.Create();
-                m_terrain.Load();
-                m_camera.SetTargetTerrain(terrainCenter);
-                terrainCenter.y *= 2.5f; // TODO ?
-                m_hitbox.SetPosition(terrainCenter);
+                ReloadTerrain();
                 
                 m_heightmapTextureId = LoadTexture2D("../data/heightmap/terrain.png");
                 m_caveHeightmapTextureId = LoadTexture2D("../data/heightmap/cave.png");
             }
+
             ImGui::EndTabItem();
         }
 

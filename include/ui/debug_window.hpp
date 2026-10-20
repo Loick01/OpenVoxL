@@ -59,6 +59,7 @@ class DebugWindow
         
         bool m_wireframeRendering;
         bool m_showMainDebug;
+        bool m_editorMode;
 
         void InitImGui();
         
@@ -73,6 +74,8 @@ class DebugWindow
         bool OpenSettings(DataHeightmapChunk& data);
         bool OpenSettings(DataCheeseChunk& data);
         bool OpenSettings(DataCaveChunk& data);
+
+        void ReloadTerrain();
         
         void ShowMainWindow();
 
