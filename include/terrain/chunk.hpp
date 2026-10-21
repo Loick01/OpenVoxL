@@ -27,7 +27,6 @@ class Chunk : public Drawable3D
         glm::vec3 m_originPosition; // Back-bottom-left position (m_originPosition = m_terrainPosition*CHUNKSIZE)
         std::vector<Voxel> m_voxels;
         std::vector<int> m_gridVoxel;
-        // std::vector<Voxel*> m_gridVoxel;
 
         std::vector<unsigned int> m_blockIds;
         std::vector<unsigned int> m_faceOrientations;
@@ -59,6 +58,8 @@ class Chunk : public Drawable3D
         // Chunk(glm::vec3 position, bool referenceChunk); // Used in editor mode only
         ~Chunk();
         
+        const std::vector<Voxel>& GetVoxels() const;
+
         Chunk* GetChunkNeighbor(const ChunkNeighbor which);
         void SetChunkNeighbor(const ChunkNeighbor which, Chunk* neighbor);
         

@@ -1,6 +1,7 @@
 #include "terrain/terrain.hpp"
 
 #include "graphic/stb_image.h" // stbi_load
+#include "terrain/structure.hpp" // TODO : Remove ?
 
 Terrain::Terrain(const glm::ivec3 sizeChunk):
     m_sizeChunk(sizeChunk), m_surfaceChunkHeight(m_sizeChunk.y),
@@ -186,6 +187,21 @@ void Terrain::UpdateDataChunk(const ChunkLayer layer, DataCaveChunk& data)
 
     if (data.heightmap.width != m_sizeChunk.x*CHUNK_SIZE || data.heightmap.depth != m_sizeChunk.z*CHUNK_SIZE)
         throw std::runtime_error("The dimensions of the cave heightmap do not match with the size of the terrain");
+}
+
+void Terrain::SaveEditorChunkInFile(const std::string& name) const
+{
+    if (m_sizeChunk != glm::ivec3(1))
+        throw std::runtime_error("Terrain::SaveEditorChunkInFile should only be used in Editor mode, when m_sizeChunk == 1x1x1");
+
+    const Chunk& editorChunk = m_chunks[0];
+
+    // TODO : Should be in Chunk ?
+    StructureData structData;
+    for (const Voxel& v : editorChunk.GetVoxels()) {
+        // TODO 
+    }
+
 }
 
 void Terrain::Create()

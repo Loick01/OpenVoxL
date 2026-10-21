@@ -24,6 +24,11 @@ Chunk::~Chunk()
     glDeleteBuffers(1, &m_faceOrientation_SSBO);
 }
 
+const std::vector<Voxel>& Chunk::GetVoxels() const
+{
+    return m_voxels;
+}
+
 Chunk* Chunk::GetChunkNeighbor(const ChunkNeighbor which)
 {
     std::map<ChunkNeighbor, Chunk*>::const_iterator it = m_chunkNeighbors.find(which);

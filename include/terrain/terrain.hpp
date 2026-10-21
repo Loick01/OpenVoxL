@@ -58,6 +58,8 @@ class Terrain
         unsigned int GetMaxHeightForLayer(const ChunkLayer layer) const;
         unsigned int GetChunkIndexInGrid(const glm::ivec3& chunkPosition) const;
 
+        void SaveEditorChunkInFile(const std::string& name) const;
+        
         void Create();
         void Load();
         void Draw(const glm::mat4& projection, const glm::mat4& view) const;

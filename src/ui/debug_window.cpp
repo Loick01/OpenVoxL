@@ -351,7 +351,7 @@ void DebugWindow::ShowMainWindow()
             ImGui::InputText("Structure Name", name, sizeof(name));
 
             if (ImGui::Button("Save Structure")) {
-                // m_terrain.SaveEditorChunkInFile(name);
+                m_terrain.SaveEditorChunkInFile(name);
             }
             
             ImGui::EndTabItem();
