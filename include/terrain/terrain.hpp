@@ -15,9 +15,13 @@ enum class ChunkLayer
     Surface, Below
 };
 
+class FileReader;
+
 class Terrain
 {
     private:
+        const FileReader& m_fileReader;
+
         // TODO : Should have m_worldSize = GetSize()*CHUNK_SIZE ? 
         glm::ivec3 m_sizeChunk;
         
@@ -37,7 +41,7 @@ class Terrain
         void UpdateDataChunk(const ChunkLayer layer, DataCaveChunk& data);
     
     public:
-        Terrain(const glm::ivec3 sizeChunk);
+        Terrain(const FileReader& fileReader, const glm::ivec3 sizeChunk);
 
         const Chunk& GetChunkFromVoxel(const glm::ivec3& voxelPosition) const;
         Chunk& GetChunkFromVoxel(const glm::ivec3& voxelPosition);

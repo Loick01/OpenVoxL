@@ -7,6 +7,7 @@
 #include "terrain/terrain.hpp"
 #include "terrain/terrain_modifier.hpp"
 #include "core/camera.hpp"
+#include "core/file/file.hpp"
 #include "core/time.hpp"
 #include "core/window.hpp"
 #include "event/event.hpp"
@@ -22,6 +23,7 @@ class Application
         Window m_window; // Window must be initialized before EventController
         EventController m_eventController;
         SoundController m_soundController;
+        FileReader m_fileReader;
 
         Camera m_camera;
         Hud m_hud;

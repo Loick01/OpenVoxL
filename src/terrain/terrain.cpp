@@ -1,11 +1,13 @@
 #include "terrain/terrain.hpp"
 
+#include "core/file/file.hpp" // TODO : Remove ?
 #include "graphic/stb_image.h" // stbi_load
 #include "terrain/structure.hpp" // TODO : Remove ?
 
-Terrain::Terrain(const glm::ivec3 sizeChunk):
+Terrain::Terrain(const FileReader& fileReader, const glm::ivec3 sizeChunk):
     m_sizeChunk(sizeChunk), m_surfaceChunkHeight(m_sizeChunk.y),
-    m_generator(FREQUENCY, OCTAVES, SEED, FastNoise::SimplexFractal)
+    m_generator(FREQUENCY, OCTAVES, SEED, FastNoise::SimplexFractal),
+    m_fileReader(fileReader)
 {
     SetChunkType(ChunkLayer::Surface, ChunkType::Heightmap);
     SetChunkType(ChunkLayer::Below, ChunkType::Cheese);
@@ -199,9 +201,11 @@ void Terrain::SaveEditorChunkInFile(const std::string& name) const
     // TODO : Should be in Chunk ?
     StructureData structData;
     for (const Voxel& v : editorChunk.GetVoxels()) {
-        // TODO 
+        const glm::ivec3 bp = v.GetOrigin() - glm::vec3(CHUNK_SIZE/2);
+        structData.blocks.emplace_back(v.GetBlockId(), bp);
     }
 
+    m_fileReader.SaveStructureFile(name, structData);
 }
 
 void Terrain::Create()

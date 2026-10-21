@@ -47,5 +47,6 @@ class Voxel
         glm::vec3 GetOrigin() const;
         std::vector<glm::vec3> GetVertices() const;
 
+        unsigned int GetBlockId() const;
         void BuildVoxel();
 };

@@ -63,6 +63,11 @@ unsigned int Voxel::GetFaceTextureId(const unsigned int blockId, const unsigned 
     return blockMultipleTextureId.at(blockId)[orientation];
 }
 
+unsigned int Voxel::GetBlockId() const
+{
+    return m_blockId;
+}
+
 void Voxel::BuildVoxel()
 {
     const std::string rootId = GetRootFaceId();
