@@ -92,6 +92,18 @@ make
       <br>
       <strong>Terrain Generation with Splines</strong>
     </td>
+    <td align="center" width="250">
+      <a href="https://www.youtube.com/watch?v=4UpIf9l_4X0">
+        <img
+          src="https://img.youtube.com/vi/4UpIf9l_4X0/maxresdefault.jpg"
+          width="240"
+          height="135"
+          style="object-fit: cover;"
+        >
+      </a>
+      <br>
+      <strong>Player, Collision and Hotbar</strong>
+    </td>
   </tr>
 </table>
 
