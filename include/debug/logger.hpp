@@ -5,13 +5,13 @@
 
 enum class LogLevel
 {   
-    Level1, Level2
+    Level1, Level2, Level3
 };
 
 struct Log
 {
     std::string message;
-    LogLevel level;
+    LogLevel level; // TODO : Use level in DebugWindow
 };
 
 class Logger // Singleton

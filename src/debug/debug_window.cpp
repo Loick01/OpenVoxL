@@ -312,8 +312,11 @@ void DebugWindow::ShowMainWindow()
                 ImGuiWindowFlags_HorizontalScrollbar
             );
         
-            for (const Log& log : logger.GetLogs())
+            // TODO : Use ImGuiListClipper ?
+            for (const Log& log : logger.GetLogs()){
                 ImGui::TextUnformatted(log.message.c_str());
+                ImGui::Separator();
+            }
 
             ImGui::EndChild();
 
