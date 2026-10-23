@@ -1,7 +1,7 @@
 #include "event/event.hpp"
 
 #include "core/camera.hpp"
-#include "ui/debug_window.hpp"
+#include "debug/debug_window.hpp"
 #include "ui/hotbar.hpp"
 #include "ui/hud.hpp"
 

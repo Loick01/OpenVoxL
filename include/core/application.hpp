@@ -13,7 +13,7 @@
 #include "event/event.hpp"
 #include "graphic/skybox.hpp"
 #include "sound/sound.hpp"
-#include "ui/debug_window.hpp"
+#include "debug/debug_window.hpp"
 #include "ui/hotbar.hpp"
 #include "ui/hud.hpp"
 

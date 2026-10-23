@@ -1,4 +1,4 @@
-#include "ui/debug_window.hpp"
+#include "debug/debug_window.hpp"
 
 #include <vector>
 
@@ -6,6 +6,7 @@
 #include <GLFW/glfw3.h>
 
 #include "core/camera.hpp"
+#include "debug/logger.hpp"
 #include "entity/collision.hpp"
 #include "entity/player.hpp"
 #include "graphic/texture.hpp"
@@ -294,6 +295,28 @@ void DebugWindow::ShowMainWindow()
                 ReloadTerrain();
             }
                 
+            ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem("Logs")){
+            
+            Logger& logger = Logger::GetInstance();
+            
+            if (ImGui::Button("Clear"))
+                logger.Clear();
+
+            ImGui::BeginChild(
+                "LogScrollRegion",
+                ImVec2(0, 0),
+                ImGuiChildFlags_Border,
+                ImGuiWindowFlags_HorizontalScrollbar
+            );
+        
+            for (const Log& log : logger.GetLogs())
+                ImGui::TextUnformatted(log.message.c_str());
+
+            ImGui::EndChild();
+
             ImGui::EndTabItem();
         }
         
