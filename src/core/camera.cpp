@@ -1,9 +1,8 @@
 #include "core/camera.hpp"
 
-#include <stdexcept>
-
 #include <glm/gtc/matrix_transform.hpp> // glm::lookAt
 
+#include "debug/logger.hpp"
 #include "entity/hitbox.hpp"
 
 Camera::Camera(GLFWwindow* glfwWindow, Hitbox& hitbox, const float aspectRatio):
@@ -53,7 +52,8 @@ void Camera::CheckInputMode()
             glfwSetInputMode(m_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             break;
         default:
-            throw std::runtime_error("Camera::CheckInputMode : This CameraState value should not be used here");
+            Logger::GetInstance().AddLog(LogLevel::Level1, "Unhandled CameraState used in Camera::CheckInputMode");
+            break;
     }
 }
 

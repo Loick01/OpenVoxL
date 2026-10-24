@@ -1,6 +1,6 @@
 #include "entity/hitbox.hpp"
 
-#include <stdexcept>
+#include "debug/logger.hpp"
 
 Hitbox::Hitbox(const glm::vec3 position, const float height, const float eyeHeight, const float width):
     m_position(position), m_height(height), m_eyeHeight(eyeHeight), m_width(width), 
@@ -98,8 +98,9 @@ void Hitbox::RequestMove(const Direction dir)
         case Direction::Left :
             m_currentMove -= m_rightVector;
             break;
-        default:    
-            throw std::runtime_error("Hitbox::Move : This Direction value should not be used here");
+        default:   
+            Logger::GetInstance().AddLog(LogLevel::Level1, "Unhandled Direction used in Hitbox::RequestMove");
+            break;
     }
 }
 

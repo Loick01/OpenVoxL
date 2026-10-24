@@ -2,7 +2,7 @@
 
 #include <glad/glad.h>
 #include <array>
-#include <stdexcept>
+#include <string>
 
 #include "graphic/stb_image.h"
 

@@ -2,14 +2,16 @@
 
 #include <stdexcept>
 
+#include "debug/logger.hpp"
+
 Window::Window(const std::string& title):
-    m_title(title)
+    m_glfwWindow(nullptr), m_title(title)
 {
     InitGlfw();
-
+    
     // Should not be here (glad must be initialized after glfw) ? 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-        throw std::runtime_error("Failed to initialize GLAD");
+        Logger::GetInstance().AddLog(LogLevel::Level2, "Failed to initialize GLAD");
 }
 
 Window::~Window()
@@ -36,15 +38,15 @@ unsigned int Window::GetHeight() const
 void Window::InitGlfw()
 {
     if (!glfwInit())
-        throw std::runtime_error("Failed to initialize GLFW");
+        Logger::GetInstance().AddLog(LogLevel::Level2, "Failed to initialize GLFW");
 
     GLFWmonitor* monitor = glfwGetPrimaryMonitor();
     if (!monitor)
-        throw std::runtime_error("glfwGetPrimaryMonitor failed");
+        Logger::GetInstance().AddLog(LogLevel::Level2, "glfwGetPrimaryMonitor() failed");
 
     const GLFWvidmode* videoMode = glfwGetVideoMode(monitor);
     if (!videoMode)
-        throw std::runtime_error("glfwGetVideoMode failed");
+        Logger::GetInstance().AddLog(LogLevel::Level2, "glfwGetVideoMode() failed");
 
     m_width = videoMode->width;
     m_height = videoMode->height;
@@ -59,7 +61,7 @@ void Window::InitGlfw()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     m_glfwWindow = glfwCreateWindow(m_width, m_height, m_title.c_str(), monitor, nullptr);
-    if (m_glfwWindow == NULL)
+    if (m_glfwWindow == nullptr)
         throw std::runtime_error("Failed to create GLFW window");
 
     glfwMakeContextCurrent(m_glfwWindow);

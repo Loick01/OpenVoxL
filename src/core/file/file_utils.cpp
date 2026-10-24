@@ -1,5 +1,7 @@
 #include "core/file/file.hpp"
 
+#include "debug/logger.hpp"
+
 // template <typename T>
 // T FileReader::ReadEnum(std::ifstream& input, const std::unordered_map<std::string,T>& values, const std::string& typeName) const
 // {
@@ -9,7 +11,7 @@
 //     if (it != values.end())
 //         return it->second;
 
-//     throw std::runtime_error("Unknown value read as " + typeName);
+//     Logger::GetInstance().AddLog(LogLevel::Level1, "Unknown value read as " + typeName);
 // }
 
 // Axis FileReader::ReadAxis(std::ifstream& input) const

@@ -3,12 +3,15 @@
 #include <algorithm>
 
 #include "core/file/path.hpp"
+#include "debug/logger.hpp"
 
 std::ifstream FileReader::OpenFile(const std::string& filepath)
 {
     std::ifstream input;
     input.open(filepath);
-    if (!input) throw std::runtime_error("Can't open this file : " + filepath);
+    if (!input)
+        Logger::GetInstance().AddLog(LogLevel::Level2, "Failed to open the file : " + filepath);
+    
     return input;
 }
 
@@ -24,7 +27,8 @@ std::string FileReader::GetFileExtension(const std::string& filepath) const
 {
     size_t pos = filepath.rfind('.');
     if (pos == std::string::npos)
-        throw std::runtime_error("This file has no extension : " + filepath);
+        Logger::GetInstance().AddLog(LogLevel::Level1, "This file has no extension : " + filepath);
+
     return filepath.substr(pos);
 }
 

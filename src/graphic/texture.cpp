@@ -1,5 +1,7 @@
 #include "graphic/texture.hpp"
 
+#include "debug/logger.hpp"
+
 GLuint LoadTexture2D(const std::string& pathTexture) 
 {
 	GLuint textureId;
@@ -10,7 +12,7 @@ GLuint LoadTexture2D(const std::string& pathTexture)
 	int width, height, nrChannels;
 	unsigned char* data = stbi_load(pathTexture.c_str(), &width, &height, &nrChannels, 0);
 
-    GLenum format;
+    GLenum format = GL_RGB;
     switch (nrChannels) {
         case 1:
             format = GL_RED;
@@ -25,13 +27,14 @@ GLuint LoadTexture2D(const std::string& pathTexture)
             format = GL_RGBA;
             break;
         default:
-            throw std::runtime_error("LoadTexture2D : Incorrect number of channel");
+            Logger::GetInstance().AddLog(LogLevel::Level2, "LoadTexture2D() --> Incorrect number of channel : " + nrChannels);
+            break;
     }
     
 	if (data)
 		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
 	else
-		throw std::runtime_error("Failed to load texture: " + pathTexture);
+        Logger::GetInstance().AddLog(LogLevel::Level2, "Failed to load the texture: " + pathTexture);
 	
     stbi_image_free(data);
     
@@ -66,7 +69,7 @@ GLuint LoadCubemapTexture(const std::array<std::string,6>& pathTextures)
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X+i, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
             stbi_image_free(data);
         } else {
-            throw std::runtime_error("Cubemap texture failed to load at path : " + pathTextures[i]);
+            Logger::GetInstance().AddLog(LogLevel::Level2, "Cubemap texture failed to load at path : " + pathTextures[i]);
         }
     }
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

@@ -1,6 +1,7 @@
 #include "terrain/terrain.hpp"
 
 #include "core/file/file.hpp" // TODO : Remove ?
+#include "debug/logger.hpp"
 #include "graphic/stb_image.h" // stbi_load
 #include "terrain/structure.hpp" // TODO : Remove ?
 
@@ -44,7 +45,8 @@ unsigned int Terrain::GetMaxHeightForLayer(const ChunkLayer layer) const
         case ChunkLayer::Below : 
             return (m_sizeChunk.y-m_surfaceChunkHeight)*CHUNK_SIZE;
         default :   
-            throw std::runtime_error("Terrain::GetMaxHeightForLayer : This ChunkLayer value should not be used here");
+            Logger::GetInstance().AddLog(LogLevel::Level1, "Unhandled ChunkLayer used in Terrain::GetMaxHeightForLayer"); // TODO : Should be LogLevel::Level2 ?
+            return 0;
     }
 }
 
@@ -131,7 +133,8 @@ DataChunk Terrain::CreateDataChunk(const ChunkLayer layer, const ChunkType type)
             break;
         }
         default:
-            throw std::runtime_error("Terrain::Create : This ChunkType value should not be used here");
+            Logger::GetInstance().AddLog(LogLevel::Level1, "Unhandled ChunkType used in Terrain::CreateDataChunk");
+            break;
     }
     
     std::visit( 
@@ -172,7 +175,7 @@ void Terrain::UpdateDataChunk(const ChunkLayer layer, DataHeightmapChunk& data)
     data.heightmap.values = stbi_load("../data/heightmap/terrain.png", &data.heightmap.width, &data.heightmap.depth, &data.heightmap.channel, 1);
 
     if (data.heightmap.width != m_sizeChunk.x*CHUNK_SIZE || data.heightmap.depth != m_sizeChunk.z*CHUNK_SIZE)
-        throw std::runtime_error("The dimensions of the heightmap do not match with the size of the terrain");
+        Logger::GetInstance().AddLog(LogLevel::Level3, "The dimensions of the heightmap do not match with the size of the terrain");
 }
 
 void Terrain::UpdateDataChunk(const ChunkLayer layer, DataCheeseChunk& data)
@@ -188,13 +191,15 @@ void Terrain::UpdateDataChunk(const ChunkLayer layer, DataCaveChunk& data)
     data.heightmap.values = stbi_load("../data/heightmap/cave.png", &data.heightmap.width, &data.heightmap.depth, &data.heightmap.channel, 1);
 
     if (data.heightmap.width != m_sizeChunk.x*CHUNK_SIZE || data.heightmap.depth != m_sizeChunk.z*CHUNK_SIZE)
-        throw std::runtime_error("The dimensions of the cave heightmap do not match with the size of the terrain");
+        Logger::GetInstance().AddLog(LogLevel::Level3, "The dimensions of the cave heightmap do not match with the size of the terrain");
 }
 
 void Terrain::SaveEditorChunkInFile(const std::string& name) const
 {
-    if (m_sizeChunk != glm::ivec3(1))
-        throw std::runtime_error("Terrain::SaveEditorChunkInFile should only be used in Editor mode, when m_sizeChunk == 1x1x1");
+    if (m_sizeChunk != glm::ivec3(1)) {
+        Logger::GetInstance().AddLog(LogLevel::Level2, "Terrain::SaveEditorChunkInFile should only be used in Editor mode, when m_sizeChunk == 1x1x1");
+        return;
+    }
 
     const Chunk& editorChunk = m_chunks[0];
 
