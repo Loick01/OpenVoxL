@@ -3,7 +3,6 @@
 #include <algorithm>
 
 #include "core/file/path.hpp"
-#include "debug/logger.hpp"
 
 std::ifstream FileReader::OpenFile(const std::string& filepath)
 {

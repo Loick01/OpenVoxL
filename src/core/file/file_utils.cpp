@@ -1,7 +1,5 @@
 #include "core/file/file.hpp"
 
-#include "debug/logger.hpp"
-
 // template <typename T>
 // T FileReader::ReadEnum(std::ifstream& input, const std::unordered_map<std::string,T>& values, const std::string& typeName) const
 // {

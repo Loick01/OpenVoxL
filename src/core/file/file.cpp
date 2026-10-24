@@ -1,7 +1,6 @@
 #include "core/file/file.hpp"
 
 #include "core/file/path.hpp"
-#include "debug/logger.hpp"
 
 StructureData FileReader::ReadStructureFile(const std::string& structFilepath) const
 {

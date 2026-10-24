@@ -25,6 +25,7 @@ class Logger // Singleton
         static Logger& GetInstance();
 
         const std::vector<Log>& GetLogs() const;
+        void WriteLogsInFile() const; // TODO : For now, logs are not filtered according to their LogLevel
 
         void AddLog(const LogLevel level, const std::string& message);
         void Clear();
