@@ -63,7 +63,8 @@ class Terrain
         unsigned int GetChunkIndexInGrid(const glm::ivec3& chunkPosition) const;
 
         void SaveEditorChunkInFile(const std::string& name) const;
-        
+        void BuildStructure(const glm::ivec3 bp, const std::string& filepath);
+
         void Create();
         void Load();
         void Draw(const glm::mat4& projection, const glm::mat4& view) const;

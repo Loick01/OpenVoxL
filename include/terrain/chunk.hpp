@@ -79,7 +79,12 @@ class Chunk : public Drawable3D
         void Load() override;
 
         void CreateBlock(const glm::ivec3 blockPosition, const unsigned int blockId);
+        void CreateBlockWithoutLoad(const glm::ivec3 blockPosition, const unsigned int blockId);
+        // Because I wanted to make sure I wouldn't forget to call Load() when updating a Chunk, I kept AddVoxel()/RemoveVoxel() private, and I added CreateBlockWithoutLoad()
+        // This way, when I want to create multiple blocks and Load() only once after all the blocks have been created (for example in Terrain::BuildStructure()), I can use this function
+
         void DeleteBlock(const glm::ivec3 blockPosition);
+        // void DeleteBlockWithoutLoad(const glm::ivec3 blockPosition); // TODO ? I suppose I will need it when I add the eraser tool
         
         void Draw(const glm::mat4& projection, const glm::mat4& view) const override;
 };

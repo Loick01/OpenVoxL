@@ -344,6 +344,11 @@ void Chunk::CreateBlock(const glm::ivec3 blockPosition, const unsigned int block
     // I would just have to use LoadNeighborChunk(), but the condition IsEmptyAt() should return true when the neighboring chunk must be loaded  
 }
 
+void Chunk::CreateBlockWithoutLoad(const glm::ivec3 blockPosition, const unsigned int blockId)
+{
+    AddVoxel(blockPosition, blockId);
+}
+
 void Chunk::DeleteBlock(const glm::ivec3 blockPosition)
 {
     RemoveVoxel(blockPosition);

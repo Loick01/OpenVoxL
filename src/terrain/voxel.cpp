@@ -14,7 +14,8 @@ namespace {
     }};
 
     const std::map<unsigned int, std::array<unsigned int, 6>> blockMultipleTextureId = {
-        {13, {13, 14, 15, 15, 15, 15}}
+        {13, {13, 14, 15, 15, 15, 15}},
+        {29, {29, 30, 31, 31, 31, 31}}
     };
 }
 
