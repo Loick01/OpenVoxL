@@ -1,7 +1,11 @@
 #pragma once
 
+#include <array>
 #include <string>
+#include <string_view>
 #include <vector>
+
+using Color = std::array<float, 3>;
 
 enum class LogLevel
 {   
@@ -10,8 +14,18 @@ enum class LogLevel
 
 struct Log
 {
-    std::string message;
-    LogLevel level; // TODO : Use level in DebugWindow
+    const std::string message;
+    const LogLevel level;
+
+    const std::string_view label;
+    const Color labelColor;
+
+    Log(const std::string& m, const LogLevel l):
+        message(m), level(l), label(GetLevelLabel()), labelColor(GetLevelLabelColor())
+    {}
+
+    std::string_view GetLevelLabel() const;
+    Color GetLevelLabelColor() const;
 };
 
 class Logger // Singleton

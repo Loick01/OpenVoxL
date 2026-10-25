@@ -314,6 +314,13 @@ void DebugWindow::ShowMainWindow()
         
             // TODO : Use ImGuiListClipper ?
             for (const Log& log : logger.GetLogs()){
+                const ImVec4 labelColor = ImVec4(log.labelColor[0], log.labelColor[1], log.labelColor[2], 1.f); 
+                
+                ImGui::PushStyleColor(ImGuiCol_Text, labelColor);
+                ImGui::TextUnformatted(log.label.data());
+                ImGui::PopStyleColor();
+
+                ImGui::SameLine();
                 ImGui::TextUnformatted(log.message.c_str());
                 ImGui::Separator();
             }
