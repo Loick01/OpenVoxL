@@ -33,5 +33,6 @@ class FileReader // TODO : Should be Singleton ?
         
         // FileIO
         std::string GetFileExtension(const std::string& filepath) const;
+        std::string GetFileNameWithoutExtension(const std::string& filepath) const;
         bool IsStructFile(const std::string& filepath) const;
 };

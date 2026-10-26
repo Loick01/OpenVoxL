@@ -11,11 +11,13 @@
 #include <implot.h>
 
 #include <string>
+#include <vector>
 
 #include "terrain/data_chunk.hpp"
 
 class Camera;
 class CollisionResolver;
+class FileReader;
 class Hitbox;
 class Player;
 class Terrain;
@@ -38,6 +40,18 @@ struct NoiseSettings
     {}
 };
 
+// TODO : Should not be here ?
+struct StructureInfo
+{
+    const std::string structureName; // Without extension
+    GLuint iconTextureId;
+
+    bool operator==(const StructureInfo& other) const 
+    {
+        return structureName == other.structureName;
+    }
+};
+
 class DebugWindow
 {
     private:    
@@ -48,6 +62,7 @@ class DebugWindow
         Hitbox& m_hitbox;
         Terrain& m_terrain;
         TerrainModifier& m_terrainModifier;
+        const FileReader& m_fileReader; // TODO : Try to remove ?
             
         glm::ivec3 m_nextSizeChunk; // Next Terrain::m_sizeChunk
          
@@ -64,12 +79,17 @@ class DebugWindow
         // TODO : Remove ? + Rename
         GLuint m_heightmapTextureId;
         GLuint m_caveHeightmapTextureId;
+
+        // TODO : Remove ?
+        std::vector<StructureInfo> m_loadedStructures;
         
         bool m_wireframeRendering;
         bool m_showMainDebug;
         bool m_editorMode;
 
         void InitImGui();
+        
+        void OpenStructureDirectory();
         
         bool OpenNoiseSettings(NoiseParameters& noiseParams, const std::string& labelSuffix, NoiseSettings& noiseSettings);
         bool OpenSplinePlot(SplineData& spline);
@@ -88,7 +108,7 @@ class DebugWindow
 
     public:
         DebugWindow(GLFWwindow* glfwWindow, Camera& camera, CollisionResolver& collisionResolver, Player& player, 
-            Terrain& terrain, TerrainModifier& terrainModifier);
+            Terrain& terrain, TerrainModifier& terrainModifier, const FileReader& fileReader);
         ~DebugWindow();
         
         void KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys);

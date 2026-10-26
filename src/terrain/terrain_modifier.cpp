@@ -5,8 +5,9 @@
 #include "ui/hotbar.hpp"
 #include "ui/hud.hpp"
 
-TerrainModifier::TerrainModifier(const Camera& camera, const Hotbar& hotbar, const Hud& hud, Terrain& terrain, const float delay):
-    m_camera(camera), m_terrain(terrain), m_hotbar(hotbar), m_hud(hud), m_updateDelay(delay)
+TerrainModifier::TerrainModifier(const Camera& camera, const Hotbar& hotbar, const Hud& hud, Terrain& terrain, 
+const float delay, const float distance):
+    m_camera(camera), m_terrain(terrain), m_hotbar(hotbar), m_hud(hud), m_updateDelay(delay), m_reachDistance(distance)
 {}
 
 // http://www.cse.yorku.ca/~amana/research/grid.pdf
@@ -84,14 +85,24 @@ std::optional<RaycastHit> TerrainModifier::RaycastVoxelGrid(const glm::vec3 star
     return std::nullopt;
 }
 
-TimeDelay& TerrainModifier::GetUpdateDelay()
+TimeDelay TerrainModifier::GetUpdateDelay() const
 {
     return m_updateDelay;
+}
+
+float TerrainModifier::GetReachDistance() const
+{
+    return m_reachDistance;
 }
 
 void TerrainModifier::SetUpdateDelay(const float delay)
 {
     m_updateDelay.delay = delay;
+}
+
+void TerrainModifier::SetReachDistance(const float distance)
+{
+    m_reachDistance = distance;
 }
 
 void TerrainModifier::EventMouseButtonUpdate(const std::array<bool, GLFW_MOUSE_BUTTON_LAST+1>& mouseButtons, const float deltaTime)
@@ -101,7 +112,7 @@ void TerrainModifier::EventMouseButtonUpdate(const std::array<bool, GLFW_MOUSE_B
         return;
     
     if (mouseButtons[GLFW_MOUSE_BUTTON_LEFT]) {
-        const std::optional<RaycastHit> rayHitOpt = RaycastVoxelGrid(m_camera.GetPosition(), m_camera.GetPosition()+m_camera.GetFrontVector()*4.5f); // TODO : Voxel range distance
+        const std::optional<RaycastHit> rayHitOpt = RaycastVoxelGrid(m_camera.GetPosition(), m_camera.GetPosition()+m_camera.GetFrontVector()*m_reachDistance);
         if (rayHitOpt) {
             const RaycastHit& rayHit = rayHitOpt.value();
             // rayHit.voxelPos is in Terrain (IsSolidAt is used in RaycastVoxelGrid())
@@ -110,7 +121,7 @@ void TerrainModifier::EventMouseButtonUpdate(const std::array<bool, GLFW_MOUSE_B
             m_updateDelay.Reset();
         }
     } else if (mouseButtons[GLFW_MOUSE_BUTTON_RIGHT]) {
-        const std::optional<RaycastHit> rayHitOpt = RaycastVoxelGrid(m_camera.GetPosition(), m_camera.GetPosition()+m_camera.GetFrontVector()*4.5f); // TODO : Voxel range distance
+        const std::optional<RaycastHit> rayHitOpt = RaycastVoxelGrid(m_camera.GetPosition(), m_camera.GetPosition()+m_camera.GetFrontVector()*m_reachDistance);
         if (rayHitOpt) {
             const RaycastHit rayHit = rayHitOpt.value();
             const glm::ivec3 targetVoxelPos = rayHit.voxelPos + rayHit.normal;

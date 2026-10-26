@@ -2,10 +2,16 @@
 
 #include <vector>
 
+#include <dirent.h> // opendir
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include "core/camera.hpp"
+
+// TODO : Should not be here ?
+#include "core/file/file.hpp"
+#include "core/file/path.hpp"
+
 #include "debug/logger.hpp"
 #include "entity/collision.hpp"
 #include "entity/player.hpp"
@@ -26,9 +32,9 @@ namespace
 }
 
 DebugWindow::DebugWindow(GLFWwindow* glfwWindow, Camera& camera, CollisionResolver& collisionResolver, Player& player, 
-Terrain& terrain, TerrainModifier& terrainModifier):
+Terrain& terrain, TerrainModifier& terrainModifier, const FileReader& fileReader):
     m_glfwWindow(glfwWindow), m_width(500), m_height(500), m_camera(camera), m_collisionResolver(collisionResolver), 
-    m_player(player), m_hitbox(m_player.GetHitbox()), m_terrain(terrain), m_terrainModifier(terrainModifier),
+    m_player(player), m_hitbox(m_player.GetHitbox()), m_terrain(terrain), m_terrainModifier(terrainModifier), m_fileReader(fileReader),
     m_indexCameraState((unsigned int)m_camera.GetState()), m_nextSizeChunk(m_terrain.GetSizeChunk()),
     m_indexSurfaceChunkType((unsigned int)m_terrain.GetChunkType(ChunkLayer::Surface)), 
     m_indexBelowChunkType((unsigned int)m_terrain.GetChunkType(ChunkLayer::Below)),
@@ -37,6 +43,8 @@ Terrain& terrain, TerrainModifier& terrainModifier):
     InitImGui();
     m_heightmapTextureId = LoadTexture2D("../data/heightmap/terrain.png");
     m_caveHeightmapTextureId = LoadTexture2D("../data/heightmap/cave.png");
+
+    OpenStructureDirectory();
 }
 
 DebugWindow::~DebugWindow()
@@ -45,6 +53,38 @@ DebugWindow::~DebugWindow()
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
     ImPlot::DestroyContext();
+}
+
+void DebugWindow::OpenStructureDirectory()
+{   
+    const std::string directoryPath = std::string(DataDirectory::Structure);
+    
+    DIR* structureDirectory = opendir(directoryPath.c_str());
+    if (structureDirectory == nullptr) {
+        Logger::GetInstance().AddLog(LogLevel::Level2, "Failed to open the directory : " + directoryPath);
+        return;
+    }
+
+    struct dirent* entry;
+    while ((entry = readdir(structureDirectory)) != nullptr) {
+        if (entry->d_type != DT_REG)
+            continue;
+
+        const std::string structureFilename = entry->d_name;
+        if (m_fileReader.IsStructFile(structureFilename)) {
+            const std::string structureName = m_fileReader.GetFileNameWithoutExtension(structureFilename);
+            StructureInfo structureInfo{structureName, 0};
+
+            Logger::GetInstance().AddLog(LogLevel::Level0, "This structure file has been found : " + structureName); // TODO : Remove
+
+            if (std::find(m_loadedStructures.begin(), m_loadedStructures.end(), structureInfo) == m_loadedStructures.end()) {
+                structureInfo.iconTextureId = LoadTexture2D(directoryPath + structureName + std::string(FileExtension::Image));
+                m_loadedStructures.push_back(structureInfo);
+            }
+        }
+    }
+    
+    closedir(structureDirectory);
 }
 
 void DebugWindow::InitImGui()
@@ -355,6 +395,7 @@ void DebugWindow::ShowMainWindow()
             float jumpStrength = m_player.GetJumpStrength();
             float gravity = m_collisionResolver.GetGravity();
             float updateDelay = m_terrainModifier.GetUpdateDelay().delay;
+            float reachDistance = m_terrainModifier.GetReachDistance();
 
             ImGui::Text("Player Position: %.1f/%.1f/%.1f", playerPosition.x, playerPosition.y, playerPosition.z);
             
@@ -370,6 +411,9 @@ void DebugWindow::ShowMainWindow()
             if (ImGui::SliderFloat("Update delay", &updateDelay, 0.f, 10.f))
                 m_terrainModifier.SetUpdateDelay(updateDelay);
 
+            if (ImGui::SliderFloat("Reach distance", &reachDistance, 0.f, 20.f))
+                m_terrainModifier.SetReachDistance(reachDistance);
+
             ImGui::EndTabItem();
         }
 
@@ -381,6 +425,12 @@ void DebugWindow::ShowMainWindow()
             if (ImGui::Button("Save Structure")) {
                 m_terrain.SaveEditorChunkInFile(name);
             }
+            
+            ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem("Structure")){
+            ImGui::Text("TODO");
             
             ImGui::EndTabItem();
         }

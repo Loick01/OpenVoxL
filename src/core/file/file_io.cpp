@@ -25,10 +25,21 @@ std::string FileReader::ReadString(std::ifstream& input) const
 std::string FileReader::GetFileExtension(const std::string& filepath) const 
 {
     size_t pos = filepath.rfind('.');
+    if (pos == std::string::npos) {
+        Logger::GetInstance().AddLog(LogLevel::Level1, "This file has no extension : " + filepath);
+        return "";
+    }
+
+    return filepath.substr(pos);
+}
+
+std::string FileReader::GetFileNameWithoutExtension(const std::string& filepath) const
+{
+    size_t pos = filepath.rfind('.');
     if (pos == std::string::npos)
         Logger::GetInstance().AddLog(LogLevel::Level1, "This file has no extension : " + filepath);
 
-    return filepath.substr(pos);
+    return filepath.substr(0, pos);
 }
 
 bool FileReader::IsStructFile(const std::string& filepath) const

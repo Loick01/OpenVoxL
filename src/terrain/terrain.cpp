@@ -17,8 +17,6 @@ Terrain::Terrain(const FileReader& fileReader, const glm::ivec3 sizeChunk):
 
     Create();
     Load();
-
-    // BuildStructure(glm::ivec3(1, 21, 21), "tree"); // TODO : Remove
 }
 
 glm::ivec3 Terrain::GetSizeChunk() const

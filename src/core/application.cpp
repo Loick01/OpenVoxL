@@ -4,10 +4,10 @@ Application::Application():
     m_window("OpenVoxL"), m_camera(m_window.GetGlfwWindow(), m_player.GetHitbox(), (float)m_window.GetWidth()/(float)m_window.GetHeight()),
     m_eventController(m_window.GetGlfwWindow(), m_camera, m_debug, m_hud, m_hotbar),
     m_skybox("../shader/skybox/skybox.vs", "../shader/skybox/skybox.fs"),
-    m_terrain(m_fileReader, glm::ivec3(3)), m_terrainModifier(m_camera, m_hotbar, m_hud, m_terrain, 0.2f),
+    m_terrain(m_fileReader, glm::ivec3(3)), m_terrainModifier(m_camera, m_hotbar, m_hud, m_terrain, 0.2f, 4.5f),
     m_hud("../shader/ui/hud.vs", "../shader/ui/hud.fs", m_window.GetWidth(), m_window.GetHeight()),
     m_hotbar("../shader/ui/hotbar.vs", "../shader/ui/hotbar.fs", m_window.GetWidth(), m_window.GetHeight()),
-    m_debug(m_window.GetGlfwWindow(), m_camera, m_collisionResolver, m_player, m_terrain, m_terrainModifier),
+    m_debug(m_window.GetGlfwWindow(), m_camera, m_collisionResolver, m_player, m_terrain, m_terrainModifier, m_fileReader),
     m_player(glm::vec3(0.f), 6.5f, 1.5f, 4.5f, 9.f), m_collisionResolver(m_terrain, -30.f)
 {
     glViewport(0, 0, m_window.GetWidth(), m_window.GetHeight());

@@ -12,6 +12,11 @@ GLuint LoadTexture2D(const std::string& pathTexture)
 	int width, height, nrChannels;
 	unsigned char* data = stbi_load(pathTexture.c_str(), &width, &height, &nrChannels, 0);
 
+    if (data == nullptr) {
+        Logger::GetInstance().AddLog(LogLevel::Level2, "Failed to load the texture: " + pathTexture);
+        return textureId; // TODO : I have to do something else
+    }
+    
     GLenum format = GL_RGB;
     switch (nrChannels) {
         case 1:
@@ -31,11 +36,7 @@ GLuint LoadTexture2D(const std::string& pathTexture)
             break;
     }
     
-	if (data)
-		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-	else
-        Logger::GetInstance().AddLog(LogLevel::Level2, "Failed to load the texture: " + pathTexture);
-	
+	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
     stbi_image_free(data);
     
     if (nrChannels == 1) {

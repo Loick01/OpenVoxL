@@ -49,12 +49,17 @@ class TerrainModifier : public EventMouseUpdatable
         std::optional<RaycastHit> RaycastVoxelGrid(const glm::vec3 startPos, const glm::vec3 endPos) const;
         
         TimeDelay m_updateDelay;
+        float m_reachDistance;
 
     public: 
-        TerrainModifier(const Camera& camera, const Hotbar& hotbar, const Hud& hud, Terrain& terrain, const float delay);
+        TerrainModifier(const Camera& camera, const Hotbar& hotbar, const Hud& hud, Terrain& terrain, 
+            const float delay, const float distance);
 
-        TimeDelay& GetUpdateDelay();
+        TimeDelay GetUpdateDelay() const;
+        float GetReachDistance() const;
+        
         void SetUpdateDelay(const float delay); // TODO : Should be in TimeDelay struct ?
+        void SetReachDistance(const float distance);
 
         void EventMouseButtonUpdate(const std::array<bool, GLFW_MOUSE_BUTTON_LAST+1>& mouseButtons, const float deltaTime) override;
 };

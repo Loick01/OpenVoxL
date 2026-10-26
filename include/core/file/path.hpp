@@ -1,6 +1,7 @@
 #pragma once
 
 namespace FileExtension {
+    inline constexpr std::string_view Image = ".png";
     inline constexpr std::string_view Structure = ".struct";
     inline constexpr std::string_view Log = ".log";
 }
