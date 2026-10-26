@@ -29,11 +29,9 @@ DebugWindow::DebugWindow(GLFWwindow* glfwWindow, Camera& camera, CollisionResolv
 Terrain& terrain, TerrainModifier& terrainModifier):
     m_glfwWindow(glfwWindow), m_width(500), m_height(500), m_camera(camera), m_collisionResolver(collisionResolver), 
     m_player(player), m_hitbox(m_player.GetHitbox()), m_terrain(terrain), m_terrainModifier(terrainModifier),
-    m_indexCameraState((unsigned int)m_camera.GetState()), m_nextSizeChunk(glm::ivec3(1)),
+    m_indexCameraState((unsigned int)m_camera.GetState()), m_nextSizeChunk(m_terrain.GetSizeChunk()),
     m_indexSurfaceChunkType((unsigned int)m_terrain.GetChunkType(ChunkLayer::Surface)), 
     m_indexBelowChunkType((unsigned int)m_terrain.GetChunkType(ChunkLayer::Below)),
-    m_indexNoiseTypeForHeightmap(5), m_indexInterpForHeightmap(0), m_indexFractalTypeForHeightmap(0), m_indexCellularDistanceFunctionForHeightmap(0), m_indexCellularReturnTypeForHeightmap(0), // TODO : Remove
-    m_indexNoiseTypeForCheese(5), m_indexInterpForCheese(0), m_indexFractalTypeForCheese(0), m_indexCellularDistanceFunctionForCheese(0), m_indexCellularReturnTypeForCheese(0), // TODO : Remove
     m_wireframeRendering(false), m_showMainDebug(true), m_editorMode(false)
 {
     InitImGui();
@@ -57,8 +55,7 @@ void DebugWindow::InitImGui()
     ImPlot::CreateContext();
 }
 
-bool DebugWindow::OpenNoiseSettings(NoiseParameters& noiseParams, const std::string& labelSuffix, 
-    unsigned int& indexNoiseType, unsigned int& indexInterp, unsigned int& indexFractalType, unsigned int& indexCellularDistanceFunction, unsigned int& indexCellularReturnType)
+bool DebugWindow::OpenNoiseSettings(NoiseParameters& noiseParams, const std::string& labelSuffix, NoiseSettings& noiseSettings)
 {
     bool needUpdate = false;
     if (ImGui::SliderFloat(("Frequency##"+labelSuffix).c_str(), &noiseParams.frequency, 0.5f, 10.f))
@@ -68,55 +65,55 @@ bool DebugWindow::OpenNoiseSettings(NoiseParameters& noiseParams, const std::str
     if (ImGui::SliderInt(("Seed##"+labelSuffix).c_str(), &noiseParams.seed, 0, 255))
         needUpdate = true;
     
-    if (ImGui::BeginCombo(("Noise Type##"+labelSuffix).c_str(), noiseTypes[indexNoiseType])){ 
+    if (ImGui::BeginCombo(("Noise Type##"+labelSuffix).c_str(), noiseTypes[noiseSettings.indexNoiseType])){ 
         for (unsigned int i = 0; i < IM_ARRAYSIZE(noiseTypes); i++){
             if (ImGui::Selectable(noiseTypes[i])) {
-                indexNoiseType = i;
-                noiseParams.noiseType = static_cast<FastNoise::NoiseType>(indexNoiseType);
+                noiseSettings.indexNoiseType = i;
+                noiseParams.noiseType = static_cast<FastNoise::NoiseType>(noiseSettings.indexNoiseType);
                 needUpdate = true;
             }
         }
         ImGui::EndCombo();
     }
 
-    if (ImGui::BeginCombo(("Interp##"+labelSuffix).c_str(), interps[indexInterp])){ 
+    if (ImGui::BeginCombo(("Interp##"+labelSuffix).c_str(), interps[noiseSettings.indexInterp])){ 
         for (unsigned int i = 0; i < IM_ARRAYSIZE(interps); i++){
             if (ImGui::Selectable(interps[i])) {
-                indexInterp = i;
-                noiseParams.interp = static_cast<FastNoise::Interp>(indexInterp);
+                noiseSettings.indexInterp = i;
+                noiseParams.interp = static_cast<FastNoise::Interp>(noiseSettings.indexInterp);
                 needUpdate = true;
             }
         }
         ImGui::EndCombo();
     }
 
-    if (ImGui::BeginCombo(("Fractal Type##"+labelSuffix).c_str(), fractalTypes[indexFractalType])){ 
+    if (ImGui::BeginCombo(("Fractal Type##"+labelSuffix).c_str(), fractalTypes[noiseSettings.indexFractalType])){ 
         for (unsigned int i = 0; i < IM_ARRAYSIZE(fractalTypes); i++){
             if (ImGui::Selectable(fractalTypes[i])) {
-                indexFractalType = i;
-                noiseParams.fractalType = static_cast<FastNoise::FractalType>(indexFractalType);
+                noiseSettings.indexFractalType = i;
+                noiseParams.fractalType = static_cast<FastNoise::FractalType>(noiseSettings.indexFractalType);
                 needUpdate = true;
             }
         }
         ImGui::EndCombo();
     }
 
-    if (ImGui::BeginCombo(("Cellular Distance Function##"+labelSuffix).c_str(), cellularDistanceFunctions[indexCellularDistanceFunction])){ 
+    if (ImGui::BeginCombo(("Cellular Distance Function##"+labelSuffix).c_str(), cellularDistanceFunctions[noiseSettings.indexCellularDistanceFunction])){ 
         for (unsigned int i = 0; i < IM_ARRAYSIZE(cellularDistanceFunctions); i++){
             if (ImGui::Selectable(cellularDistanceFunctions[i])) {
-                indexCellularDistanceFunction = i;
-                noiseParams.cellularDistanceFunction = static_cast<FastNoise::CellularDistanceFunction>(indexCellularDistanceFunction);
+                noiseSettings.indexCellularDistanceFunction = i;
+                noiseParams.cellularDistanceFunction = static_cast<FastNoise::CellularDistanceFunction>(noiseSettings.indexCellularDistanceFunction);
                 needUpdate = true;
             }
         }
         ImGui::EndCombo();
     }
 
-    if (ImGui::BeginCombo(("Cellular Return Type##"+labelSuffix).c_str(), cellularReturnTypes[indexCellularReturnType])){ 
+    if (ImGui::BeginCombo(("Cellular Return Type##"+labelSuffix).c_str(), cellularReturnTypes[noiseSettings.indexCellularReturnType])){ 
         for (unsigned int i = 0; i < IM_ARRAYSIZE(cellularReturnTypes); i++){
             if (ImGui::Selectable(cellularReturnTypes[i])) {
-                indexCellularReturnType = i;
-                noiseParams.cellularReturnType = static_cast<FastNoise::CellularReturnType>(indexCellularReturnType);
+                noiseSettings.indexCellularReturnType = i;
+                noiseParams.cellularReturnType = static_cast<FastNoise::CellularReturnType>(noiseSettings.indexCellularReturnType);
                 needUpdate = true;
             }
         }
@@ -210,10 +207,9 @@ bool DebugWindow::OpenSettings(DataHeightmapChunk& data)
 {
     bool needUpdate = false;
 
-    needUpdate |= OpenNoiseSettings(data.noiseParams, "Heightmap",
-        m_indexNoiseTypeForHeightmap, m_indexInterpForHeightmap, m_indexFractalTypeForHeightmap, m_indexCellularDistanceFunctionForHeightmap, m_indexCellularReturnTypeForHeightmap);
+    needUpdate |= OpenNoiseSettings(data.noiseParams, "Heightmap", m_heightmapNoiseSettings);
 
-    if (ImGui::Checkbox("Use spline", &data.spline.use))
+    if (ImGui::Checkbox("Use spline##Heightmap", &data.spline.use))
         needUpdate = true;
 
     if (data.spline.use)
@@ -229,8 +225,7 @@ bool DebugWindow::OpenSettings(DataCheeseChunk& data)
     if (ImGui::SliderFloat("Threshold##Cheese", &data.threshold, -1.f, 1.f))
         needUpdate = true;
 
-    needUpdate |= OpenNoiseSettings(data.noiseParams, "Cheese",
-        m_indexNoiseTypeForCheese, m_indexInterpForCheese, m_indexFractalTypeForCheese, m_indexCellularDistanceFunctionForCheese, m_indexCellularReturnTypeForCheese);
+    needUpdate |= OpenNoiseSettings(data.noiseParams, "Cheese", m_cheeseNoiseSettings);
 
     return needUpdate;
 }
@@ -244,7 +239,7 @@ bool DebugWindow::OpenSettings(DataCaveChunk& data)
     if (ImGui::SliderInt("Threshold##Cave", &data.threshold, 0, 8))
         needUpdate = true;
 
-    if (ImGui::Checkbox("Use spline", &data.spline.use))
+    if (ImGui::Checkbox("Use spline##Cave", &data.spline.use))
         needUpdate = true;
     
     if (data.spline.use)

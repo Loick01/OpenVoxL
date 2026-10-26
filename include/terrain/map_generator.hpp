@@ -38,6 +38,10 @@ class MapGenerator
 
         float GetNoise3D(const float x, const float y, const float z) const;
         void GenerateHeightMap(const unsigned int nrBlockWidth, const unsigned int nrBlockDepth, const unsigned int maxBlockHeight) const;
+
+        void UseSplineForHeight(std::vector<unsigned char>& grid, const unsigned int width, const unsigned int depth, const unsigned int maxHeight,
+            const std::vector<float>& plotX, const std::vector<float>& plotY) const;
+        
         void GenerateHeightMapWithSpline(const unsigned int nrBlockWidth, const unsigned int nrBlockDepth, const unsigned int maxBlockHeight, 
             const std::vector<float>& plotX, const std::vector<float>& plotY) const;
         void GenerateCaveHeightMap(const unsigned int nrBlockWidth, const unsigned int nrBlockDepth, const unsigned int maxBlockHeight, 

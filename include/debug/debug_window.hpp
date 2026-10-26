@@ -21,6 +21,23 @@ class Player;
 class Terrain;
 class TerrainModifier;
 
+struct NoiseSettings
+{
+    unsigned int indexNoiseType;
+    unsigned int indexInterp;
+    unsigned int indexFractalType;
+    unsigned int indexCellularDistanceFunction;
+    unsigned int indexCellularReturnType;
+
+    NoiseSettings():
+        indexNoiseType(5),
+        indexInterp(0),
+        indexFractalType(0),
+        indexCellularDistanceFunction(0), 
+        indexCellularReturnType(0)
+    {}
+};
+
 class DebugWindow
 {
     private:    
@@ -40,18 +57,9 @@ class DebugWindow
         unsigned int m_indexSurfaceChunkType;
         unsigned int m_indexBelowChunkType;
 
-        // TODO : Merge indexForHeightmap with indexForCheese
-        unsigned int m_indexNoiseTypeForHeightmap;
-        unsigned int m_indexInterpForHeightmap;
-        unsigned int m_indexFractalTypeForHeightmap;
-        unsigned int m_indexCellularDistanceFunctionForHeightmap;
-        unsigned int m_indexCellularReturnTypeForHeightmap;
-
-        unsigned int m_indexNoiseTypeForCheese;
-        unsigned int m_indexInterpForCheese;
-        unsigned int m_indexFractalTypeForCheese;
-        unsigned int m_indexCellularDistanceFunctionForCheese;
-        unsigned int m_indexCellularReturnTypeForCheese;
+        NoiseSettings m_heightmapNoiseSettings;
+        NoiseSettings m_cheeseNoiseSettings;
+        // TODO : Add m_caveNoiseSettings ?
 
         // TODO : Remove ? + Rename
         GLuint m_heightmapTextureId;
@@ -63,8 +71,7 @@ class DebugWindow
 
         void InitImGui();
         
-        bool OpenNoiseSettings(NoiseParameters& noiseParams, const std::string& labelSuffix,
-            unsigned int& indexNoiseType, unsigned int& indexInterp, unsigned int& indexFractalType, unsigned int& indexCellularDistanceFunction, unsigned int& indexCellularReturnType); // TODO : Remove index... parameters
+        bool OpenNoiseSettings(NoiseParameters& noiseParams, const std::string& labelSuffix, NoiseSettings& noiseSettings);
         bool OpenSplinePlot(SplineData& spline);
         
         bool OpenSettings(DataFlatChunk& data);
