@@ -7,8 +7,8 @@
 #include <glm/glm.hpp>
 
 #include "graphic/drawable.hpp"
-#include "terrain/data_chunk.hpp"
-#include "terrain/voxel.hpp"
+#include "world/data_chunk.hpp"
+#include "world/voxel.hpp"
 
 #define CHUNK_SIZE 32
 #define BLOCK_ID_MAX 35

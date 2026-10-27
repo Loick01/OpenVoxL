@@ -1,6 +1,6 @@
 #include "graphic/texture.hpp"
 
-#include "debug/logger.hpp"
+#include "setting/logger.hpp"
 
 GLuint LoadTexture2D(const std::string& pathTexture) 
 {

@@ -8,7 +8,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp> // glm::value_ptr
 
-#include "debug/logger.hpp"
+#include "setting/logger.hpp"
 
 class Shader
 {

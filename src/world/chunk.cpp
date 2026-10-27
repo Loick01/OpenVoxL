@@ -1,4 +1,4 @@
-#include "terrain/chunk.hpp"
+#include "world/chunk.hpp"
 
 namespace {
     const unsigned int stoneId = 0;

@@ -4,16 +4,16 @@
 
 #include "entity/collision.hpp"
 #include "entity/player.hpp"
-#include "terrain/terrain.hpp"
-#include "terrain/terrain_modifier.hpp"
+#include "world/terrain/terrain.hpp"
+#include "world/terrain/terrain_modifier.hpp"
 #include "core/camera.hpp"
 #include "core/file/file.hpp"
 #include "core/time.hpp"
 #include "core/window.hpp"
 #include "event/event.hpp"
 #include "graphic/skybox.hpp"
+#include "setting/setting.hpp"
 #include "sound/sound.hpp"
-#include "debug/debug_window.hpp"
 #include "ui/hotbar.hpp"
 #include "ui/hud.hpp"
 
@@ -36,7 +36,7 @@ class Application
         Player m_player;
         CollisionResolver m_collisionResolver;
         
-        DebugWindow m_debug;
+        SettingWindow m_debug;
         
     public:
         Application();

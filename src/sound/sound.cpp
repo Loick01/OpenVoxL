@@ -1,7 +1,7 @@
 #define MINIAUDIO_IMPLEMENTATION
 #include "sound/sound.hpp"
 
-#include "debug/logger.hpp"
+#include "setting/logger.hpp"
 
 SoundController::SoundController():
     m_audioInitialized(false)

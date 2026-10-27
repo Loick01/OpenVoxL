@@ -2,8 +2,8 @@
 
 #include <vector>
 
-#include "terrain/chunk.hpp"
-#include "terrain/map_generator.hpp"
+#include "world/chunk.hpp"
+#include "world/world_generator.hpp"
 
 // Default values
 #define FREQUENCY 1.f
@@ -25,7 +25,7 @@ class Terrain
         // TODO : Should have m_worldSize = GetSize()*CHUNK_SIZE ? 
         glm::ivec3 m_sizeChunk;
         
-        MapGenerator m_generator;    
+        WorldGenerator m_generator;    
         std::vector<Chunk> m_chunks; 
         std::map<ChunkLayer, std::pair<ChunkType, DataChunk>> m_dataChunks;
         unsigned int m_surfaceChunkHeight; // Number of Chunks used for the height of the surface. Thus Below layer will have m_nrChunkHeight-m_surfaceChunkHeight

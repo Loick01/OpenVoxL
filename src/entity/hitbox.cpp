@@ -1,6 +1,6 @@
 #include "entity/hitbox.hpp"
 
-#include "debug/logger.hpp"
+#include "setting/logger.hpp"
 
 Hitbox::Hitbox(const glm::vec3 position, const float height, const float eyeHeight, const float width):
     m_position(position), m_height(height), m_eyeHeight(eyeHeight), m_width(width), 

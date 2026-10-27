@@ -1,7 +1,7 @@
 #include "entity/collision.hpp"
 
 #include "entity/hitbox.hpp"
-#include "terrain/terrain.hpp"
+#include "world/terrain/terrain.hpp"
 
 CollisionResolver::CollisionResolver(const Terrain& terrain, const float gravity):
     m_terrain(terrain), m_gravity(gravity)

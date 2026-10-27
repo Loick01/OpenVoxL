@@ -1,37 +1,22 @@
-#include "debug/debug_window.hpp"
+#include "setting/setting.hpp"
 
-#include <vector>
-
-#include <dirent.h> // opendir
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include "core/camera.hpp"
-
-// TODO : Should not be here ?
-#include "core/file/file.hpp"
-#include "core/file/path.hpp"
-
-#include "debug/logger.hpp"
 #include "entity/collision.hpp"
 #include "entity/player.hpp"
 #include "graphic/texture.hpp"
-#include "terrain/terrain.hpp"
-#include "terrain/terrain_modifier.hpp"
+#include "world/terrain/terrain.hpp"
+#include "world/terrain/terrain_modifier.hpp"
 
 namespace
 {
     const char* cameraStates[] = {"KeyFree (E)", "MouseFree (E)", "Orbital (O)", "Player (P)"};
     const char* chunkTypes[] = {"Full", "Flat", "Wave", "Editor", "Heightmap", "Cheese", "Cave"};
-
-    const char* noiseTypes[] = {"Value", "ValueFractal", "Perlin", "PerlinFractal", "Simplex", "SimplexFractal", "Cellular", "WhiteNoise", "Cubic", "CubicFractal"};
-    const char* interps[] = {"Linear", "Hermite", "Quintic"};
-    const char* fractalTypes[] = {"FBM", "Billow", "RigidMulti"};
-    const char* cellularDistanceFunctions[] = {"Euclidean", "Manhattan", "Natural"};
-    const char* cellularReturnTypes[] = {"CellValue", "NoiseLookup", "Distance", "Distance2", "Distance2Add", "Distance2Sub", "Distance2Mul", "Distance2Div"};
 }
 
-DebugWindow::DebugWindow(GLFWwindow* glfwWindow, Camera& camera, CollisionResolver& collisionResolver, Player& player, 
+SettingWindow::SettingWindow(GLFWwindow* glfwWindow, Camera& camera, CollisionResolver& collisionResolver, Player& player, 
 Terrain& terrain, TerrainModifier& terrainModifier, const FileReader& fileReader):
     m_glfwWindow(glfwWindow), m_width(500), m_height(500), m_camera(camera), m_collisionResolver(collisionResolver), 
     m_player(player), m_hitbox(m_player.GetHitbox()), m_terrain(terrain), m_terrainModifier(terrainModifier), m_fileReader(fileReader),
@@ -47,7 +32,7 @@ Terrain& terrain, TerrainModifier& terrainModifier, const FileReader& fileReader
     OpenStructureDirectory();
 }
 
-DebugWindow::~DebugWindow()
+SettingWindow::~SettingWindow()
 {
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
@@ -55,39 +40,7 @@ DebugWindow::~DebugWindow()
     ImPlot::DestroyContext();
 }
 
-void DebugWindow::OpenStructureDirectory()
-{   
-    const std::string directoryPath = std::string(DataDirectory::Structure);
-    
-    DIR* structureDirectory = opendir(directoryPath.c_str());
-    if (structureDirectory == nullptr) {
-        Logger::GetInstance().AddLog(LogLevel::Level2, "Failed to open the directory : " + directoryPath);
-        return;
-    }
-
-    struct dirent* entry;
-    while ((entry = readdir(structureDirectory)) != nullptr) {
-        if (entry->d_type != DT_REG)
-            continue;
-
-        const std::string structureFilename = entry->d_name;
-        if (m_fileReader.IsStructFile(structureFilename)) {
-            const std::string structureName = m_fileReader.GetFileNameWithoutExtension(structureFilename);
-            StructureInfo structureInfo{structureName, 0};
-
-            Logger::GetInstance().AddLog(LogLevel::Level0, "This structure file has been found : " + structureName); // TODO : Remove
-
-            if (std::find(m_loadedStructures.begin(), m_loadedStructures.end(), structureInfo) == m_loadedStructures.end()) {
-                structureInfo.iconTextureId = LoadTexture2D(directoryPath + structureName + std::string(FileExtension::Image));
-                m_loadedStructures.push_back(structureInfo);
-            }
-        }
-    }
-    
-    closedir(structureDirectory);
-}
-
-void DebugWindow::InitImGui()
+void SettingWindow::InitImGui()
 {
     ImGui::CreateContext();
     ImGui_ImplGlfw_InitForOpenGL(m_glfwWindow, true);
@@ -95,200 +48,7 @@ void DebugWindow::InitImGui()
     ImPlot::CreateContext();
 }
 
-bool DebugWindow::OpenNoiseSettings(NoiseParameters& noiseParams, const std::string& labelSuffix, NoiseSettings& noiseSettings)
-{
-    bool needUpdate = false;
-    if (ImGui::SliderFloat(("Frequency##"+labelSuffix).c_str(), &noiseParams.frequency, 0.5f, 10.f))
-        needUpdate = true;
-    if (ImGui::SliderInt(("Octaves##"+labelSuffix).c_str(), &noiseParams.octaves, 0, 8))
-        needUpdate = true;
-    if (ImGui::SliderInt(("Seed##"+labelSuffix).c_str(), &noiseParams.seed, 0, 255))
-        needUpdate = true;
-    
-    if (ImGui::BeginCombo(("Noise Type##"+labelSuffix).c_str(), noiseTypes[noiseSettings.indexNoiseType])){ 
-        for (unsigned int i = 0; i < IM_ARRAYSIZE(noiseTypes); i++){
-            if (ImGui::Selectable(noiseTypes[i])) {
-                noiseSettings.indexNoiseType = i;
-                noiseParams.noiseType = static_cast<FastNoise::NoiseType>(noiseSettings.indexNoiseType);
-                needUpdate = true;
-            }
-        }
-        ImGui::EndCombo();
-    }
-
-    if (ImGui::BeginCombo(("Interp##"+labelSuffix).c_str(), interps[noiseSettings.indexInterp])){ 
-        for (unsigned int i = 0; i < IM_ARRAYSIZE(interps); i++){
-            if (ImGui::Selectable(interps[i])) {
-                noiseSettings.indexInterp = i;
-                noiseParams.interp = static_cast<FastNoise::Interp>(noiseSettings.indexInterp);
-                needUpdate = true;
-            }
-        }
-        ImGui::EndCombo();
-    }
-
-    if (ImGui::BeginCombo(("Fractal Type##"+labelSuffix).c_str(), fractalTypes[noiseSettings.indexFractalType])){ 
-        for (unsigned int i = 0; i < IM_ARRAYSIZE(fractalTypes); i++){
-            if (ImGui::Selectable(fractalTypes[i])) {
-                noiseSettings.indexFractalType = i;
-                noiseParams.fractalType = static_cast<FastNoise::FractalType>(noiseSettings.indexFractalType);
-                needUpdate = true;
-            }
-        }
-        ImGui::EndCombo();
-    }
-
-    if (ImGui::BeginCombo(("Cellular Distance Function##"+labelSuffix).c_str(), cellularDistanceFunctions[noiseSettings.indexCellularDistanceFunction])){ 
-        for (unsigned int i = 0; i < IM_ARRAYSIZE(cellularDistanceFunctions); i++){
-            if (ImGui::Selectable(cellularDistanceFunctions[i])) {
-                noiseSettings.indexCellularDistanceFunction = i;
-                noiseParams.cellularDistanceFunction = static_cast<FastNoise::CellularDistanceFunction>(noiseSettings.indexCellularDistanceFunction);
-                needUpdate = true;
-            }
-        }
-        ImGui::EndCombo();
-    }
-
-    if (ImGui::BeginCombo(("Cellular Return Type##"+labelSuffix).c_str(), cellularReturnTypes[noiseSettings.indexCellularReturnType])){ 
-        for (unsigned int i = 0; i < IM_ARRAYSIZE(cellularReturnTypes); i++){
-            if (ImGui::Selectable(cellularReturnTypes[i])) {
-                noiseSettings.indexCellularReturnType = i;
-                noiseParams.cellularReturnType = static_cast<FastNoise::CellularReturnType>(noiseSettings.indexCellularReturnType);
-                needUpdate = true;
-            }
-        }
-        ImGui::EndCombo();
-    }
-
-    return needUpdate;
-}
-
-bool DebugWindow::OpenSplinePlot(SplineData& spline)
-{
-    bool needUpdate = false;
-
-    if (ImPlot::BeginPlot("Surface height spline")) {
-        ImPlot::SetupAxis(ImAxis_X1, "Noise value", ImPlotAxisFlags_LockMin | ImPlotAxisFlags_LockMax);
-        ImPlot::SetupAxis(ImAxis_Y1, "Height", ImPlotAxisFlags_LockMin | ImPlotAxisFlags_LockMax);
-        ImPlot::SetupAxisLimits(ImAxis_X1, 0., 1.);
-        ImPlot::SetupAxisLimits(ImAxis_Y1, 0., 1.);
-
-        std::vector<float>& plotX = spline.plotX;
-        std::vector<float>& plotY = spline.plotY;
-        if (!plotX.empty() && !plotY.empty()) { // Should test plotX.size() != plotY.size() ?
-            ImPlot::PlotScatter("Points", plotX.data(), plotY.data(), plotX.size());
-            ImPlot::PlotLine("Points", plotX.data(), plotY.data(), plotX.size());
-        }
-        if (ImPlot::IsPlotHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
-            ImPlotPoint mouse_pos = ImPlot::GetPlotMousePos();
-            float x = mouse_pos.x;
-            float y = mouse_pos.y;
-            if (plotX.size() != 0){
-                for (unsigned int i = 0 ; i < plotX.size() ; i++){
-                    if (plotX[i] > x){
-                        plotX.insert(plotX.begin()+i, x);
-                        plotY.insert(plotY.begin()+i, y);
-                        break;
-                    }else if (i == plotX.size()-1){
-                        plotX.push_back(x);
-                        plotY.push_back(y);
-                        break;
-                    }
-                }
-            }else{
-                plotX.push_back(x);
-                plotY.push_back(y);
-            }
-            needUpdate = true;
-        }
-
-        ImGui::SetNextItemWidth(150.0f);
-        if (ImGui::SliderFloat("First", &plotY.front(), 0.f, 1.f))
-            needUpdate = true;
-        ImGui::SameLine();
-        ImGui::SetNextItemWidth(150.0f);
-        if (ImGui::SliderFloat("Last", &plotY.back(), 0.f, 1.f))
-            needUpdate = true;
-        ImGui::SameLine();
-        if (ImGui::Button("Clean")) {
-            spline.Reset();
-            needUpdate = true;
-        }
-
-        ImPlot::EndPlot();
-    }
-    
-    return needUpdate;
-}
-
-bool DebugWindow::OpenSettings(DataFlatChunk& data)
-{
-    return false;
-}
-
-bool DebugWindow::OpenSettings(DataFullChunk& data)
-{
-    return false;
-}
-
-bool DebugWindow::OpenSettings(DataWaveChunk& data)
-{
-    if (ImGui::SliderFloat("Frequency##Wave", &data.frequency, 0.5f, 10.f))
-        return true;
-    return false;
-}
-
-bool DebugWindow::OpenSettings(DataEditorChunk& data)
-{
-    return false;
-}
-
-bool DebugWindow::OpenSettings(DataHeightmapChunk& data)
-{
-    bool needUpdate = false;
-
-    needUpdate |= OpenNoiseSettings(data.noiseParams, "Heightmap", m_heightmapNoiseSettings);
-
-    if (ImGui::Checkbox("Use spline##Heightmap", &data.spline.use))
-        needUpdate = true;
-
-    if (data.spline.use)
-        needUpdate |= OpenSplinePlot(data.spline);
-    
-    return needUpdate;
-}
-
-bool DebugWindow::OpenSettings(DataCheeseChunk& data)
-{
-    bool needUpdate = false;
-
-    if (ImGui::SliderFloat("Threshold##Cheese", &data.threshold, -1.f, 1.f))
-        needUpdate = true;
-
-    needUpdate |= OpenNoiseSettings(data.noiseParams, "Cheese", m_cheeseNoiseSettings);
-
-    return needUpdate;
-}
-
-bool DebugWindow::OpenSettings(DataCaveChunk& data)
-{
-    bool needUpdate = false;
-
-    if (ImGui::SliderInt("Iteration##Cave", &data.nrIteration, 0, 10))
-        needUpdate = true;
-    if (ImGui::SliderInt("Threshold##Cave", &data.threshold, 0, 8))
-        needUpdate = true;
-
-    if (ImGui::Checkbox("Use spline##Cave", &data.spline.use))
-        needUpdate = true;
-    
-    if (data.spline.use)
-        needUpdate |= OpenSplinePlot(data.spline);
-
-    return needUpdate;
-}
-
-void DebugWindow::ReloadTerrain()
+void SettingWindow::ReloadTerrain()
 {
     // TODO : Should not be here and use Notifier instead ?
     glm::vec3 terrainCenter = glm::vec3(m_nextSizeChunk*CHUNK_SIZE)/2.f;
@@ -300,13 +60,13 @@ void DebugWindow::ReloadTerrain()
     m_hitbox.SetPosition(terrainCenter);
 }
 
-void DebugWindow::KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys)
+void SettingWindow::KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys)
 {
     if (keys[GLFW_KEY_F3])
         m_showMainDebug = !m_showMainDebug;
 }
 
-void DebugWindow::ShowMainWindow()
+void SettingWindow::ShowMainWindow()
 {
     ImGui::Begin("Main Debug", &m_showMainDebug);
 
@@ -524,7 +284,7 @@ void DebugWindow::ShowMainWindow()
     ImGui::End();
 }
 
-void DebugWindow::Draw()
+void SettingWindow::Draw()
 {    
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();

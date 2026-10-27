@@ -3,8 +3,8 @@
 #include <fstream>
 #include <string>
 
-#include "debug/logger.hpp"
-#include "terrain/structure.hpp"
+#include "setting/logger.hpp"
+#include "world/structure.hpp"
 
 #define SECTION_DELIMITER "###" // define ? Rename
 #define TEXT_DELIMITER ';' // define ? Rename

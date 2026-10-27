@@ -1,10 +1,10 @@
-#include "terrain/map_generator.hpp"
+#include "world/world_generator.hpp"
 
 #include <cstdlib>
 
 #include "graphic/stb_image_write.h"
 
-MapGenerator::MapGenerator(const float frequency, const int octaves, const int seed, FastNoise::NoiseType type):
+WorldGenerator::WorldGenerator(const float frequency, const int octaves, const int seed, FastNoise::NoiseType type):
     m_frequency(frequency)
 {
     m_noise.SetFractalOctaves(octaves);
@@ -12,12 +12,12 @@ MapGenerator::MapGenerator(const float frequency, const int octaves, const int s
     m_noise.SetNoiseType(type);
 }
 
-NoiseParameters MapGenerator::GetNoiseParams() const
+NoiseParameters WorldGenerator::GetNoiseParams() const
 {
     return {m_frequency, m_noise.GetFractalOctaves(), m_noise.GetSeed(), m_noise.GetNoiseType()};
 }
 
-void MapGenerator::SetNoiseParams(const NoiseParameters& params)
+void WorldGenerator::SetNoiseParams(const NoiseParameters& params)
 {
     m_frequency = params.frequency;
     m_noise.SetFractalOctaves(params.octaves);
@@ -29,12 +29,12 @@ void MapGenerator::SetNoiseParams(const NoiseParameters& params)
     m_noise.SetCellularReturnType(params.cellularReturnType);
 }
 
-float MapGenerator::GetNoise3D(const float x, const float y, const float z) const
+float WorldGenerator::GetNoise3D(const float x, const float y, const float z) const
 {
     return m_noise.GetNoise(x, y, z);
 }
 
-void MapGenerator::GenerateHeightMap(const unsigned int nrBlockWidth, const unsigned int nrBlockDepth, const unsigned int maxBlockHeight) const
+void WorldGenerator::GenerateHeightMap(const unsigned int nrBlockWidth, const unsigned int nrBlockDepth, const unsigned int maxBlockHeight) const
 {
     std::vector<unsigned char> grid(nrBlockWidth*nrBlockDepth);
 
@@ -48,7 +48,7 @@ void MapGenerator::GenerateHeightMap(const unsigned int nrBlockWidth, const unsi
     stbi_write_png("../data/heightmap/terrain.png", nrBlockWidth, nrBlockDepth, 1, grid.data(), nrBlockWidth);
 }
 
-void MapGenerator::UseSplineForHeight(std::vector<unsigned char>& grid, const unsigned int width, const unsigned int depth, const unsigned int maxHeight,
+void WorldGenerator::UseSplineForHeight(std::vector<unsigned char>& grid, const unsigned int width, const unsigned int depth, const unsigned int maxHeight,
     const std::vector<float>& plotX, const std::vector<float>& plotY) const
 {
     for(unsigned int j = 0 ; j < depth ; j++) { // Z
@@ -71,7 +71,7 @@ void MapGenerator::UseSplineForHeight(std::vector<unsigned char>& grid, const un
     }
 }
 
-void MapGenerator::GenerateHeightMapWithSpline(const unsigned int nrBlockWidth, const unsigned int nrBlockDepth, const unsigned int maxBlockHeight, 
+void WorldGenerator::GenerateHeightMapWithSpline(const unsigned int nrBlockWidth, const unsigned int nrBlockDepth, const unsigned int maxBlockHeight, 
     const std::vector<float>& plotX, const std::vector<float>& plotY) const
 {
     std::vector<unsigned char> grid(nrBlockWidth*nrBlockDepth, 1);
@@ -79,7 +79,7 @@ void MapGenerator::GenerateHeightMapWithSpline(const unsigned int nrBlockWidth, 
     stbi_write_png("../data/heightmap/terrain.png", nrBlockWidth, nrBlockDepth, 1, grid.data(), nrBlockWidth);
 }
 
-void MapGenerator::GenerateCaveHeightMap(const unsigned int nrBlockWidth, const unsigned int nrBlockDepth, const unsigned int maxBlockHeight,
+void WorldGenerator::GenerateCaveHeightMap(const unsigned int nrBlockWidth, const unsigned int nrBlockDepth, const unsigned int maxBlockHeight,
     const unsigned int nrIteration, const unsigned int threshold, const std::vector<float>& plotX, const std::vector<float>& plotY) const
 {
     std::vector<unsigned char> grid(nrBlockWidth*nrBlockDepth);

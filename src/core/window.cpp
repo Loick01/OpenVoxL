@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-#include "debug/logger.hpp"
+#include "setting/logger.hpp"
 
 Window::Window(const std::string& title):
     m_glfwWindow(nullptr), m_title(title)

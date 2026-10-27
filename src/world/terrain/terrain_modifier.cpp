@@ -1,7 +1,7 @@
-#include "terrain/terrain_modifier.hpp"
+#include "world/terrain/terrain_modifier.hpp"
 
 #include "core/camera.hpp"
-#include "terrain/terrain.hpp"
+#include "world/terrain/terrain.hpp"
 #include "ui/hotbar.hpp"
 #include "ui/hud.hpp"
 

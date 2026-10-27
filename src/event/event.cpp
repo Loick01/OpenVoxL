@@ -1,11 +1,11 @@
 #include "event/event.hpp"
 
 #include "core/camera.hpp"
-#include "debug/debug_window.hpp"
+#include "setting/setting.hpp"
 #include "ui/hotbar.hpp"
 #include "ui/hud.hpp"
 
-EventController::EventController(GLFWwindow* glfwWindow, Camera& camera, DebugWindow& debug, Hud& hud, Hotbar& hotbar):
+EventController::EventController(GLFWwindow* glfwWindow, Camera& camera, SettingWindow& debug, Hud& hud, Hotbar& hotbar):
     m_glfwWindow(glfwWindow), m_camera(camera), m_debug(debug), m_hud(hud), m_hotbar(hotbar),
     m_keys{}, m_mouseButtons{}, m_handBlockIndex(0)
 {

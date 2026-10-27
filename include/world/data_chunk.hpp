@@ -2,7 +2,7 @@
 
 #include <variant>
 
-#include "terrain/map_generator.hpp"
+#include "world/world_generator.hpp"
 
 enum class ChunkType
 {
@@ -70,11 +70,11 @@ struct DataHeightmapChunk
 
 struct DataCheeseChunk
 {
-    MapGenerator* generator;
+    WorldGenerator* generator;
     NoiseParameters noiseParams;
     float threshold; // [-1, 1]
 
-    DataCheeseChunk(MapGenerator* g, const NoiseParameters np):
+    DataCheeseChunk(WorldGenerator* g, const NoiseParameters np):
         generator(g), noiseParams(np), threshold(0.f)
     {}
 };

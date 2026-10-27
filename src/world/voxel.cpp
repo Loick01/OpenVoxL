@@ -1,4 +1,4 @@
-#include "terrain/voxel.hpp"
+#include "world/voxel.hpp"
 
 #include <array>
 #include <map>

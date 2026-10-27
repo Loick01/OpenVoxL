@@ -22,7 +22,7 @@ struct NoiseParameters
 	// enum CellularReturnType { CellValue, NoiseLookup, Distance, Distance2, Distance2Add, Distance2Sub, Distance2Mul, Distance2Div };   Default = CellValue
 };
 
-class MapGenerator
+class WorldGenerator
 {
     private:
         FastNoise m_noise;
@@ -30,7 +30,7 @@ class MapGenerator
         unsigned int m_maxBlockHeight;
         
     public:
-        MapGenerator(const float frequency, const int octaves, const int seed, FastNoise::NoiseType type);
+        WorldGenerator(const float frequency, const int octaves, const int seed, FastNoise::NoiseType type);
 
         NoiseParameters GetNoiseParams() const;
         

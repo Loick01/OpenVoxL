@@ -2,7 +2,7 @@
 
 #include <glm/gtc/matrix_transform.hpp> // glm::lookAt
 
-#include "debug/logger.hpp"
+#include "setting/logger.hpp"
 #include "entity/hitbox.hpp"
 
 Camera::Camera(GLFWwindow* glfwWindow, Hitbox& hitbox, const float aspectRatio):

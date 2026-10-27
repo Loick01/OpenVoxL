@@ -2,7 +2,7 @@
 #include <iostream>
 
 #include "core/application.hpp"
-#include "debug/logger.hpp"
+#include "setting/logger.hpp"
 
 int main()
 {   

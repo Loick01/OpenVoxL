@@ -11,9 +11,10 @@
 #include <implot.h>
 
 #include <string>
-#include <vector>
+#include <vector> // TODO : Remove ? (Only used for m_loadedStructure)
 
-#include "terrain/data_chunk.hpp"
+#include "setting/logger.hpp"
+#include "world/data_chunk.hpp" // TODO : Remove ?
 
 class Camera;
 class CollisionResolver;
@@ -52,7 +53,7 @@ struct StructureInfo
     }
 };
 
-class DebugWindow
+class SettingWindow
 {
     private:    
         GLFWwindow* m_glfwWindow;
@@ -107,9 +108,9 @@ class DebugWindow
         void ShowMainWindow();
 
     public:
-        DebugWindow(GLFWwindow* glfwWindow, Camera& camera, CollisionResolver& collisionResolver, Player& player, 
+        SettingWindow(GLFWwindow* glfwWindow, Camera& camera, CollisionResolver& collisionResolver, Player& player, 
             Terrain& terrain, TerrainModifier& terrainModifier, const FileReader& fileReader);
-        ~DebugWindow();
+        ~SettingWindow();
         
         void KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys);
         void Draw();
