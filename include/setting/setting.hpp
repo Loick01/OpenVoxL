@@ -11,7 +11,7 @@
 #include <implot.h>
 
 #include <string>
-#include <vector> // TODO : Remove ? (Only used for m_loadedStructure)
+#include <vector> // TODO : Remove ? (Only used for m_loadedStructures)
 
 #include "setting/logger.hpp"
 #include "world/data_chunk.hpp" // TODO : Remove ?
@@ -44,12 +44,12 @@ struct NoiseSettings
 // TODO : Should not be here ?
 struct StructureInfo
 {
-    const std::string structureName; // Without extension
-    GLuint iconTextureId;
+    const std::string name; // Without extension
+    GLuint iconTextureId; // TODO : use ImTextureID instead of GLuint
 
     bool operator==(const StructureInfo& other) const 
     {
-        return structureName == other.structureName;
+        return name == other.name;
     }
 };
 
@@ -83,6 +83,7 @@ class SettingWindow
 
         // TODO : Remove ?
         std::vector<StructureInfo> m_loadedStructures;
+        unsigned int m_selectedStructure;
         
         bool m_wireframeRendering;
         bool m_showMainDebug;
@@ -91,6 +92,7 @@ class SettingWindow
         void InitImGui();
         
         void OpenStructureDirectory();
+        void ShowStructureIcons();
         
         bool OpenNoiseSettings(NoiseParameters& noiseParams, const std::string& labelSuffix, NoiseSettings& noiseSettings);
         bool OpenSplinePlot(SplineData& spline);

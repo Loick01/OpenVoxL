@@ -21,7 +21,7 @@ Terrain& terrain, TerrainModifier& terrainModifier, const FileReader& fileReader
     m_glfwWindow(glfwWindow), m_width(500), m_height(500), m_camera(camera), m_collisionResolver(collisionResolver), 
     m_player(player), m_hitbox(m_player.GetHitbox()), m_terrain(terrain), m_terrainModifier(terrainModifier), m_fileReader(fileReader),
     m_indexCameraState((unsigned int)m_camera.GetState()), m_nextSizeChunk(m_terrain.GetSizeChunk()),
-    m_indexSurfaceChunkType((unsigned int)m_terrain.GetChunkType(ChunkLayer::Surface)), 
+    m_indexSurfaceChunkType((unsigned int)m_terrain.GetChunkType(ChunkLayer::Surface)), m_selectedStructure(0),
     m_indexBelowChunkType((unsigned int)m_terrain.GetChunkType(ChunkLayer::Below)),
     m_wireframeRendering(false), m_showMainDebug(true), m_editorMode(false)
 {
@@ -184,13 +184,14 @@ void SettingWindow::ShowMainWindow()
 
             if (ImGui::Button("Save Structure")) {
                 m_terrain.SaveEditorChunkInFile(name);
+                OpenStructureDirectory(); // TODO : ?
             }
             
             ImGui::EndTabItem();
         }
 
         if (ImGui::BeginTabItem("Structure")){
-            ImGui::Text("TODO");
+            ShowStructureIcons();
             
             ImGui::EndTabItem();
         }

@@ -14,7 +14,8 @@ GLuint LoadTexture2D(const std::string& pathTexture)
 
     if (data == nullptr) {
         Logger::GetInstance().AddLog(LogLevel::Level2, "Failed to load the texture: " + pathTexture);
-        return textureId; // TODO : I have to do something else
+        data = stbi_load("../asset/texture/placeholder.png", &width, &height, &nrChannels, 0);
+        // TODO : data == nullptr ?
     }
     
     GLenum format = GL_RGB;
