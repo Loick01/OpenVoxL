@@ -7,6 +7,7 @@
 #include <glm/glm.hpp>
 
 #include "event/mouse_updatable.hpp"
+#include "world/structure.hpp"
 
 class Camera;
 class Hotbar;
@@ -51,6 +52,8 @@ class TerrainModifier : public EventMouseUpdatable
         TimeDelay m_updateDelay;
         float m_reachDistance;
 
+        StructureData m_currentStructure;
+
     public: 
         TerrainModifier(const Camera& camera, const Hotbar& hotbar, const Hud& hud, Terrain& terrain, 
             const float delay, const float distance);
@@ -60,6 +63,7 @@ class TerrainModifier : public EventMouseUpdatable
         
         void SetUpdateDelay(const float delay); // TODO : Should be in TimeDelay struct ?
         void SetReachDistance(const float distance);
+        void SetCurrentStructure(const StructureData& structure);
 
         void EventMouseButtonUpdate(const std::array<bool, GLFW_MOUSE_BUTTON_LAST+1>& mouseButtons, const float deltaTime) override;
 };

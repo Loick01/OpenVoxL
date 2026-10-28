@@ -13,8 +13,10 @@
 #include <string>
 #include <vector> // TODO : Remove ? (Only used for m_loadedStructures)
 
+#include "core/notifier.hpp"
 #include "setting/logger.hpp"
 #include "world/data_chunk.hpp" // TODO : Remove ?
+#include "world/structure.hpp"
 
 class Camera;
 class CollisionResolver;
@@ -24,6 +26,12 @@ class Player;
 class Terrain;
 class TerrainModifier;
 
+enum class Setting 
+{
+    UpdateValues
+};
+
+// TODO : Should not be here ?
 struct NoiseSettings
 {
     unsigned int indexNoiseType;
@@ -53,7 +61,7 @@ struct StructureInfo
     }
 };
 
-class SettingWindow
+class SettingWindow : public Notifier<Setting>
 {
     private:    
         GLFWwindow* m_glfwWindow;
@@ -114,6 +122,8 @@ class SettingWindow
             Terrain& terrain, TerrainModifier& terrainModifier, const FileReader& fileReader);
         ~SettingWindow();
         
+        StructureData GetSelectedStructure() const;
+
         void KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys);
         void Draw();
 };

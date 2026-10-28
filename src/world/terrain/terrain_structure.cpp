@@ -4,7 +4,6 @@
 
 #include "core/file/file.hpp"
 #include "setting/logger.hpp"
-#include "world/structure.hpp"
 
 void Terrain::SaveEditorChunkInFile(const std::string& name) const
 {
@@ -25,12 +24,10 @@ void Terrain::SaveEditorChunkInFile(const std::string& name) const
     m_fileReader.SaveStructureFile(name, structData);
 }
 
-void Terrain::BuildStructure(const glm::ivec3 bp, const std::string& filepath)
-{
-    const StructureData structData = m_fileReader.ReadStructureFile(filepath);
-    
+void Terrain::BuildStructure(const glm::ivec3 bp, const StructureData& structData)
+{   
     if (IsOutOfTerrain(bp)) { // TODO : Remove ? This should not happen, because the player should not be able to select a block outside the Terrain
-        Logger::GetInstance().AddLog(LogLevel::Level2, "The selected voxel's position for building \"" + filepath + "\" structure is outside the terrain");
+        Logger::GetInstance().AddLog(LogLevel::Level2, "The selected voxel's position for building the structure is outside the terrain");
         return;
     }
     
@@ -43,8 +40,10 @@ void Terrain::BuildStructure(const glm::ivec3 bp, const std::string& filepath)
             continue;
     
         Chunk& c = GetChunkFromVoxel(worldPosition);
-        c.CreateBlockWithoutLoad(worldPosition%CHUNK_SIZE, block.id);
-        chunkLoaded.insert(GetChunkIndexInGrid(c.GetTerrainPosition()));
+        if (c.IsEmptyAt(worldPosition%CHUNK_SIZE)) {
+            c.CreateBlockWithoutLoad(worldPosition%CHUNK_SIZE, block.id);
+            chunkLoaded.insert(GetChunkIndexInGrid(c.GetTerrainPosition()));
+        }
     }
     
     for (unsigned int i : chunkLoaded)

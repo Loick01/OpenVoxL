@@ -5,8 +5,8 @@
 #include "ui/hotbar.hpp"
 #include "ui/hud.hpp"
 
-EventController::EventController(GLFWwindow* glfwWindow, Camera& camera, SettingWindow& debug, Hud& hud, Hotbar& hotbar):
-    m_glfwWindow(glfwWindow), m_camera(camera), m_debug(debug), m_hud(hud), m_hotbar(hotbar),
+EventController::EventController(GLFWwindow* glfwWindow, Camera& camera, SettingWindow& settings, Hud& hud, Hotbar& hotbar):
+    m_glfwWindow(glfwWindow), m_camera(camera), m_settings(settings), m_hud(hud), m_hotbar(hotbar),
     m_keys{}, m_mouseButtons{}, m_handBlockIndex(0)
 {
     glfwSetInputMode(m_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // Hide the mouse cursor. Will not be here
@@ -67,7 +67,7 @@ void EventController::EventKeyCallback(int key, int scancode, int action, int mo
     if (action == GLFW_PRESS) {
         m_keys[key] = true;
         m_camera.KeyCallback(GetKeys());
-        m_debug.KeyCallback(GetKeys());
+        m_settings.KeyCallback(GetKeys());
         m_hud.KeyCallback(GetKeys());
         m_hotbar.KeyCallback(GetKeys());
     } else if (action == GLFW_RELEASE) {

@@ -6,6 +6,17 @@
 #include "core/file/path.hpp"
 #include "graphic/texture.hpp"
 
+StructureData SettingWindow::GetSelectedStructure() const
+{
+    if (m_loadedStructures.empty()) {
+        Logger::GetInstance().AddLog(LogLevel::Level2, "No structures loaded");
+        return StructureData{};
+    }
+
+    const std::string structName = m_loadedStructures[m_selectedStructure].name;
+    return m_fileReader.ReadStructureFile(structName);
+}
+
 void SettingWindow::OpenStructureDirectory()
 {   
     m_loadedStructures.clear();
@@ -57,8 +68,10 @@ void SettingWindow::ShowStructureIcons()
         const StructureInfo& structure = m_loadedStructures[i];
         ImGui::Image((ImTextureID)(intptr_t)structure.iconTextureId, ImVec2(128, 128));
         
-        if (ImGui::Button(structure.name.c_str(), ImVec2(128, 24)))
+        if (ImGui::Button(structure.name.c_str(), ImVec2(128, 24))) {
             m_selectedStructure = i;
+            Notify(Setting::UpdateValues);
+        }
 
         ImGui::NextColumn();
     }

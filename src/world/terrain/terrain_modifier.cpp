@@ -105,6 +105,11 @@ void TerrainModifier::SetReachDistance(const float distance)
     m_reachDistance = distance;
 }
 
+void TerrainModifier::SetCurrentStructure(const StructureData& structure)
+{
+    m_currentStructure = structure;
+}
+
 void TerrainModifier::EventMouseButtonUpdate(const std::array<bool, GLFW_MOUSE_BUTTON_LAST+1>& mouseButtons, const float deltaTime)
 {
     m_updateDelay.count += deltaTime;
@@ -129,11 +134,16 @@ void TerrainModifier::EventMouseButtonUpdate(const std::array<bool, GLFW_MOUSE_B
             if (m_terrain.IsOutOfTerrain(targetVoxelPos))
                 return;
             
-            Chunk& c = m_terrain.GetChunkFromVoxel(targetVoxelPos);
-            if (c.IsEmptyAt(targetVoxelPos%CHUNK_SIZE)){
-                c.CreateBlock(targetVoxelPos%CHUNK_SIZE, m_hotbar.GetSelectedBlockId(m_hud.GetSelectorPosition()));
-                m_updateDelay.Reset();
-            }
+            // TODO : Structure OR Block placing
+            
+            m_terrain.BuildStructure(targetVoxelPos, m_currentStructure);
+            m_updateDelay.Reset();
+
+            // Chunk& c = m_terrain.GetChunkFromVoxel(targetVoxelPos);
+            // if (c.IsEmptyAt(targetVoxelPos%CHUNK_SIZE)){
+            //     c.CreateBlock(targetVoxelPos%CHUNK_SIZE, m_hotbar.GetSelectedBlockId(m_hud.GetSelectorPosition()));
+            //     m_updateDelay.Reset();
+            // }
         }
     }
 }

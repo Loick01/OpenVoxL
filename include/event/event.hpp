@@ -16,7 +16,7 @@ class EventController
         GLFWwindow* m_glfwWindow;
         
         Camera& m_camera;
-        SettingWindow& m_debug;
+        SettingWindow& m_settings;
         Hud& m_hud;
         Hotbar& m_hotbar;
 
@@ -31,7 +31,7 @@ class EventController
         void EventScrollCallback(double xoffset, double yoffset);
 
     public:
-        EventController(GLFWwindow* glfwWindow, Camera& camera, SettingWindow& debug, Hud& hud, Hotbar& hotbar);
+        EventController(GLFWwindow* glfwWindow, Camera& camera, SettingWindow& settings, Hud& hud, Hotbar& hotbar);
         
         const std::array<bool,GLFW_KEY_LAST+1>& GetKeys() const;
         const std::array<bool,GLFW_MOUSE_BUTTON_LAST+1>& GetMouseButtons() const;

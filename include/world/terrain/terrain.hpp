@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "world/chunk.hpp"
+#include "world/structure.hpp"
 #include "world/world_generator.hpp"
 
 // Default values
@@ -63,7 +64,7 @@ class Terrain
         unsigned int GetChunkIndexInGrid(const glm::ivec3& chunkPosition) const;
 
         void SaveEditorChunkInFile(const std::string& name) const;
-        void BuildStructure(const glm::ivec3 bp, const std::string& filepath);
+        void BuildStructure(const glm::ivec3 bp, const StructureData& structData);
 
         void Create();
         void Load();

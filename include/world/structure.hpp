@@ -17,4 +17,5 @@ struct BlockData
 struct StructureData 
 {
     std::vector<BlockData> blocks;
+    // TODO : const std::string name ?
 };

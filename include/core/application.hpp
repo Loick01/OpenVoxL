@@ -36,10 +36,11 @@ class Application
         Player m_player;
         CollisionResolver m_collisionResolver;
         
-        SettingWindow m_debug;
+        SettingWindow m_settings;
         
     public:
         Application();
 
         bool Run();
+        void UpdateFromSetting(const Setting e);
 };
