@@ -2,8 +2,8 @@
 
 #include <glm/gtc/matrix_transform.hpp> // glm::lookAt
 
-#include "setting/logger.hpp"
 #include "entity/hitbox.hpp"
+#include "setting/logger.hpp"
 
 Camera::Camera(GLFWwindow* glfwWindow, Hitbox& hitbox, const float aspectRatio):
     m_state(CameraState::Player), m_upVector(glm::vec3(0.f, 1.f, 0.f)),
@@ -132,7 +132,7 @@ void Camera::CursorPosCallback(double xpos, double ypos)
     }
 }
 
-void Camera::EventKeyUpdate(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime)
+void Camera::KeyUpdate(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime)
 {
     if (m_state == CameraState::Player) {
         m_position = m_playerHitbox.GetEyePosition();

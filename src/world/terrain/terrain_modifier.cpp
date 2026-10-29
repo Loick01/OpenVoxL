@@ -7,7 +7,8 @@
 
 TerrainModifier::TerrainModifier(const Camera& camera, const Hotbar& hotbar, const Hud& hud, Terrain& terrain, 
 const float delay, const float distance):
-    m_camera(camera), m_terrain(terrain), m_hotbar(hotbar), m_hud(hud), m_updateDelay(delay), m_reachDistance(distance)
+    m_camera(camera), m_terrain(terrain), m_hotbar(hotbar), m_hud(hud), m_updateDelay(delay), m_reachDistance(distance),
+    m_mode(PlaceMode::Block)
 {}
 
 // http://www.cse.yorku.ca/~amana/research/grid.pdf
@@ -110,6 +111,28 @@ void TerrainModifier::SetCurrentStructure(const StructureData& structure)
     m_currentStructure = structure;
 }
 
+void TerrainModifier::Place(const glm::ivec3 targetPos) 
+{
+    switch (m_mode) {
+        case PlaceMode::Block : {
+            Chunk& c = m_terrain.GetChunkFromVoxel(targetPos);
+            if (c.IsEmptyAt(targetPos%CHUNK_SIZE)){
+                c.CreateBlock(targetPos%CHUNK_SIZE, m_hotbar.GetSelectedBlockId(m_hud.GetSelectorPosition()));
+                m_updateDelay.Reset();
+            }
+            break;
+        }
+        case PlaceMode::Structure : {
+            m_terrain.BuildStructure(targetPos, m_currentStructure);
+            m_updateDelay.Reset();
+            break;
+        }
+        default :
+            Logger::GetInstance().AddLog(LogLevel::Level1, "Unhandled PlaceMode used in TerrainModifier::Place");
+            break;
+    }
+}
+
 void TerrainModifier::EventMouseButtonUpdate(const std::array<bool, GLFW_MOUSE_BUTTON_LAST+1>& mouseButtons, const float deltaTime)
 {
     m_updateDelay.count += deltaTime;
@@ -134,16 +157,13 @@ void TerrainModifier::EventMouseButtonUpdate(const std::array<bool, GLFW_MOUSE_B
             if (m_terrain.IsOutOfTerrain(targetVoxelPos))
                 return;
             
-            // TODO : Structure OR Block placing
-            
-            m_terrain.BuildStructure(targetVoxelPos, m_currentStructure);
-            m_updateDelay.Reset();
-
-            // Chunk& c = m_terrain.GetChunkFromVoxel(targetVoxelPos);
-            // if (c.IsEmptyAt(targetVoxelPos%CHUNK_SIZE)){
-            //     c.CreateBlock(targetVoxelPos%CHUNK_SIZE, m_hotbar.GetSelectedBlockId(m_hud.GetSelectorPosition()));
-            //     m_updateDelay.Reset();
-            // }
+            Place(targetVoxelPos);
         }
     }
+}
+
+void TerrainModifier::KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys)
+{
+    if (keys[GLFW_KEY_F])
+        m_mode = (m_mode == PlaceMode::Block ? PlaceMode::Structure : PlaceMode::Block);
 }

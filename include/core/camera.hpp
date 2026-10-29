@@ -2,6 +2,8 @@
 
 #include <glm/glm.hpp>
 
+#include "event/cursor_pos_callback.hpp"
+#include "event/key_callback.hpp"
 #include "event/key_updatable.hpp"
 
 class Hitbox;
@@ -11,7 +13,7 @@ enum class CameraState
     KeyFree, MouseFree, Orbital, Player
 };
 
-class Camera : public EventKeyUpdatable
+class Camera : public EventKeyCallback, public EventCursorPosCallback, public EventKeyUpdatable
 {
     private:
         const glm::vec3 m_upVector;
@@ -57,8 +59,9 @@ class Camera : public EventKeyUpdatable
         void SetTargetTerrain(const glm::vec3 target);
 
         void SetState(const CameraState state);
-        void KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys);
-        void CursorPosCallback(double xpos, double ypos);
 
-        void EventKeyUpdate(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime) override;
+        void KeyCallback(const std::array<bool, GLFW_KEY_LAST+1>& keys) override;
+        void CursorPosCallback(double xpos, double ypos) override;
+        
+        void KeyUpdate(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime) override;
 };

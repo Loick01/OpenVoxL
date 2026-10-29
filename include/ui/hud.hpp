@@ -5,9 +5,11 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "event/key_callback.hpp"
+#include "event/scroll_callback.hpp"
 #include "graphic/drawable.hpp"
 
-class Hud : public Drawable2D 
+class Hud : public EventScrollCallback, public EventKeyCallback, public Drawable2D 
 {
     private:
         std::vector<Quad> m_uiQuads;
@@ -21,10 +23,9 @@ class Hud : public Drawable2D
         void SelectorNext();
         void SelectorPrevious();
 
-        void KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys);
-
         void UpdateHealth(const float health);
         void UpdateStamina(const float stamina);
 
-        void ScrollCallback(const double xoffset, const double yoffset);
+        void KeyCallback(const std::array<bool, GLFW_KEY_LAST+1>& keys) override;
+        void ScrollCallback(const double xoffset, const double yoffset) override;
 };

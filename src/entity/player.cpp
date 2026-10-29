@@ -40,7 +40,7 @@ void Player::SetJumpStrength(const float jumpStrength)
     m_jumpStrength = jumpStrength;
 }
 
-void Player::EventKeyUpdate(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime)
+void Player::KeyUpdate(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime)
 {
     m_frameSpeed = m_speed * deltaTime;
     

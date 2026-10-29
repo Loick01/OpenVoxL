@@ -1,12 +1,10 @@
 #include "event/event.hpp"
 
-#include "core/camera.hpp"
-#include "setting/setting.hpp"
-#include "ui/hotbar.hpp"
-#include "ui/hud.hpp"
-
-EventController::EventController(GLFWwindow* glfwWindow, Camera& camera, SettingWindow& settings, Hud& hud, Hotbar& hotbar):
-    m_glfwWindow(glfwWindow), m_camera(camera), m_settings(settings), m_hud(hud), m_hotbar(hotbar),
+EventController::EventController(GLFWwindow* glfwWindow, 
+std::initializer_list<EventKeyCallback*> keyCallbacks,
+std::initializer_list<EventCursorPosCallback*> cursorPosCallbacks,
+std::initializer_list<EventScrollCallback*> scrollCallbacks):
+    m_glfwWindow(glfwWindow), m_keyCallbacks(keyCallbacks), m_cursorPosCallback(cursorPosCallbacks), m_scrollCallbacks(scrollCallbacks),
     m_keys{}, m_mouseButtons{}, m_handBlockIndex(0)
 {
     glfwSetInputMode(m_glfwWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // Hide the mouse cursor. Will not be here
@@ -16,13 +14,13 @@ EventController::EventController(GLFWwindow* glfwWindow, Camera& camera, Setting
     glfwSetKeyCallback(m_glfwWindow, [](GLFWwindow* window, int key, int scancode, int action, int mods)
     {
         EventController* controller = static_cast<EventController*>(glfwGetWindowUserPointer(window));
-        controller->EventKeyCallback(key, scancode, action, mods);
+        controller->ProcessKeyCallback(key, scancode, action, mods);
     });
 
     glfwSetCursorPosCallback(m_glfwWindow, [](GLFWwindow* window, double xpos, double ypos)
     {
         EventController* controller = static_cast<EventController*>(glfwGetWindowUserPointer(window));
-        controller->EventCursorPosCallback(xpos, ypos);
+        controller->ProcessCursorPosCallback(xpos, ypos);
     });
 
     glfwSetMouseButtonCallback(m_glfwWindow, [](GLFWwindow* window, int button, int action, int mods)
@@ -34,7 +32,7 @@ EventController::EventController(GLFWwindow* glfwWindow, Camera& camera, Setting
     glfwSetScrollCallback(m_glfwWindow, [](GLFWwindow* window, double xoffset, double yoffset)
     {
         EventController* controller = static_cast<EventController*>(glfwGetWindowUserPointer(window));
-        controller->EventScrollCallback(xoffset, yoffset);
+        controller->ProcessScrollCallback(xoffset, yoffset);
     });
 }
 
@@ -59,25 +57,30 @@ void EventController::HandleWindowEvent()
         glfwSetWindowShouldClose(m_glfwWindow, true);
 }
 
-void EventController::EventKeyCallback(int key, int scancode, int action, int mods)
+void EventController::ProcessKeyCallback(int key, int scancode, int action, int mods)
 {
     if (key < 0 || key > GLFW_KEY_LAST) 
         return;
 
     if (action == GLFW_PRESS) {
         m_keys[key] = true;
-        m_camera.KeyCallback(GetKeys());
-        m_settings.KeyCallback(GetKeys());
-        m_hud.KeyCallback(GetKeys());
-        m_hotbar.KeyCallback(GetKeys());
+        for (EventKeyCallback* e : m_keyCallbacks)
+            e->KeyCallback(GetKeys());
     } else if (action == GLFW_RELEASE) {
         m_keys[key] = false;
     }
 }
 
-void EventController::EventCursorPosCallback(double xpos, double ypos)
+void EventController::ProcessCursorPosCallback(double xpos, double ypos)
 {
-    m_camera.CursorPosCallback(xpos, ypos);
+    for (EventCursorPosCallback* e : m_cursorPosCallback)
+        e->CursorPosCallback(xpos, ypos);
+}
+
+void EventController::ProcessScrollCallback(double xoffset, double yoffset)
+{
+    for (EventScrollCallback* e : m_scrollCallbacks)
+        e->ScrollCallback(xoffset, yoffset);
 }
 
 void EventController::EventMouseButtonCallback(int button, int action, int mods)
@@ -89,9 +92,4 @@ void EventController::EventMouseButtonCallback(int button, int action, int mods)
         m_mouseButtons[button] = true;
     else if (action == GLFW_RELEASE)
         m_mouseButtons[button] = false;
-}
-
-void EventController::EventScrollCallback(double xoffset, double yoffset)
-{
-    m_hud.ScrollCallback(xoffset, yoffset);
 }

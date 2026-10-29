@@ -32,6 +32,7 @@ make
 + **Mouse Wheel :** Move the selection in the hotbar
 + **+/- :** Navigate through the available blocks in the hotbar
 + **E :** Switch between MouseFree and KeyFree camera
++ **F :** Switch between Block and Structure placing mode
 + **O :** Switch to Orbital camera
 + **P :** Switch to Player
 + **Q :** Show/Hide the HUD

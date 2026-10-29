@@ -14,6 +14,7 @@
 #include <vector> // TODO : Remove ? (Only used for m_loadedStructures)
 
 #include "core/notifier.hpp"
+#include "event/key_callback.hpp"
 #include "setting/logger.hpp"
 #include "world/data_chunk.hpp" // TODO : Remove ?
 #include "world/structure.hpp"
@@ -61,7 +62,7 @@ struct StructureInfo
     }
 };
 
-class SettingWindow : public Notifier<Setting>
+class SettingWindow : public EventKeyCallback, public Notifier<Setting>
 {
     private:    
         GLFWwindow* m_glfwWindow;
@@ -124,6 +125,6 @@ class SettingWindow : public Notifier<Setting>
         
         StructureData GetSelectedStructure() const;
 
-        void KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys);
+        void KeyCallback(const std::array<bool, GLFW_KEY_LAST+1>& keys) override;
         void Draw();
 };

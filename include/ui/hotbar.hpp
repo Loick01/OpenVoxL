@@ -6,11 +6,12 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "event/key_callback.hpp"
 #include "graphic/drawable.hpp"
 
 #define BLOCK_ID_MAX 35
 
-class Hotbar : public Drawable2D
+class Hotbar : public EventKeyCallback, public Drawable2D
 {
     private:
         std::vector<Quad> m_hotbarQuads;
@@ -28,6 +29,6 @@ class Hotbar : public Drawable2D
         void Next();
         void Previous();
 
-        void KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys);
+        void KeyCallback(const std::array<bool, GLFW_KEY_LAST+1>& keys) override;
         void Draw() const override;
 };

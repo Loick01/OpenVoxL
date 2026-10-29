@@ -6,6 +6,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
+#include "event/key_callback.hpp"
 #include "event/mouse_updatable.hpp"
 #include "world/structure.hpp"
 
@@ -13,6 +14,11 @@ class Camera;
 class Hotbar;
 class Hud;
 class Terrain;
+
+enum class PlaceMode
+{
+    Block, Structure
+};
 
 struct RaycastHit
 {
@@ -39,7 +45,7 @@ struct TimeDelay // TODO : Will not be here
     }
 };
 
-class TerrainModifier : public EventMouseUpdatable
+class TerrainModifier : public EventKeyCallback, public EventMouseUpdatable
 {
     private:
         const Camera& m_camera;
@@ -53,6 +59,9 @@ class TerrainModifier : public EventMouseUpdatable
         float m_reachDistance;
 
         StructureData m_currentStructure;
+        PlaceMode m_mode;
+
+        void Place(const glm::ivec3 targetPos);
 
     public: 
         TerrainModifier(const Camera& camera, const Hotbar& hotbar, const Hud& hud, Terrain& terrain, 
@@ -66,4 +75,5 @@ class TerrainModifier : public EventMouseUpdatable
         void SetCurrentStructure(const StructureData& structure);
 
         void EventMouseButtonUpdate(const std::array<bool, GLFW_MOUSE_BUTTON_LAST+1>& mouseButtons, const float deltaTime) override;
+        void KeyCallback(const std::array<bool, GLFW_KEY_LAST+1>& keys) override;
 };

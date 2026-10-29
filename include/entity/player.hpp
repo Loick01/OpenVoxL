@@ -34,5 +34,5 @@ class Player : public EventKeyUpdatable
         void SetSpeed(const float speed);
         void SetJumpStrength(const float jumpStrength);
         
-        void EventKeyUpdate(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime) override;
+        void KeyUpdate(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime) override;
 };

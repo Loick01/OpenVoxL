@@ -9,5 +9,5 @@ class EventKeyUpdatable
     public:
         EventKeyUpdatable() = default;
 
-        virtual void EventKeyUpdate(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime) = 0;
+        virtual void KeyUpdate(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime) = 0;
 };

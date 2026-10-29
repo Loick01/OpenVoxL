@@ -52,17 +52,17 @@ void Hud::SelectorPrevious()
     Load(m_uiQuads);
 }
 
-void Hud::KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys)
-{
-    if (keys[GLFW_KEY_Q])
-        m_show = !m_show;
-}
-
 void Hud::UpdateHealth(const float health)
 {}
 
 void Hud::UpdateStamina(const float stamina)
 {}
+
+void Hud::KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys)
+{
+    if (keys[GLFW_KEY_Q])
+        m_show = !m_show;
+}
 
 void Hud::ScrollCallback(const double xoffset, const double yoffset)
 {
