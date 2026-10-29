@@ -5,11 +5,11 @@
 #include "core/file/file.hpp"
 #include "setting/logger.hpp"
 
-void Terrain::SaveEditorChunkInFile(const std::string& name) const
+bool Terrain::SaveEditorChunkInFile(const std::string& name) const
 {
     if (m_sizeChunk != glm::ivec3(1)) {
         Logger::GetInstance().AddLog(LogLevel::Level2, "Terrain::SaveEditorChunkInFile should only be used in Editor mode, when m_sizeChunk == 1x1x1");
-        return;
+        return false;
     }
 
     const Chunk& editorChunk = m_chunks[0];
@@ -22,6 +22,7 @@ void Terrain::SaveEditorChunkInFile(const std::string& name) const
     }
 
     m_fileReader.SaveStructureFile(name, structData);
+    return true;
 }
 
 void Terrain::BuildStructure(const glm::ivec3 bp, const StructureData& structData)

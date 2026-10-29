@@ -4,6 +4,7 @@
 
 #include "core/file/file.hpp"
 #include "core/file/path.hpp"
+#include "graphic/stb_image_write.h"
 #include "graphic/texture.hpp"
 
 StructureData SettingWindow::GetSelectedStructure() const
@@ -39,8 +40,6 @@ void SettingWindow::OpenStructureDirectory()
             const std::string name = m_fileReader.GetFileNameWithoutExtension(structureFilename);
             StructureInfo structureInfo{name, 0};
 
-            Logger::GetInstance().AddLog(LogLevel::Level0, "This structure file has been found : " + name); // TODO : Remove
-
             if (std::find(m_loadedStructures.begin(), m_loadedStructures.end(), structureInfo) == m_loadedStructures.end()) {
                 structureInfo.iconTextureId = LoadTexture2D(directoryPath + name + std::string(FileExtension::Image));
                 m_loadedStructures.push_back(structureInfo);
@@ -49,6 +48,23 @@ void SettingWindow::OpenStructureDirectory()
     }
     
     closedir(structureDirectory);
+}
+
+void SettingWindow::WriteStructureIcon(const std::string& name, const unsigned int iconSize)
+{
+    int windowWidth, windowHeight;
+    glfwGetWindowSize(m_glfwWindow, &windowWidth, &windowHeight);
+    const ImVec2 position = ImVec2((windowWidth-iconSize)/2, (windowHeight-iconSize)/2); 
+    unsigned char* pixels = new unsigned char[3*iconSize*iconSize];
+    const std::string fullPath = std::string(DataDirectory::Structure) + name + std::string(FileExtension::Image);
+
+    glReadPixels(position.x, position.y, iconSize, iconSize, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+    
+    stbi_flip_vertically_on_write(true);
+    stbi_write_png(fullPath.c_str(), iconSize, iconSize, 3, pixels, iconSize*3); // TODO : Use stbi_write_png_compression_level ?
+    stbi_flip_vertically_on_write(false);
+
+    delete[] pixels;
 }
 
 void SettingWindow::ShowStructureIcons()

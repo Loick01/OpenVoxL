@@ -63,7 +63,7 @@ class Terrain
         unsigned int GetMaxHeightForLayer(const ChunkLayer layer) const;
         unsigned int GetChunkIndexInGrid(const glm::ivec3& chunkPosition) const;
 
-        void SaveEditorChunkInFile(const std::string& name) const;
+        bool SaveEditorChunkInFile(const std::string& name) const;
         void BuildStructure(const glm::ivec3 bp, const StructureData& structData);
 
         void Create();

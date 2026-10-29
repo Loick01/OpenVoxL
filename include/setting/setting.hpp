@@ -101,6 +101,7 @@ class SettingWindow : public EventKeyCallback, public Notifier<Setting>
         void InitImGui();
         
         void OpenStructureDirectory();
+        void WriteStructureIcon(const std::string& name, const unsigned int iconSize);
         void ShowStructureIcons();
         
         bool OpenNoiseSettings(NoiseParameters& noiseParams, const std::string& labelSuffix, NoiseSettings& noiseSettings);
