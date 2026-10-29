@@ -9,6 +9,7 @@
 #include "event/key_callback.hpp"
 #include "event/mouse_updatable.hpp"
 #include "world/structure.hpp"
+#include "world/chunk.hpp" // TODO : Use a different type than Chunk
 
 class Camera;
 class Hotbar;
@@ -58,8 +59,9 @@ class TerrainModifier : public EventKeyCallback, public EventMouseUpdatable
         TimeDelay m_updateDelay;
         float m_reachDistance;
 
-        StructureData m_currentStructure;
         PlaceMode m_mode;
+        StructureData m_currentStructure;
+        Chunk m_structureVisualization; // TODO : Use a different type than Chunk
 
         void Place(const glm::ivec3 targetPos);
 
@@ -76,4 +78,6 @@ class TerrainModifier : public EventKeyCallback, public EventMouseUpdatable
 
         void EventMouseButtonUpdate(const std::array<bool, GLFW_MOUSE_BUTTON_LAST+1>& mouseButtons, const float deltaTime) override;
         void KeyCallback(const std::array<bool, GLFW_KEY_LAST+1>& keys) override;
+
+        void Draw(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& model) const; // TODO ?
 };

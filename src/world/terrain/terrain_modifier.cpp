@@ -8,7 +8,7 @@
 TerrainModifier::TerrainModifier(const Camera& camera, const Hotbar& hotbar, const Hud& hud, Terrain& terrain, 
 const float delay, const float distance):
     m_camera(camera), m_terrain(terrain), m_hotbar(hotbar), m_hud(hud), m_updateDelay(delay), m_reachDistance(distance),
-    m_mode(PlaceMode::Block)
+    m_structureVisualization("../shader/world/structure_visualization.vs", "../shader/world/structure_visualization.fs"), m_mode(PlaceMode::Block)
 {}
 
 // http://www.cse.yorku.ca/~amana/research/grid.pdf
@@ -109,6 +109,10 @@ void TerrainModifier::SetReachDistance(const float distance)
 void TerrainModifier::SetCurrentStructure(const StructureData& structure)
 {
     m_currentStructure = structure;
+    
+    // TODO : Fill m_structureVisualization with the current structure
+    
+    m_structureVisualization.TempLoad(); // TODO : Remove
 }
 
 void TerrainModifier::Place(const glm::ivec3 targetPos) 
@@ -166,4 +170,10 @@ void TerrainModifier::KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys)
 {
     if (keys[GLFW_KEY_F])
         m_mode = (m_mode == PlaceMode::Block ? PlaceMode::Structure : PlaceMode::Block);
+}
+
+void TerrainModifier::Draw(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& model) const
+{
+    if (m_mode == PlaceMode::Structure)
+        m_structureVisualization.DrawStructureVisualization(projection, view, model);
 }

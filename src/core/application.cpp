@@ -44,7 +44,10 @@ bool Application::Run()
     
     const glm::mat4 cameraViewMatrix = m_camera.GetViewMatrix();
     const glm::mat4 cameraProjectionMatrix = m_camera.GetProjectionMatrix();
-    
+
+    const glm::vec3 playerPosition = m_player.GetHitbox().GetPosition();
+    const glm::mat4 model = glm::translate(glm::mat4(1.f), m_camera.GetPosition()+m_camera.GetFrontVector()*3.f);
+
     const std::array<bool, GLFW_KEY_LAST+1>& keys = m_eventController.GetKeys();
     const std::array<bool, GLFW_MOUSE_BUTTON_LAST+1>& mouseButtons = m_eventController.GetMouseButtons();
     
@@ -55,6 +58,7 @@ bool Application::Run()
     
     m_skybox.Draw(cameraProjectionMatrix, cameraViewMatrix);
     m_terrain.Draw(cameraProjectionMatrix, cameraViewMatrix);
+    m_terrainModifier.Draw(cameraProjectionMatrix, cameraViewMatrix, model);
     
     m_hud.Draw();
     m_hotbar.Draw();

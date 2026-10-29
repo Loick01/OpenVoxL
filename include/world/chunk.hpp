@@ -55,7 +55,7 @@ class Chunk : public Drawable3D
     public:
         Chunk(const std::string& vertexPath, const std::string& fragmentPath, const glm::ivec3 terrainPosition, 
             const glm::ivec3 layerPosition, const glm::ivec3 terrainSize, const glm::vec3 originPosition);
-        // Chunk(glm::vec3 position, bool referenceChunk); // Used in editor mode only
+        Chunk(const std::string& vertexPath, const std::string& fragmentPath); // Use for structure visualization only
         ~Chunk();
         
         const std::vector<Voxel>& GetVoxels() const;
@@ -78,6 +78,9 @@ class Chunk : public Drawable3D
 
         void Load() override;
 
+        void TempBuildFaces(); // TODO : Remove
+        void TempLoad(); // TODO : Remove
+
         void CreateBlock(const glm::ivec3 blockPosition, const unsigned int blockId);
         void CreateBlockWithoutLoad(const glm::ivec3 blockPosition, const unsigned int blockId);
         // Because I wanted to make sure I wouldn't forget to call Load() when updating a Chunk, I kept AddVoxel()/RemoveVoxel() private, and I added CreateBlockWithoutLoad()
@@ -87,4 +90,5 @@ class Chunk : public Drawable3D
         // void DeleteBlockWithoutLoad(const glm::ivec3 blockPosition); // TODO ? I suppose I will need it when I add the eraser tool
         
         void Draw(const glm::mat4& projection, const glm::mat4& view) const override;
+        void DrawStructureVisualization(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& model) const; // TODO : Will not be here
 };
