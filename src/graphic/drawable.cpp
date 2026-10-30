@@ -25,9 +25,6 @@ void Drawable3D::LoadCmTexture(const std::array<std::string,6>& pathTextures)
     m_textureId = LoadCubemapTexture(pathTextures);
 }
 
-void Drawable3D::Draw() const
-{}
-
 void Drawable3D::Draw(const glm::mat4& projection, const glm::mat4& view) const
 {}
 

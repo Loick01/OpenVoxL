@@ -18,26 +18,6 @@ const glm::ivec3 layerPosition, const glm::ivec3 terrainSize, const glm::vec3 or
     m_gridVoxel.resize(CHUNK_SIZE*CHUNK_SIZE*CHUNK_SIZE, -1);
 }
 
-Chunk::Chunk(const std::string& vertexPath, const std::string& fragmentPath):
-    Drawable3D(vertexPath, fragmentPath)
-{
-    glGenBuffers(1, &m_blockId_SSBO);
-    glGenBuffers(1, &m_faceOrientation_SSBO);
-    
-    LoadTexture("../asset/texture/block/atlas.png");
-    m_gridVoxel.resize(CHUNK_SIZE*CHUNK_SIZE*CHUNK_SIZE, -1);
-
-    // TODO : Remove
-    for (unsigned int k = 0 ; k < CHUNK_SIZE ; k++) { // Y
-        for (unsigned int j = 0 ; j < CHUNK_SIZE ; j++) { // Z
-            for (unsigned int i = 0 ; i < CHUNK_SIZE ; i++) { // X
-                if (rand()%2==0)
-                    AddVoxel(glm::ivec3(i, k, j), rand()%BLOCK_ID_MAX+1);
-            }
-        }
-    }
-}
-
 Chunk::~Chunk()
 {
     glDeleteBuffers(1, &m_blockId_SSBO); 
@@ -354,29 +334,6 @@ void Chunk::Load()
     VoxelBufferData();
 }
 
-#include <iostream>
-
-void Chunk::TempBuildFaces() 
-{
-    m_chunkFaces.clear();
-
-    for (Voxel& v : m_voxels) {
-        AddFace(v.GetFaceId(0), v.GetFacePtr(0));
-        AddFace(v.GetFaceId(1), v.GetFacePtr(1));
-        AddFace(v.GetFaceId(2), v.GetFacePtr(2));
-        AddFace(v.GetFaceId(3), v.GetFacePtr(3));
-        AddFace(v.GetFaceId(4), v.GetFacePtr(4));
-        AddFace(v.GetFaceId(5), v.GetFacePtr(5));
-    }
-}
-
-void Chunk::TempLoad()
-{
-    TempBuildFaces();
-    VoxelComputeData();
-    VoxelBufferData();
-}
-
 void Chunk::CreateBlock(const glm::ivec3 blockPosition, const unsigned int blockId)
 {
     AddVoxel(blockPosition, blockId);
@@ -408,19 +365,6 @@ void Chunk::Draw(const glm::mat4& projection, const glm::mat4& view) const
     m_shader.Use();
     m_shader.SetMat4("projection", projection);
     m_shader.SetMat4("view", view);
-    BindTexture2D(m_shader.GetLocation("atlas"), m_textureId, 0);
-    glBindVertexArray(m_VAO);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_blockId_SSBO);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, m_faceOrientation_SSBO);
-    glDrawElements(GL_TRIANGLES, m_indices.size(), GL_UNSIGNED_INT, (void*)0);
-}
-
-void Chunk::DrawStructureVisualization(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& model) const
-{
-    m_shader.Use();
-    m_shader.SetMat4("projection", projection);
-    m_shader.SetMat4("view", view);
-    m_shader.SetMat4("model", model);
     BindTexture2D(m_shader.GetLocation("atlas"), m_textureId, 0);
     glBindVertexArray(m_VAO);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_blockId_SSBO);

@@ -55,7 +55,6 @@ class Chunk : public Drawable3D
     public:
         Chunk(const std::string& vertexPath, const std::string& fragmentPath, const glm::ivec3 terrainPosition, 
             const glm::ivec3 layerPosition, const glm::ivec3 terrainSize, const glm::vec3 originPosition);
-        Chunk(const std::string& vertexPath, const std::string& fragmentPath); // Use for structure visualization only
         ~Chunk();
         
         const std::vector<Voxel>& GetVoxels() const;
@@ -77,9 +76,6 @@ class Chunk : public Drawable3D
         void Build(const DataCaveChunk& data);
 
         void Load() override;
-
-        void TempBuildFaces(); // TODO : Remove
-        void TempLoad(); // TODO : Remove
 
         void CreateBlock(const glm::ivec3 blockPosition, const unsigned int blockId);
         void CreateBlockWithoutLoad(const glm::ivec3 blockPosition, const unsigned int blockId);

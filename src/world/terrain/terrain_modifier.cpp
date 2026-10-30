@@ -111,8 +111,8 @@ void TerrainModifier::SetCurrentStructure(const StructureData& structure)
     m_currentStructure = structure;
     
     // TODO : Fill m_structureVisualization with the current structure
-    
-    m_structureVisualization.TempLoad(); // TODO : Remove
+
+    m_structureVisualization.Load();
 }
 
 void TerrainModifier::Place(const glm::ivec3 targetPos) 
@@ -175,5 +175,5 @@ void TerrainModifier::KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys)
 void TerrainModifier::Draw(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& model) const
 {
     if (m_mode == PlaceMode::Structure)
-        m_structureVisualization.DrawStructureVisualization(projection, view, model);
+        m_structureVisualization.Draw(projection, view, model);
 }

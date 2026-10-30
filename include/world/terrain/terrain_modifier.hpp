@@ -9,7 +9,7 @@
 #include "event/key_callback.hpp"
 #include "event/mouse_updatable.hpp"
 #include "world/structure.hpp"
-#include "world/chunk.hpp" // TODO : Use a different type than Chunk
+#include "world/visualization.hpp"
 
 class Camera;
 class Hotbar;
@@ -50,7 +50,7 @@ class TerrainModifier : public EventKeyCallback, public EventMouseUpdatable
 {
     private:
         const Camera& m_camera;
-        const Hotbar& m_hotbar;
+        const Hotbar& m_hotbar; // TODO : Remove ?
         const Hud& m_hud; // TODO : Remove ?
         Terrain& m_terrain;
 
@@ -61,7 +61,7 @@ class TerrainModifier : public EventKeyCallback, public EventMouseUpdatable
 
         PlaceMode m_mode;
         StructureData m_currentStructure;
-        Chunk m_structureVisualization; // TODO : Use a different type than Chunk
+        Visualization m_structureVisualization;
 
         void Place(const glm::ivec3 targetPos);
 
