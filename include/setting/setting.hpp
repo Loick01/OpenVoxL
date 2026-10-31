@@ -11,7 +11,7 @@
 #include <implot.h>
 
 #include <string>
-#include <vector> // TODO : Remove ? (Only used for m_loadedStructures)
+#include <vector>
 
 #include "core/notifier.hpp"
 #include "event/key_callback.hpp"
@@ -54,7 +54,7 @@ struct NoiseSettings
 struct StructureInfo
 {
     const std::string name; // Without extension
-    GLuint iconTextureId; // TODO : use ImTextureID instead of GLuint
+    ImTextureID iconTextureId;
 
     bool operator==(const StructureInfo& other) const 
     {
@@ -87,8 +87,8 @@ class SettingWindow : public EventKeyCallback, public Notifier<Setting>
         // TODO : Add m_caveNoiseSettings ?
 
         // TODO : Remove ? + Rename
-        GLuint m_heightmapTextureId;
-        GLuint m_caveHeightmapTextureId;
+        ImTextureID m_heightmapTextureId;
+        ImTextureID m_caveHeightmapTextureId;
 
         // TODO : Remove ?
         std::vector<StructureInfo> m_loadedStructures;
@@ -100,6 +100,7 @@ class SettingWindow : public EventKeyCallback, public Notifier<Setting>
 
         void InitImGui();
         
+        static ImTextureID ToImTextureID(const GLuint textureId);
         void OpenStructureDirectory();
         void WriteStructureIcon(const std::string& name, const unsigned int iconSize);
         void ShowStructureIcons();

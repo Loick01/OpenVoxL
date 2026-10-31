@@ -100,15 +100,18 @@ void Camera::SetState(const CameraState state)
 
 void Camera::KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys)
 {
-    if (keys[GLFW_KEY_E])
+    if (keys[GLFW_KEY_E]) {
         if (m_state == CameraState::MouseFree)
             SetState(CameraState::KeyFree);
         else
             SetState(CameraState::MouseFree);
-    else if (keys[GLFW_KEY_O])
+        m_playerHitbox.SetHitboxState(HitboxState::Disable);
+    } else if (keys[GLFW_KEY_O]) {
         SetState(CameraState::Orbital);
-    else if (keys[GLFW_KEY_P]) {
+        m_playerHitbox.SetHitboxState(HitboxState::Disable);
+    } else if (keys[GLFW_KEY_P]) {
         m_playerHitbox.SetPosition(m_position);
+        m_playerHitbox.SetHitboxState(HitboxState::Enable);
         SetState(CameraState::Player);
     }
 }

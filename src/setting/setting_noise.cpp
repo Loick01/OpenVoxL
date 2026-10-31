@@ -1,8 +1,4 @@
-// TODO : Rename setting_noise.cpp ?
-
 #include "setting/setting.hpp"
-
-// #include <vector> // TODO : ?
 
 namespace 
 {

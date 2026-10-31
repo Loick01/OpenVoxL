@@ -12,6 +12,11 @@ enum class MovementState
     Air, Ground //, Water
 };
 
+enum class HitboxState
+{
+    Enable, Disable
+};
+
 struct AABB
 {
     glm::vec3 min;
@@ -27,6 +32,7 @@ class Hitbox
     private:    
         AABB m_box;
 
+        HitboxState m_hitboxState;
         MovementState m_movementState;
         
         glm::vec3 m_position;  
@@ -49,6 +55,7 @@ class Hitbox
         glm::vec3 GetFrontVector() const;
         glm::vec3 GetCurrentMove() const;
 
+        HitboxState GetHitboxState() const;
         MovementState GetMovementState() const;
 
         float GetVerticalVelocity() const;
@@ -61,6 +68,8 @@ class Hitbox
         void SetPosition(const glm::vec3 p);
         void SetCurrentMove(const glm::vec3 m);
         void SetVerticalVelocity(const float verticalVelocity);
+
+        void SetHitboxState(const HitboxState state);
         void SetMovementState(const MovementState state);
 
         void RequestMove(const Direction dir);

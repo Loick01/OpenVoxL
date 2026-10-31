@@ -103,6 +103,9 @@ bool CollisionResolver::AxisZ(const AABB& box, glm::vec3& move)
 
 void CollisionResolver::Resolve(Hitbox& hitbox, const float frameSpeed, const double deltaTime)
 {
+    if (hitbox.GetHitboxState() != HitboxState::Enable)
+        return;
+    
     glm::vec3 move = hitbox.GetCurrentMove();
     move.y = 0.f;
     

@@ -7,6 +7,7 @@
 #include "entity/collision.hpp"
 #include "entity/player.hpp"
 #include "graphic/texture.hpp"
+#include "setting/config.hpp"
 #include "world/terrain/terrain.hpp"
 #include "world/terrain/terrain_modifier.hpp"
 
@@ -26,8 +27,8 @@ Terrain& terrain, TerrainModifier& terrainModifier, const FileReader& fileReader
     m_wireframeRendering(false), m_showMainDebug(true), m_editorMode(false)
 {
     InitImGui();
-    m_heightmapTextureId = LoadTexture2D("../data/heightmap/terrain.png");
-    m_caveHeightmapTextureId = LoadTexture2D("../data/heightmap/cave.png");
+    m_heightmapTextureId = ToImTextureID(LoadTexture2D("../data/heightmap/terrain.png"));
+    m_caveHeightmapTextureId = ToImTextureID(LoadTexture2D("../data/heightmap/cave.png"));
 
     OpenStructureDirectory();
 }
@@ -46,6 +47,11 @@ void SettingWindow::InitImGui()
     ImGui_ImplGlfw_InitForOpenGL(m_glfwWindow, true);
     ImGui_ImplOpenGL3_Init("#version 330");
     ImPlot::CreateContext();
+}
+
+ImTextureID SettingWindow::ToImTextureID(const GLuint textureId)
+{
+    return (ImTextureID)(intptr_t)textureId;
 }
 
 void SettingWindow::ReloadTerrain()
@@ -171,7 +177,7 @@ void SettingWindow::ShowMainWindow()
             if (ImGui::SliderFloat("Update delay", &updateDelay, 0.f, 10.f))
                 m_terrainModifier.SetUpdateDelay(updateDelay);
 
-            if (ImGui::SliderFloat("Reach distance", &reachDistance, 0.f, 20.f))
+            if (ImGui::SliderFloat("Reach distance", &reachDistance, 0.f, 50.f))
                 m_terrainModifier.SetReachDistance(reachDistance);
 
             ImGui::EndTabItem();
@@ -184,8 +190,8 @@ void SettingWindow::ShowMainWindow()
 
             if (ImGui::Button("Save Structure")) {
                 if (m_terrain.SaveEditorChunkInFile(name)) {
-                    WriteStructureIcon(name, 600);
-                    OpenStructureDirectory(); // TODO : ?
+                    WriteStructureIcon(name, SettingStructureConfig::iconImageSize);
+                    OpenStructureDirectory();
                 }
             }
             
@@ -261,8 +267,8 @@ void SettingWindow::ShowMainWindow()
             if (ImGui::Button("Load Terrain")) {
                 ReloadTerrain();
                 
-                m_heightmapTextureId = LoadTexture2D("../data/heightmap/terrain.png");
-                m_caveHeightmapTextureId = LoadTexture2D("../data/heightmap/cave.png");
+                m_heightmapTextureId = ToImTextureID(LoadTexture2D("../data/heightmap/terrain.png"));
+                m_caveHeightmapTextureId = ToImTextureID(LoadTexture2D("../data/heightmap/cave.png"));
             }
 
             ImGui::EndTabItem();
@@ -275,8 +281,8 @@ void SettingWindow::ShowMainWindow()
             // const unsigned int heightmapDepth = terrainBlockSize.z;
             
             // TODO : Not 512x512
-            ImGui::Image((ImTextureID)(intptr_t)m_heightmapTextureId, ImVec2(512, 512));
-            ImGui::Image((ImTextureID)(intptr_t)m_caveHeightmapTextureId, ImVec2(512, 512));
+            ImGui::Image(m_heightmapTextureId, ImVec2(512, 512));
+            ImGui::Image(m_caveHeightmapTextureId, ImVec2(512, 512));
 
             ImGui::EndTabItem();
         }

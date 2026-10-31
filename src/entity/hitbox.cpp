@@ -4,7 +4,7 @@
 
 Hitbox::Hitbox(const glm::vec3 position, const float height, const float eyeHeight, const float width):
     m_position(position), m_height(height), m_eyeHeight(eyeHeight), m_width(width), 
-    m_currentMove(0.f), m_verticalVelocity(0.f), m_movementState(MovementState::Air)
+    m_currentMove(0.f), m_verticalVelocity(0.f), m_movementState(MovementState::Air), m_hitboxState(HitboxState::Enable)
 {
     ComputeAABB();
 }
@@ -32,6 +32,11 @@ glm::vec3 Hitbox::GetFrontVector() const
 glm::vec3 Hitbox::GetCurrentMove() const
 {
     return m_currentMove;
+}
+
+HitboxState Hitbox::GetHitboxState() const
+{
+    return m_hitboxState;
 }
 
 MovementState Hitbox::GetMovementState() const
@@ -76,6 +81,11 @@ void Hitbox::SetCurrentMove(const glm::vec3 m)
 void Hitbox::SetVerticalVelocity(const float verticalVelocity)
 {
     m_verticalVelocity = verticalVelocity;
+}
+
+void Hitbox::SetHitboxState(const HitboxState state)
+{
+    m_hitboxState = state;
 }
 
 void Hitbox::SetMovementState(const MovementState state)

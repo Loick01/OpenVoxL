@@ -45,13 +45,12 @@ bool Application::Run()
     const glm::mat4 cameraViewMatrix = m_camera.GetViewMatrix();
     const glm::mat4 cameraProjectionMatrix = m_camera.GetProjectionMatrix();
 
-    const glm::vec3 playerPosition = m_player.GetHitbox().GetPosition();
-
     const std::array<bool, GLFW_KEY_LAST+1>& keys = m_eventController.GetKeys();
     const std::array<bool, GLFW_MOUSE_BUTTON_LAST+1>& mouseButtons = m_eventController.GetMouseButtons();
-    
+
     m_player.KeyUpdate(keys, deltaTime);
     m_collisionResolver.Resolve(m_player.GetHitbox(), m_player.GetFrameSpeed(), deltaTime);
+    
     m_terrainModifier.EventMouseButtonUpdate(mouseButtons, deltaTime);
     m_camera.KeyUpdate(keys, deltaTime);
     

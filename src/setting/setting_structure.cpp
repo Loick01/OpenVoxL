@@ -6,6 +6,7 @@
 #include "core/file/path.hpp"
 #include "graphic/stb_image_write.h"
 #include "graphic/texture.hpp"
+#include "setting/config.hpp"
 
 StructureData SettingWindow::GetSelectedStructure() const
 {
@@ -41,7 +42,7 @@ void SettingWindow::OpenStructureDirectory()
             StructureInfo structureInfo{name, 0};
 
             if (std::find(m_loadedStructures.begin(), m_loadedStructures.end(), structureInfo) == m_loadedStructures.end()) {
-                structureInfo.iconTextureId = LoadTexture2D(directoryPath + name + std::string(FileExtension::Image));
+                structureInfo.iconTextureId = ToImTextureID(LoadTexture2D(directoryPath + name + std::string(FileExtension::Image)));
                 m_loadedStructures.push_back(structureInfo);
             }
         }
@@ -76,15 +77,17 @@ void SettingWindow::ShowStructureIcons()
         ImGui::Text("Current structure : %s", m_loadedStructures[m_selectedStructure].name.c_str());
     }
     
-    ImGui::Columns(3, "structuresIcon", false);
-    for (unsigned int i = 0 ; i < 3 ; i++)
-        ImGui::SetColumnWidth(i, 144); 
+    ImGui::Columns(SettingStructureConfig::column, "structuresIcon", false);
+    for (unsigned int i = 0 ; i < SettingStructureConfig::column ; i++)
+        ImGui::SetColumnWidth(i, SettingStructureConfig::columnWidth); 
 
     for (unsigned int i = 0 ; i < m_loadedStructures.size() ; i++) {
         const StructureInfo& structure = m_loadedStructures[i];
-        ImGui::Image((ImTextureID)(intptr_t)structure.iconTextureId, ImVec2(128, 128));
+        ImGui::Image(structure.iconTextureId, 
+            ImVec2(SettingStructureConfig::iconSize, SettingStructureConfig::iconSize)
+        );
         
-        if (ImGui::Button(structure.name.c_str(), ImVec2(128, 24))) {
+        if (ImGui::Button(structure.name.c_str(), ImVec2(SettingStructureConfig::iconSize, SettingStructureConfig::buttonHeight))) {
             m_selectedStructure = i;
             Notify(Setting::UpdateValues);
         }

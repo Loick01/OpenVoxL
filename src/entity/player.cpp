@@ -42,6 +42,9 @@ void Player::SetJumpStrength(const float jumpStrength)
 
 void Player::KeyUpdate(const std::array<bool, GLFW_KEY_LAST+1>& keys, const float deltaTime)
 {
+    if (m_hitbox.GetHitboxState() != HitboxState::Enable)
+        return;
+    
     m_frameSpeed = m_speed * deltaTime;
     
     if (keys[GLFW_KEY_W])
