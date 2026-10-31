@@ -21,9 +21,8 @@ class Visualization : public Drawable3D
         GLuint m_blockId_SSBO;
         GLuint m_faceOrientation_SSBO;
 
-        // TODO : ?????
-        // std::vector<unsigned int> m_blockIds; 
-        // std::vector<unsigned int> m_faceOrientations;
+        std::vector<unsigned int> m_blockIds; 
+        std::vector<unsigned int> m_faceOrientations;
 
         void AddVoxel(const glm::ivec3 blockPosition, const unsigned int blockId);
         
