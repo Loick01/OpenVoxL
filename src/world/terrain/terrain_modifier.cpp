@@ -109,9 +109,7 @@ void TerrainModifier::SetReachDistance(const float distance)
 void TerrainModifier::SetCurrentStructure(const StructureData& structure)
 {
     m_currentStructure = structure;
-    
-    // TODO : Fill m_structureVisualization with the current structure
-
+    m_structureVisualization.FillWith(structure);
     m_structureVisualization.Load();
 }
 
@@ -172,8 +170,19 @@ void TerrainModifier::KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys)
         m_mode = (m_mode == PlaceMode::Block ? PlaceMode::Structure : PlaceMode::Block);
 }
 
-void TerrainModifier::Draw(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& model) const
+void TerrainModifier::Draw(const glm::mat4& projection, const glm::mat4& view) const
 {
-    if (m_mode == PlaceMode::Structure)
-        m_structureVisualization.Draw(projection, view, model);
+    if (m_mode == PlaceMode::Structure) {
+        const std::optional<RaycastHit> rayHitOpt = RaycastVoxelGrid(m_camera.GetPosition(), m_camera.GetPosition()+m_camera.GetFrontVector()*m_reachDistance);
+        if (rayHitOpt) {
+            const RaycastHit rayHit = rayHitOpt.value();
+            const glm::vec3 targetVoxelPos = rayHit.voxelPos + rayHit.normal;
+            
+            if (m_terrain.IsOutOfTerrain(targetVoxelPos))
+                return;
+            
+            const glm::mat4 model = glm::translate(glm::mat4(1.f), targetVoxelPos);
+            m_structureVisualization.Draw(projection, view, model);
+        }
+    }
 }

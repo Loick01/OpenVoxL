@@ -2,6 +2,8 @@
 
 // TODO : Rename this file
 
+#include "world/structure.hpp"
+
 Visualization::Visualization(const std::string& vertexPath, const std::string& fragmentPath):
     Drawable3D(vertexPath, fragmentPath)
 {
@@ -9,10 +11,6 @@ Visualization::Visualization(const std::string& vertexPath, const std::string& f
     glGenBuffers(1, &m_faceOrientation_SSBO);
     
     LoadTexture("../asset/texture/block/atlas.png");
-
-    // TODO : Remove
-    for (unsigned int k = 0 ; k < 2 ; k++) // Y
-        AddVoxel(glm::ivec3(0, k, 0), rand()%30);
 }
 
 Visualization::~Visualization()
@@ -91,6 +89,14 @@ void Visualization::VoxelBufferData()
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_faceOrientation_SSBO);
     glBufferData(GL_SHADER_STORAGE_BUFFER, m_faceOrientations.size()*sizeof(unsigned int), m_faceOrientations.data(), GL_DYNAMIC_DRAW);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, m_faceOrientation_SSBO);
+}
+
+void Visualization::FillWith(const StructureData& structData)
+{  
+    m_voxels.clear();
+
+    for (const BlockData& block : structData.blocks)
+        AddVoxel(block.position, block.id);
 }
 
 void Visualization::Load()

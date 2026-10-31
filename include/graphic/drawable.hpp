@@ -28,6 +28,7 @@ class Drawable3D
         virtual void LoadCmTexture(const std::array<std::string,6>& pathTextures);
         virtual void Load() = 0;
         virtual void Draw(const glm::mat4& projection, const glm::mat4& view) const;
+        virtual void Draw(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& model) const;
 };
 
 class Drawable2D

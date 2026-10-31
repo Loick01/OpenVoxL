@@ -11,6 +11,8 @@
 #include "graphic/drawable.hpp"
 #include "world/voxel.hpp"
 
+struct StructureData;
+
 class Visualization : public Drawable3D
 {
     private:
@@ -37,6 +39,8 @@ class Visualization : public Drawable3D
         Visualization(const std::string& vertexPath, const std::string& fragmentPath);
         ~Visualization();
 
+        void FillWith(const StructureData& structData);
+        
         void Load() override;
-        void Draw(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& model) const; // TODO : override
+        void Draw(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& model) const override;
 };

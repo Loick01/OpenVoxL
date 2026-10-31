@@ -28,6 +28,9 @@ void Drawable3D::LoadCmTexture(const std::array<std::string,6>& pathTextures)
 void Drawable3D::Draw(const glm::mat4& projection, const glm::mat4& view) const
 {}
 
+void Drawable3D::Draw(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& model) const
+{}
+
 Drawable2D::Drawable2D(const std::string& vertexPath, const std::string& fragmentPath):
     m_shader(vertexPath, fragmentPath), m_show(true)
 {
