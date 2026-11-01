@@ -29,7 +29,7 @@ class FileReader // TODO : Should be Singleton ?
 
         // File
         StructureData ReadStructureFile(const std::string& structFilepath) const;
-        void SaveStructureFile(const std::string& structFilepath, const StructureData& structData) const;
+        bool SaveStructureFile(const std::string& structFilepath, const StructureData& structData) const;
         
         // FileIO
         std::string GetFileExtension(const std::string& filepath) const;

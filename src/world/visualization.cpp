@@ -99,6 +99,12 @@ void Visualization::FillWith(const StructureData& structData)
         AddVoxel(block.position, block.id);
 }
 
+void Visualization::UpdateData(const StructureData& structData)
+{
+    FillWith(structData);
+    Load();
+}
+
 void Visualization::Load()
 {
     BuildFaces();

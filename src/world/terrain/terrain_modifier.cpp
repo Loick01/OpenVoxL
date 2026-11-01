@@ -109,8 +109,7 @@ void TerrainModifier::SetReachDistance(const float distance)
 void TerrainModifier::SetCurrentStructure(const StructureData& structure)
 {
     m_currentStructure = structure;
-    m_structureVisualization.FillWith(structure);
-    m_structureVisualization.Load();
+    m_structureVisualization.UpdateData(m_currentStructure);
 }
 
 void TerrainModifier::Place(const glm::ivec3 targetPos) 
@@ -168,6 +167,14 @@ void TerrainModifier::KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys)
 {
     if (keys[GLFW_KEY_F])
         m_mode = (m_mode == PlaceMode::Block ? PlaceMode::Structure : PlaceMode::Block);
+
+    if (keys[GLFW_KEY_R]) {
+        m_currentStructure.RotateToLeft();
+        m_structureVisualization.UpdateData(m_currentStructure);
+    } else if (keys[GLFW_KEY_T]) {
+        m_currentStructure.RotateToRight();
+        m_structureVisualization.UpdateData(m_currentStructure);
+    }
 }
 
 void TerrainModifier::Draw(const glm::mat4& projection, const glm::mat4& view) const

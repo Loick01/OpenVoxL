@@ -32,9 +32,10 @@ make
 + **Mouse Wheel :** Move the selection in the hotbar
 + **+/- :** Navigate through the available blocks in the hotbar
 + **E :** Switch between MouseFree and KeyFree camera
-+ **F :** Switch between Block and Structure placing mode
 + **O :** Switch to Orbital camera
-+ **P :** Switch to Player
++ **V :** Switch to Player
++ **F :** Switch between Block and Structure placing mode
++ **R/T :** Rotate to the left/right the current structure
 + **Q :** Show/Hide the HUD
 + **F3 :** Show/Hide the Debug window
 + **Escape :** Close the window
@@ -104,6 +105,18 @@ make
       </a>
       <br>
       <strong>Player, Collision and Hotbar</strong>
+    </td>
+    <td align="center" width="250">
+      <a href="https://www.youtube.com/watch?v=sRSNtSebqWQ">
+        <img
+          src="https://img.youtube.com/vi/sRSNtSebqWQ/maxresdefault.jpg"
+          width="240"
+          height="135"
+          style="object-fit: cover;"
+        >
+      </a>
+      <br>
+      <strong>Editor and Structures</strong>
     </td>
   </tr>
 </table>

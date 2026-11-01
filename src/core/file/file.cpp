@@ -15,11 +15,11 @@ StructureData FileReader::ReadStructureFile(const std::string& structFilepath) c
     return data;
 }
 
-void FileReader::SaveStructureFile(const std::string& structFilepath, const StructureData& structData) const
+bool FileReader::SaveStructureFile(const std::string& structFilepath, const StructureData& structData) const
 {
     if (structFilepath.empty()) {
         Logger::GetInstance().AddLog(LogLevel::Level1, "Can't save the structure --> File name is empty");
-        return;
+        return false;
     }
 
     const std::string filepath = std::string(DataDirectory::Structure) + structFilepath + std::string(FileExtension::Structure);
@@ -30,4 +30,6 @@ void FileReader::SaveStructureFile(const std::string& structFilepath, const Stru
 
     output.close();
     Logger::GetInstance().AddLog(LogLevel::Level1, "The structure has been saved as " + filepath);
+    
+    return true;
 }

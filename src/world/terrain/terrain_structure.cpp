@@ -21,8 +21,7 @@ bool Terrain::SaveEditorChunkInFile(const std::string& name) const
         structData.blocks.emplace_back(v.GetBlockId(), bp);
     }
 
-    m_fileReader.SaveStructureFile(name, structData);
-    return true;
+    return m_fileReader.SaveStructureFile(name, structData);
 }
 
 void Terrain::BuildStructure(const glm::ivec3 bp, const StructureData& structData)

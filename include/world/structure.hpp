@@ -18,4 +18,22 @@ struct StructureData
 {
     std::vector<BlockData> blocks;
     // TODO : const std::string name ?
+
+    void RotateToLeft()
+    {
+        for (BlockData& block : blocks) {
+            const unsigned int t = block.position.z;
+            block.position.z = block.position.x;
+            block.position.x = -t;
+        }
+    }
+    
+    void RotateToRight()
+    {
+        for (BlockData& block : blocks) {
+            const unsigned int t = block.position.x;
+            block.position.x = block.position.z;
+            block.position.z = -t;
+        }
+    } 
 };

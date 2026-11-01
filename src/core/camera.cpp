@@ -109,7 +109,7 @@ void Camera::KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys)
     } else if (keys[GLFW_KEY_O]) {
         SetState(CameraState::Orbital);
         m_playerHitbox.SetHitboxState(HitboxState::Disable);
-    } else if (keys[GLFW_KEY_P]) {
+    } else if (keys[GLFW_KEY_V]) {
         m_playerHitbox.SetPosition(m_position);
         m_playerHitbox.SetHitboxState(HitboxState::Enable);
         SetState(CameraState::Player);

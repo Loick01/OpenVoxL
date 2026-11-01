@@ -35,12 +35,14 @@ class Visualization : public Drawable3D
         void VoxelComputeData();
         void VoxelBufferData();
         
+        void FillWith(const StructureData& structData);
+        void Load() override;
+        
     public:
         Visualization(const std::string& vertexPath, const std::string& fragmentPath);
         ~Visualization();
 
-        void FillWith(const StructureData& structData);
-        
-        void Load() override;
+        void UpdateData(const StructureData& structData);
+
         void Draw(const glm::mat4& projection, const glm::mat4& view, const glm::mat4& model) const override;
 };
