@@ -8,5 +8,7 @@
 
 GLuint LoadTexture2D(const std::string& pathTexture);
 GLuint LoadCubemapTexture(const std::array<std::string,6>& pathTextures);
+void DeleteTexture(const GLuint& textureId);
+
 void BindTexture2D(GLint textureLocation, const GLuint textureId, const int unit);
 void BindCubemapTexture(int unit);

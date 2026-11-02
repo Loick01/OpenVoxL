@@ -30,7 +30,7 @@ class Chunk : public Drawable3D
 
         std::vector<unsigned int> m_blockIds;
         std::vector<unsigned int> m_faceOrientations;
-        std::map<std::string, Face*> m_chunkFaces;
+        std::vector<Face*> m_chunkFaces;
         std::map<ChunkNeighbor, Chunk*> m_chunkNeighbors;
 
         GLuint m_blockId_SSBO;
@@ -41,7 +41,6 @@ class Chunk : public Drawable3D
         void RemoveVoxel(const glm::ivec3 blockPosition);
         
         void AddFaceIndices(const unsigned int offset);
-        void AddFace(const std::string& faceId, Face* face);
         void BuildFaces();
 
         void VoxelComputeData();

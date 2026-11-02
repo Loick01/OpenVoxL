@@ -100,7 +100,9 @@ class SettingWindow : public EventKeyCallback, public Notifier<Setting>
 
         void InitImGui();
         
+        static GLuint ToGLuint(const ImTextureID textureId);
         static ImTextureID ToImTextureID(const GLuint textureId);
+        
         void OpenStructureDirectory();
         void WriteStructureIcon(const std::string& name, const unsigned int iconSize);
         void ShowStructureIcons();
@@ -117,7 +119,9 @@ class SettingWindow : public EventKeyCallback, public Notifier<Setting>
         bool OpenSettings(DataCaveChunk& data);
 
         void ReloadTerrain();
-        
+        void OpenTerrainTextures();
+        void DeleteTerrainTextures();
+
         void ShowMainWindow();
 
     public:

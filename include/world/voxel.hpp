@@ -1,6 +1,5 @@
 #pragma once
 
-#include <string>
 #include <vector>
 
 #include <glm/glm.hpp>
@@ -8,8 +7,7 @@
 struct Face 
 {
     std::vector<glm::vec3> vertices;
-    std::string id; // TODO uint ?
-    unsigned int blockId;
+    unsigned int blockId; // TODO : Rename
     unsigned int orientation;
 
     const std::vector<glm::vec3>& GetVertices() const
@@ -41,8 +39,6 @@ class Voxel
         Voxel(const glm::vec3 origin, const unsigned int blockId);
 
         Face* GetFacePtr(const unsigned int faceIndex);
-        std::string GetFaceId(const unsigned int faceIndex) const;
-        std::string GetRootFaceId() const;
 
         glm::vec3 GetOrigin() const;
         std::vector<glm::vec3> GetVertices() const;

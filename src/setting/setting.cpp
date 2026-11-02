@@ -27,14 +27,17 @@ Terrain& terrain, TerrainModifier& terrainModifier, const FileReader& fileReader
     m_wireframeRendering(false), m_showMainDebug(true), m_editorMode(false)
 {
     InitImGui();
-    m_heightmapTextureId = ToImTextureID(LoadTexture2D("../data/heightmap/terrain.png"));
-    m_caveHeightmapTextureId = ToImTextureID(LoadTexture2D("../data/heightmap/cave.png"));
-
+    OpenTerrainTextures();
     OpenStructureDirectory();
 }
 
 SettingWindow::~SettingWindow()
 {
+    for (const StructureInfo& info : m_loadedStructures)
+        DeleteTexture(ToGLuint(info.iconTextureId));
+    
+    DeleteTerrainTextures();
+
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
@@ -49,6 +52,11 @@ void SettingWindow::InitImGui()
     ImPlot::CreateContext();
 }
 
+GLuint SettingWindow::ToGLuint(const ImTextureID textureId)
+{
+    return (GLuint)(intptr_t)textureId;
+}
+
 ImTextureID SettingWindow::ToImTextureID(const GLuint textureId)
 {
     return (ImTextureID)(intptr_t)textureId;
@@ -56,6 +64,9 @@ ImTextureID SettingWindow::ToImTextureID(const GLuint textureId)
 
 void SettingWindow::ReloadTerrain()
 {
+    DeleteTerrainTextures();
+    OpenTerrainTextures();
+
     // TODO : Should not be here and use Notifier instead ?
     glm::vec3 terrainCenter = glm::vec3(m_nextSizeChunk*CHUNK_SIZE)/2.f;
     m_terrain.SetSizeChunk(m_nextSizeChunk); // TODO ?
@@ -64,6 +75,18 @@ void SettingWindow::ReloadTerrain()
     m_camera.SetTargetTerrain(terrainCenter);
     terrainCenter.y *= 2.5f; // TODO ?
     m_hitbox.SetPosition(terrainCenter);
+}
+
+void SettingWindow::OpenTerrainTextures()
+{
+    m_heightmapTextureId = ToImTextureID(LoadTexture2D("../data/heightmap/terrain.png"));
+    m_caveHeightmapTextureId = ToImTextureID(LoadTexture2D("../data/heightmap/cave.png"));
+}
+
+void SettingWindow::DeleteTerrainTextures()
+{
+    DeleteTexture(ToGLuint(m_heightmapTextureId));
+    DeleteTexture(ToGLuint(m_caveHeightmapTextureId));
 }
 
 void SettingWindow::KeyCallback(const std::array<bool,GLFW_KEY_LAST+1>& keys)
@@ -264,12 +287,8 @@ void SettingWindow::ShowMainWindow()
                 );
             }
             
-            if (ImGui::Button("Load Terrain")) {
+            if (ImGui::Button("Load Terrain"))
                 ReloadTerrain();
-                
-                m_heightmapTextureId = ToImTextureID(LoadTexture2D("../data/heightmap/terrain.png"));
-                m_caveHeightmapTextureId = ToImTextureID(LoadTexture2D("../data/heightmap/cave.png"));
-            }
 
             ImGui::EndTabItem();
         }

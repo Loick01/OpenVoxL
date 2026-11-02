@@ -10,6 +10,8 @@ Drawable3D::Drawable3D(const std::string& vertexPath, const std::string& fragmen
 
 Drawable3D::~Drawable3D()
 {
+    DeleteTexture(m_textureId);
+
     glDeleteVertexArrays(1, &m_VAO);
     glDeleteBuffers(1, &m_VBO);
     glDeleteBuffers(1, &m_EBO);
@@ -41,11 +43,12 @@ Drawable2D::Drawable2D(const std::string& vertexPath, const std::string& fragmen
 
 Drawable2D::~Drawable2D()
 {
+    DeleteTexture(m_textureId);
+    
     glDeleteVertexArrays(1, &m_VAO);
     glDeleteBuffers(1, &m_VBO);
     glDeleteBuffers(1, &m_EBO);
 }
-
 
 void Drawable2D::LoadTexture(const std::string& texturePath)
 {

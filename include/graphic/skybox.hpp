@@ -2,7 +2,8 @@
 
 #include "graphic/drawable.hpp"
 
-class Skybox : public Drawable3D {
+class Skybox : public Drawable3D 
+{
     public:
         Skybox(const std::string& vertexPath, const std::string& fragmentPath);
         

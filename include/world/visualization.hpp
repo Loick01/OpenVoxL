@@ -18,7 +18,7 @@ class Visualization : public Drawable3D
     private:
         std::vector<Voxel> m_voxels;
         
-        std::map<std::string, Face*> m_chunkFaces;
+        std::vector<Face*> m_chunkFaces;
 
         GLuint m_blockId_SSBO;
         GLuint m_faceOrientation_SSBO;
@@ -29,7 +29,6 @@ class Visualization : public Drawable3D
         void AddVoxel(const glm::ivec3 blockPosition, const unsigned int blockId);
         
         void AddFaceIndices(const unsigned int offset);
-        void AddFace(const std::string& faceId, Face* face);
         void BuildFaces();
 
         void VoxelComputeData();

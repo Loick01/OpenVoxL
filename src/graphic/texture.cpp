@@ -83,6 +83,11 @@ GLuint LoadCubemapTexture(const std::array<std::string,6>& pathTextures)
     return cubemapTextureId;
 }
 
+void DeleteTexture(const GLuint& textureId)
+{
+    glDeleteTextures(1, &textureId);
+}
+
 void BindTexture2D(GLint textureLocation, const GLuint textureId, const int unit)
 {
     glActiveTexture(GL_TEXTURE0 + unit);

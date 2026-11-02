@@ -20,9 +20,7 @@ StructureData SettingWindow::GetSelectedStructure() const
 }
 
 void SettingWindow::OpenStructureDirectory()
-{   
-    m_loadedStructures.clear();
-    
+{    
     const std::string directoryPath = std::string(DataDirectory::Structure);
     
     DIR* structureDirectory = opendir(directoryPath.c_str());

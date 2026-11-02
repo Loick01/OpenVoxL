@@ -31,22 +31,17 @@ void Visualization::AddFaceIndices(const unsigned int offset)
     m_indices.push_back(offset + 1);
 }
 
-void Visualization::AddFace(const std::string& faceId, Face* face)
-{
-    m_chunkFaces[faceId] = face;
-}
-
 void Visualization::BuildFaces() 
 {
     m_chunkFaces.clear();
 
     for (Voxel& v : m_voxels) {
-        AddFace(v.GetFaceId(0), v.GetFacePtr(0));
-        AddFace(v.GetFaceId(1), v.GetFacePtr(1));
-        AddFace(v.GetFaceId(2), v.GetFacePtr(2));
-        AddFace(v.GetFaceId(3), v.GetFacePtr(3));
-        AddFace(v.GetFaceId(4), v.GetFacePtr(4));
-        AddFace(v.GetFaceId(5), v.GetFacePtr(5));
+        m_chunkFaces.emplace_back(v.GetFacePtr(0));
+        m_chunkFaces.emplace_back(v.GetFacePtr(1));
+        m_chunkFaces.emplace_back(v.GetFacePtr(2));
+        m_chunkFaces.emplace_back(v.GetFacePtr(3));
+        m_chunkFaces.emplace_back(v.GetFacePtr(4));
+        m_chunkFaces.emplace_back(v.GetFacePtr(5));
     }
 }
 
@@ -58,12 +53,11 @@ void Visualization::VoxelComputeData()
     m_faceOrientations.clear();
 
     unsigned int offset = 0;
-    for(std::map<std::string, Face*>::iterator it = m_chunkFaces.begin(); it != m_chunkFaces.end(); ++it) {
-        Face* face = it->second;
-        const std::vector<glm::vec3>& faceVertices = face->GetVertices();
+    for (const Face* f : m_chunkFaces) {
+        const std::vector<glm::vec3>& faceVertices = f->GetVertices();
         m_vertices.insert(m_vertices.end(), faceVertices.begin(), faceVertices.end());
-        m_blockIds.push_back(face->GetBlockId());
-        m_faceOrientations.push_back(face->GetOrientation());
+        m_blockIds.push_back(f->GetBlockId());
+        m_faceOrientations.push_back(f->GetOrientation());
 
         AddFaceIndices(offset);
         offset += 4;
